@@ -4,7 +4,7 @@ import type { Task } from '../../types/task'
 
 type TaskListProps = {
   tasks: Task[]
-  onToggleTask: (taskId: number) => void
+  onToggleTask: (taskId: string) => void
 }
 
 
