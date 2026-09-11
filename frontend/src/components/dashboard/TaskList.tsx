@@ -1,16 +1,12 @@
 import { Check, ListTodo, MoreHorizontal } from 'lucide-react'
-import type { Task, TaskCategory } from '../../types/task'
+import { categoryStyles } from '../../constants/categoryStyles'
+import type { Task } from '../../types/task'
 
 type TaskListProps = {
   tasks: Task[]
   onToggleTask: (taskId: number) => void
 }
 
-const categoryStyles: Record<TaskCategory, string> = {
-  Faculdade: 'bg-[#e4f3e8] text-[#19683a]',
-  Pessoal: 'bg-[#e7efff] text-[#315fa8]',
-  Saúde: 'bg-[#f0eafb] text-[#6f4ca5]',
-}
 
 export function TaskList({ tasks, onToggleTask }: TaskListProps) {
   const completedTasks = tasks.filter((task) => task.completed).length

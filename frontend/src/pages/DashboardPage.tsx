@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { TaskList } from '../components/dashboard/TaskList'
 import { initialTasks } from '../data/tasks'
+import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
+import { WeekOverview } from '../components/dashboard/WeekOverview'
 
 export function DashboardPage() {
   const [tasks, setTasks] = useState(initialTasks)
@@ -51,14 +53,9 @@ export function DashboardPage() {
       <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <TaskList tasks={tasks} onToggleTask={handleToggleTask} />
 
-        <aside className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#17211b]">
-            Esta semana
-          </h2>
-
-          <p className="mt-2 text-sm text-[#7b847e]">
-            O resumo semanal será construído na próxima etapa.
-          </p>
+        <aside className="flex flex-col gap-6">
+          <WeekOverview />
+          <UpcomingTasks />
         </aside>
       </div>
     </section>
