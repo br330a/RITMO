@@ -10,7 +10,6 @@ import {
 import { initialTasks } from '../data/tasks'
 import { loadTasks, saveTasks } from '../services/taskStorage'
 import type { CreateTaskData, Task } from '../types/task'
-import { getLocalDateValue } from '../utils/date'
 
 export function TasksProvider({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Task[]>(
@@ -28,7 +27,6 @@ export function TasksProvider({ children }: PropsWithChildren) {
         {
           ...taskData,
           id: crypto.randomUUID(),
-          dueDate: getLocalDateValue(),
           completed: false,
         },
       ].sort((firstTask, secondTask) =>

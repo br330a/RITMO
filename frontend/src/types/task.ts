@@ -9,4 +9,7 @@ export type Task = {
   completed: boolean
 }
 
-export type CreateTaskData = Pick<Task, 'title' | 'time' | 'category'>
+export type CreateTaskData = Pick<
+  Task,
+  'title' | 'dueDate' | 'time' | 'category'
+>

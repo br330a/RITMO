@@ -1,31 +1,26 @@
 import { ArrowRight, Clock3 } from 'lucide-react'
 import { Link } from 'react-router'
 import { categoryStyles } from '../../constants/categoryStyles'
-import type { TaskCategory } from '../../types/task'
-
-type UpcomingTask = {
-  id: number
-  title: string
-  dateLabel: string
-  category: TaskCategory
-}
-
-const upcomingTasks: UpcomingTask[] = [
-  {
-    id: 1,
-    title: 'Trabalho em grupo',
-    dateLabel: 'Amanhã, 09:00',
-    category: 'Faculdade',
-  },
-  {
-    id: 2,
-    title: 'Treino na academia',
-    dateLabel: 'Sábado, 15:00',
-    category: 'Saúde',
-  },
-]
+import { useTasks } from '../../hooks/useTasks'
+import { formatTaskDate, getLocalDateValue } from '../../utils/date'
 
 export function UpcomingTasks() {
+  const { tasks } = useTasks()
+  const today = getLocalDateValue()
+
+  const upcomingTasks = tasks
+    .filter((task) => !task.completed && task.dueDate > today)
+    .sort((firstTask, secondTask) => {
+      const dateComparison = firstTask.dueDate.localeCompare(
+        secondTask.dueDate,
+      )
+
+      return dateComparison !== 0
+        ? dateComparison
+        : firstTask.time.localeCompare(secondTask.time)
+    })
+    .slice(0, 2)
+
   return (
     <article className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
       <header className="mb-2 flex items-center justify-between gap-4">
@@ -46,31 +41,39 @@ export function UpcomingTasks() {
         </Link>
       </header>
 
-      <div>
-        {upcomingTasks.map((task) => (
-          <div
-            key={task.id}
-            className="border-b border-[#edf1ed] py-4 last:border-none last:pb-0"
-          >
-            <p className="text-xs text-[#8a938d]">{task.dateLabel}</p>
-
-            <div className="mt-1 flex items-center justify-between gap-3">
-              <p className="min-w-0 truncate text-sm font-medium text-[#27312b]">
-                {task.title}
+      {upcomingTasks.length === 0 ? (
+        <p className="pt-4 text-sm text-[#8a938d]">
+          Nenhuma tarefa futura.
+        </p>
+      ) : (
+        <div>
+          {upcomingTasks.map((task) => (
+            <div
+              key={task.id}
+              className="border-b border-[#edf1ed] py-4 last:border-none last:pb-0"
+            >
+              <p className="text-xs text-[#8a938d]">
+                {formatTaskDate(task.dueDate)}, {task.time}
               </p>
 
-              <span
-                className={[
-                  'shrink-0 rounded-full px-3 py-1 text-xs font-medium',
-                  categoryStyles[task.category],
-                ].join(' ')}
-              >
-                {task.category}
-              </span>
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate text-sm font-medium text-[#27312b]">
+                  {task.title}
+                </p>
+
+                <span
+                  className={[
+                    'shrink-0 rounded-full px-3 py-1 text-xs font-medium',
+                    categoryStyles[task.category],
+                  ].join(' ')}
+                >
+                  {task.category}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </article>
   )
 }

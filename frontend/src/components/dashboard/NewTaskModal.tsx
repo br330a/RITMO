@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
 import type { CreateTaskData, TaskCategory } from '../../types/task'
+import { getLocalDateValue } from '../../utils/date'
 
 type NewTaskModalProps = {
   isOpen: boolean
@@ -23,6 +24,7 @@ export function NewTaskModal({
   onCreateTask,
 }: NewTaskModalProps) {
   const [title, setTitle] = useState('')
+  const [dueDate, setDueDate] = useState(getLocalDateValue())
   const [time, setTime] = useState('')
   const [category, setCategory] =
     useState<TaskCategory>('Faculdade')
@@ -34,17 +36,19 @@ export function NewTaskModal({
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!title.trim() || !time) {
+    if (!title.trim() || !dueDate || !time) {
       return
     }
 
     onCreateTask({
       title: title.trim(),
+      dueDate,
       time,
       category,
     })
 
     setTitle('')
+    setDueDate(getLocalDateValue())
     setTime('')
     setCategory('Faculdade')
     onClose()
@@ -72,7 +76,7 @@ export function NewTaskModal({
             </h2>
 
             <p className="mt-1 text-sm text-[#7b847e]">
-              Adicione uma tarefa para hoje.
+              Organize uma nova atividade.
             </p>
           </div>
 
@@ -102,18 +106,34 @@ export function NewTaskModal({
             />
           </label>
 
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
-              Horário
-            </span>
+          <div className="grid grid-cols-2 gap-4">
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Data
+              </span>
 
-            <input
-              type="time"
-              value={time}
-              onChange={(event) => setTime(event.target.value)}
-              className={inputStyles}
-            />
-          </label>
+              <input
+                type="date"
+                value={dueDate}
+                min={getLocalDateValue()}
+                onChange={(event) => setDueDate(event.target.value)}
+                className={inputStyles}
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Horário
+              </span>
+
+              <input
+                type="time"
+                value={time}
+                onChange={(event) => setTime(event.target.value)}
+                className={inputStyles}
+              />
+            </label>
+          </div>
 
           <label className="block">
             <span className="mb-2 block text-sm font-medium text-[#27312b]">
