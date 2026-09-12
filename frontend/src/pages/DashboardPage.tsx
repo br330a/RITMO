@@ -4,45 +4,21 @@ import { NewTaskModal } from '../components/dashboard/NewTaskModal'
 import { TaskList } from '../components/dashboard/TaskList'
 import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
 import { WeekOverview } from '../components/dashboard/WeekOverview'
-import { initialTasks } from '../data/tasks'
-import type { CreateTaskData } from '../types/task'
+import { useTasks } from '../hooks/useTasks'
 import { getLocalDateValue } from '../utils/date'
 
 export function DashboardPage() {
-  const [tasks, setTasks] = useState(initialTasks)
+  const { tasks, createTask, toggleTask } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const today = getLocalDateValue()
+  const todayTasks = tasks.filter((task) => task.dueDate === today)
 
   const currentDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   }).format(new Date())
-
-  function handleToggleTask(taskId: string) {
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, completed: !task.completed }
-          : task,
-      ),
-    )
-  }
-
-  function handleCreateTask(taskData: CreateTaskData) {
-    setTasks((currentTasks) =>
-      [
-        ...currentTasks,
-        {
-          ...taskData,
-          id: crypto.randomUUID(),
-          dueDate: getLocalDateValue(),
-          completed: false,
-        },
-      ].sort((firstTask, secondTask) =>
-        firstTask.time.localeCompare(secondTask.time),
-      ),
-    )
-  }
 
   return (
     <>
@@ -74,8 +50,8 @@ export function DashboardPage() {
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <TaskList
-            tasks={tasks}
-            onToggleTask={handleToggleTask}
+            tasks={todayTasks}
+            onToggleTask={toggleTask}
           />
 
           <aside className="flex flex-col gap-6">
@@ -88,7 +64,7 @@ export function DashboardPage() {
       <NewTaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onCreateTask={handleCreateTask}
+        onCreateTask={createTask}
       />
     </>
   )
