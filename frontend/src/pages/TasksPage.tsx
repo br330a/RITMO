@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { NewTaskModal } from '../components/tasks/NewTaskModal'
+import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { TaskCard } from '../components/tasks/TaskCard'
 import { useTasks } from '../hooks/useTasks'
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
@@ -15,10 +15,17 @@ const filters: { label: string; value: TaskFilter }[] = [
 ]
 
 export function TasksPage() {
-  const { tasks, createTask, toggleTask, deleteTask } = useTasks()
+  const {
+    tasks,
+    createTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+  } = useTasks()
   const [activeFilter, setActiveFilter] =
     useState<TaskFilter>('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
   const filteredTasks = [...tasks]
@@ -129,17 +136,30 @@ export function TasksPage() {
                 task={task}
                 onToggle={toggleTask}
                 onDelete={setTaskToDelete}
+                onEdit={setTaskToEdit}
               />
             ))
           )}
         </div>
       </section>
 
-      <NewTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreateTask={createTask}
-      />
+      {isModalOpen && (
+        <TaskFormModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={createTask}
+        />
+      )}
+
+      {taskToEdit && (
+        <TaskFormModal
+          key={taskToEdit.id}
+          task={taskToEdit}
+          onClose={() => setTaskToEdit(null)}
+          onSubmit={(taskData) =>
+            updateTask(taskToEdit.id, taskData)
+          }
+        />
+      )}
 
       {taskToDelete && (
         <ConfirmDeleteModal

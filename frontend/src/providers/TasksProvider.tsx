@@ -35,6 +35,26 @@ export function TasksProvider({ children }: PropsWithChildren) {
     )
   }
 
+  function updateTask(taskId: string, taskData: CreateTaskData) {
+    setTasks((currentTasks) =>
+      currentTasks
+        .map((task) =>
+          task.id === taskId
+            ? { ...task, ...taskData }
+            : task,
+        )
+        .sort((firstTask, secondTask) => {
+          const dateComparison = firstTask.dueDate.localeCompare(
+            secondTask.dueDate,
+          )
+
+          return dateComparison !== 0
+            ? dateComparison
+            : firstTask.time.localeCompare(secondTask.time)
+        }),
+    )
+  }
+
   function toggleTask(taskId: string) {
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
@@ -54,6 +74,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
   const contextValue: TasksContextValue = {
     tasks,
     createTask,
+    updateTask,
     toggleTask,
     deleteTask,
   }

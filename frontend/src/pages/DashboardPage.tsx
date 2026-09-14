@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { NewTaskModal } from '../components/tasks/NewTaskModal'
+import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { TaskList } from '../components/dashboard/TaskList'
 import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
 import { WeekOverview } from '../components/dashboard/WeekOverview'
@@ -61,11 +61,12 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <NewTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreateTask={createTask}
-      />
+      {isModalOpen && (
+        <TaskFormModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={createTask}
+        />
+      )}
     </>
   )
 }

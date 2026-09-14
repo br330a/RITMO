@@ -2,6 +2,7 @@ import {
   CalendarDays,
   Check,
   Clock3,
+  Pencil,
   Trash2,
 } from 'lucide-react'
 import { categoryStyles } from '../../constants/categoryStyles'
@@ -12,11 +13,13 @@ type TaskCardProps = {
   task: Task
   onToggle: (taskId: string) => void
   onDelete: (task: Task) => void
+  onEdit: (task: Task) => void
 }
 
 export function TaskCard({
   task,
   onToggle,
+  onEdit,
   onDelete,
 }: TaskCardProps) {
   return (
@@ -72,6 +75,15 @@ export function TaskCard({
       >
         {task.category}
       </span>
+
+      <button
+        type="button"
+        onClick={() => onEdit(task)}
+        aria-label={`Editar ${task.title}`}
+        className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[#8a938d] transition-colors hover:bg-[#e4f3e8] hover:text-[#19683a]"
+        >
+        <Pencil size={18} />
+        </button>
 
       <button
         type="button"
