@@ -7,9 +7,21 @@ import { WeekOverview } from '../components/dashboard/WeekOverview'
 import { useTasks } from '../hooks/useTasks'
 import { getLocalDateValue } from '../utils/date'
 
+import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
+import type { Task } from '../types/task'
+
 export function DashboardPage() {
-  const { tasks, createTask, toggleTask } = useTasks()
+  const {
+    tasks,
+    createTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+  } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
   const today = getLocalDateValue()
   const todayTasks = tasks.filter((task) => task.dueDate === today)
@@ -52,6 +64,8 @@ export function DashboardPage() {
           <TaskList
             tasks={todayTasks}
             onToggleTask={toggleTask}
+            onEditTask={setTaskToEdit}
+            onDeleteTask={setTaskToDelete}
           />
 
           <aside className="flex flex-col gap-6">
@@ -65,6 +79,28 @@ export function DashboardPage() {
         <TaskFormModal
           onClose={() => setIsModalOpen(false)}
           onSubmit={createTask}
+        />
+      )}
+
+      {taskToEdit && (
+        <TaskFormModal
+          key={taskToEdit.id}
+          task={taskToEdit}
+          onClose={() => setTaskToEdit(null)}
+          onSubmit={(taskData) =>
+            updateTask(taskToEdit.id, taskData)
+          }
+        />
+      )}
+
+      {taskToDelete && (
+        <ConfirmDeleteModal
+          taskTitle={taskToDelete.title}
+          onCancel={() => setTaskToDelete(null)}
+          onConfirm={() => {
+            deleteTask(taskToDelete.id)
+            setTaskToDelete(null)
+          }}
         />
       )}
     </>
