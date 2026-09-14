@@ -1,4 +1,9 @@
-import { CalendarDays, Check, Clock3 } from 'lucide-react'
+import {
+  CalendarDays,
+  Check,
+  Clock3,
+  Trash2,
+} from 'lucide-react'
 import { categoryStyles } from '../../constants/categoryStyles'
 import type { Task } from '../../types/task'
 import { formatTaskDate } from '../../utils/date'
@@ -6,9 +11,14 @@ import { formatTaskDate } from '../../utils/date'
 type TaskCardProps = {
   task: Task
   onToggle: (taskId: string) => void
+  onDelete: (task: Task) => void
 }
 
-export function TaskCard({ task, onToggle }: TaskCardProps) {
+export function TaskCard({
+  task,
+  onToggle,
+  onDelete,
+}: TaskCardProps) {
   return (
     <article className="flex items-center gap-4 rounded-2xl border border-[#e4ebe5] bg-white p-5 shadow-sm">
       <button
@@ -62,6 +72,15 @@ export function TaskCard({ task, onToggle }: TaskCardProps) {
       >
         {task.category}
       </span>
+
+      <button
+        type="button"
+        onClick={() => onDelete(task)}
+        aria-label={`Excluir ${task.title}`}
+        className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[#8a938d] transition-colors hover:bg-red-50 hover:text-red-600"
+      >
+        <Trash2 size={18} />
+      </button>
     </article>
   )
 }

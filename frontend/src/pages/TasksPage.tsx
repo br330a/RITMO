@@ -3,6 +3,8 @@ import { Plus } from 'lucide-react'
 import { NewTaskModal } from '../components/tasks/NewTaskModal'
 import { TaskCard } from '../components/tasks/TaskCard'
 import { useTasks } from '../hooks/useTasks'
+import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
+import type { Task } from '../types/task'
 
 type TaskFilter = 'all' | 'pending' | 'completed'
 
@@ -13,10 +15,11 @@ const filters: { label: string; value: TaskFilter }[] = [
 ]
 
 export function TasksPage() {
-  const { tasks, createTask, toggleTask } = useTasks()
+  const { tasks, createTask, toggleTask, deleteTask } = useTasks()
   const [activeFilter, setActiveFilter] =
     useState<TaskFilter>('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
   const filteredTasks = [...tasks]
     .filter((task) => {
@@ -125,6 +128,7 @@ export function TasksPage() {
                 key={task.id}
                 task={task}
                 onToggle={toggleTask}
+                onDelete={setTaskToDelete}
               />
             ))
           )}
@@ -136,6 +140,17 @@ export function TasksPage() {
         onClose={() => setIsModalOpen(false)}
         onCreateTask={createTask}
       />
+
+      {taskToDelete && (
+        <ConfirmDeleteModal
+          taskTitle={taskToDelete.title}
+          onCancel={() => setTaskToDelete(null)}
+          onConfirm={() => {
+            deleteTask(taskToDelete.id)
+            setTaskToDelete(null)
+          }}
+        />
+      )}
     </>
   )
 }

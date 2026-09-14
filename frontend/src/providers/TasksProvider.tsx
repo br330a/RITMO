@@ -45,10 +45,17 @@ export function TasksProvider({ children }: PropsWithChildren) {
     )
   }
 
+  function deleteTask(taskId: string) {
+  setTasks((currentTasks) =>
+    currentTasks.filter((task) => task.id !== taskId),
+  )
+}
+
   const contextValue: TasksContextValue = {
     tasks,
     createTask,
     toggleTask,
+    deleteTask,
   }
 
   return (

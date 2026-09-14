@@ -5,6 +5,7 @@ export type TasksContextValue = {
   tasks: Task[]
   createTask: (task: CreateTaskData) => void
   toggleTask: (taskId: string) => void
+  deleteTask: (taskId: string) => void
 }
 
 export const TasksContext = createContext<TasksContextValue | undefined>(
