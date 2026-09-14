@@ -11,6 +11,7 @@ type TaskFormModalProps = {
   task?: Task
   onClose: () => void
   onSubmit: (taskData: CreateTaskData) => void
+  initialDate?: string
 }
 
 const categories: TaskCategory[] = [
@@ -26,10 +27,11 @@ export function TaskFormModal({
   task,
   onClose,
   onSubmit,
+  initialDate,
 }: TaskFormModalProps) {
   const [title, setTitle] = useState(task?.title ?? '')
   const [dueDate, setDueDate] = useState(
-    task?.dueDate ?? getLocalDateValue(),
+    task?.dueDate ?? initialDate ?? getLocalDateValue(),
   )
   const [time, setTime] = useState(task?.time ?? '')
   const [category, setCategory] = useState<TaskCategory>(
