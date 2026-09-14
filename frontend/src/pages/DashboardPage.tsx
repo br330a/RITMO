@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { NewTaskModal } from '../components/dashboard/NewTaskModal'
+import { NewTaskModal } from '../components/tasks/NewTaskModal'
 import { TaskList } from '../components/dashboard/TaskList'
 import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
 import { WeekOverview } from '../components/dashboard/WeekOverview'

@@ -13,6 +13,10 @@ export function formatTaskDate(dateValue: string) {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
 
+  if (dateValue === getLocalDateValue()) {
+    return 'Hoje'
+    }
+
   if (dateValue === getLocalDateValue(tomorrow)) {
     return 'Amanhã'
   }
