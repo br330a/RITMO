@@ -1,11 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
-import type { CreateTaskData, TaskCategory } from '../../types/task'
+import type {
+  CreateTaskData,
+  Task,
+  TaskCategory,
+} from '../../types/task'
+import { getLocalDateValue } from '../../utils/date'
 
-type NewTaskModalProps = {
-  isOpen: boolean
+type TaskFormModalProps = {
+  task?: Task
   onClose: () => void
-  onCreateTask: (task: CreateTaskData) => void
+  onSubmit: (taskData: CreateTaskData) => void
 }
 
 const categories: TaskCategory[] = [
@@ -17,36 +22,36 @@ const categories: TaskCategory[] = [
 const inputStyles =
   'w-full rounded-xl border border-[#dce4dd] bg-white px-4 py-3 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]'
 
-export function NewTaskModal({
-  isOpen,
+export function TaskFormModal({
+  task,
   onClose,
-  onCreateTask,
-}: NewTaskModalProps) {
-  const [title, setTitle] = useState('')
-  const [time, setTime] = useState('')
-  const [category, setCategory] =
-    useState<TaskCategory>('Faculdade')
+  onSubmit,
+}: TaskFormModalProps) {
+  const [title, setTitle] = useState(task?.title ?? '')
+  const [dueDate, setDueDate] = useState(
+    task?.dueDate ?? getLocalDateValue(),
+  )
+  const [time, setTime] = useState(task?.time ?? '')
+  const [category, setCategory] = useState<TaskCategory>(
+    task?.category ?? 'Faculdade',
+  )
 
-  if (!isOpen) {
-    return null
-  }
+  const isEditing = Boolean(task)
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!title.trim() || !time) {
+    if (!title.trim() || !dueDate || !time) {
       return
     }
 
-    onCreateTask({
+    onSubmit({
       title: title.trim(),
+      dueDate,
       time,
       category,
     })
 
-    setTitle('')
-    setTime('')
-    setCategory('Faculdade')
     onClose()
   }
 
@@ -54,7 +59,7 @@ export function NewTaskModal({
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="new-task-title"
+      aria-labelledby="task-form-title"
       onMouseDown={onClose}
       className="fixed inset-0 z-50 grid place-items-center bg-black/35 px-5"
     >
@@ -65,14 +70,16 @@ export function NewTaskModal({
         <header className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2
-              id="new-task-title"
+              id="task-form-title"
               className="text-2xl font-semibold text-[#17211b]"
             >
-              Nova tarefa
+              {isEditing ? 'Editar tarefa' : 'Nova tarefa'}
             </h2>
 
             <p className="mt-1 text-sm text-[#7b847e]">
-              Adicione uma tarefa para hoje.
+              {isEditing
+                ? 'Atualize as informações da atividade.'
+                : 'Organize uma nova atividade.'}
             </p>
           </div>
 
@@ -102,18 +109,33 @@ export function NewTaskModal({
             />
           </label>
 
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
-              Horário
-            </span>
+          <div className="grid grid-cols-2 gap-4">
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Data
+              </span>
 
-            <input
-              type="time"
-              value={time}
-              onChange={(event) => setTime(event.target.value)}
-              className={inputStyles}
-            />
-          </label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(event) => setDueDate(event.target.value)}
+                className={inputStyles}
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Horário
+              </span>
+
+              <input
+                type="time"
+                value={time}
+                onChange={(event) => setTime(event.target.value)}
+                className={inputStyles}
+              />
+            </label>
+          </div>
 
           <label className="block">
             <span className="mb-2 block text-sm font-medium text-[#27312b]">
@@ -148,7 +170,7 @@ export function NewTaskModal({
               type="submit"
               className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
             >
-              Criar tarefa
+              {isEditing ? 'Salvar alterações' : 'Criar tarefa'}
             </button>
           </div>
         </form>

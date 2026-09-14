@@ -1,48 +1,36 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { NewTaskModal } from '../components/dashboard/NewTaskModal'
+import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { TaskList } from '../components/dashboard/TaskList'
 import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
 import { WeekOverview } from '../components/dashboard/WeekOverview'
-import { initialTasks } from '../data/tasks'
-import type { CreateTaskData } from '../types/task'
+import { useTasks } from '../hooks/useTasks'
 import { getLocalDateValue } from '../utils/date'
 
+import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
+import type { Task } from '../types/task'
+
 export function DashboardPage() {
-  const [tasks, setTasks] = useState(initialTasks)
+  const {
+    tasks,
+    createTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+  } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
+
+  const today = getLocalDateValue()
+  const todayTasks = tasks.filter((task) => task.dueDate === today)
 
   const currentDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   }).format(new Date())
-
-  function handleToggleTask(taskId: string) {
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, completed: !task.completed }
-          : task,
-      ),
-    )
-  }
-
-  function handleCreateTask(taskData: CreateTaskData) {
-    setTasks((currentTasks) =>
-      [
-        ...currentTasks,
-        {
-          ...taskData,
-          id: crypto.randomUUID(),
-          dueDate: getLocalDateValue(),
-          completed: false,
-        },
-      ].sort((firstTask, secondTask) =>
-        firstTask.time.localeCompare(secondTask.time),
-      ),
-    )
-  }
 
   return (
     <>
@@ -74,8 +62,10 @@ export function DashboardPage() {
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <TaskList
-            tasks={tasks}
-            onToggleTask={handleToggleTask}
+            tasks={todayTasks}
+            onToggleTask={toggleTask}
+            onEditTask={setTaskToEdit}
+            onDeleteTask={setTaskToDelete}
           />
 
           <aside className="flex flex-col gap-6">
@@ -85,11 +75,34 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <NewTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreateTask={handleCreateTask}
-      />
+      {isModalOpen && (
+        <TaskFormModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={createTask}
+        />
+      )}
+
+      {taskToEdit && (
+        <TaskFormModal
+          key={taskToEdit.id}
+          task={taskToEdit}
+          onClose={() => setTaskToEdit(null)}
+          onSubmit={(taskData) =>
+            updateTask(taskToEdit.id, taskData)
+          }
+        />
+      )}
+
+      {taskToDelete && (
+        <ConfirmDeleteModal
+          taskTitle={taskToDelete.title}
+          onCancel={() => setTaskToDelete(null)}
+          onConfirm={() => {
+            deleteTask(taskToDelete.id)
+            setTaskToDelete(null)
+          }}
+        />
+      )}
     </>
   )
 }
