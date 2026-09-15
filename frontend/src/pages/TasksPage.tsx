@@ -47,7 +47,9 @@ export function TasksPage() {
 
       return dateComparison !== 0
         ? dateComparison
-        : firstTask.time.localeCompare(secondTask.time)
+        : (firstTask.time ?? '23:59').localeCompare(
+            secondTask.time ?? '23:59'
+          )
     })
 
   const pendingTasks = tasks.filter((task) => !task.completed).length
@@ -77,26 +79,35 @@ export function TasksPage() {
           </button>
         </header>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-[#e4ebe5] bg-white p-5">
-            <p className="text-sm text-[#7b847e]">Total</p>
-            <strong className="mt-1 block text-2xl text-[#17211b]">
+        <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[#e4ebe5] bg-white shadow-sm">
+          <div className="px-3 py-4 text-center">
+            <strong className="block text-xl text-[#17211b]">
               {tasks.length}
             </strong>
+
+            <span className="text-xs text-[#8a938d]">
+              Total
+            </span>
           </div>
 
-          <div className="rounded-2xl border border-[#e4ebe5] bg-white p-5">
-            <p className="text-sm text-[#7b847e]">Pendentes</p>
-            <strong className="mt-1 block text-2xl text-[#b06b24]">
+          <div className="px-3 py-4 text-center">
+            <strong className="block text-xl text-[#b06b24]">
               {pendingTasks}
             </strong>
+
+            <span className="text-xs text-[#8a938d]">
+              Pendentes
+            </span>
           </div>
 
-          <div className="rounded-2xl border border-[#e4ebe5] bg-white p-5">
-            <p className="text-sm text-[#7b847e]">Concluídas</p>
-            <strong className="mt-1 block text-2xl text-[#23834b]">
+          <div className="px-3 py-4 text-center">
+            <strong className="block text-xl text-[#23834b]">
               {completedTasks}
             </strong>
+
+            <span className="text-xs text-[#8a938d]">
+              Concluídas
+            </span>
           </div>
         </div>
 

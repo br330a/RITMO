@@ -6,6 +6,7 @@ import type {
   TaskCategory,
 } from '../../types/task'
 import { getLocalDateValue } from '../../utils/date'
+import { toast } from 'sonner'
 
 type TaskFormModalProps = {
   task?: Task
@@ -29,30 +30,48 @@ export function TaskFormModal({
   onSubmit,
   initialDate,
 }: TaskFormModalProps) {
-  const [title, setTitle] = useState(task?.title ?? '')
-  const [dueDate, setDueDate] = useState(
-    task?.dueDate ?? initialDate ?? getLocalDateValue(),
-  )
-  const [time, setTime] = useState(task?.time ?? '')
-  const [category, setCategory] = useState<TaskCategory>(
-    task?.category ?? 'Faculdade',
-  )
+    const [title, setTitle] = useState(task?.title ?? '')
+
+    const [dueDate, setDueDate] = useState(
+      task?.dueDate ?? initialDate ?? getLocalDateValue()
+    )
+
+    const [time, setTime] = useState(task?.time ?? '')
+
+    const [category, setCategory] = useState<TaskCategory | ''>(
+      task?.category ?? ''
+    )
 
   const isEditing = Boolean(task)
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!title.trim() || !dueDate || !time) {
+    if (!title.trim()) {
+      toast.error('Digite o nome da tarefa.')
+      return
+    }
+
+    if (!dueDate) {
+      toast.error('Selecione a data da tarefa.')
+      return
+    }
+
+    if (!category) {
+      toast.error('Selecione uma categoria.')
       return
     }
 
     onSubmit({
       title: title.trim(),
       dueDate,
-      time,
+      time: time || null,
       category,
     })
+
+    toast.success(
+      task ? 'Tarefa atualizada com sucesso.' : 'Tarefa criada com sucesso.'
+    )
 
     onClose()
   }
@@ -127,7 +146,7 @@ export function TaskFormModal({
 
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-[#27312b]">
-                Horário
+                Horário (opcional)
               </span>
 
               <input
@@ -147,10 +166,14 @@ export function TaskFormModal({
             <select
               value={category}
               onChange={(event) =>
-                setCategory(event.target.value as TaskCategory)
+                setCategory(event.target.value as TaskCategory | '')
               }
               className={inputStyles}
             >
+              <option value="" disabled>
+                Selecione uma categoria
+              </option>
+
               {categories.map((categoryName) => (
                 <option key={categoryName} value={categoryName}>
                   {categoryName}

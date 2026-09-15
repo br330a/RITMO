@@ -10,6 +10,7 @@ import {
 import { initialTasks } from '../data/tasks'
 import { loadTasks, saveTasks } from '../services/taskStorage'
 import type { CreateTaskData, Task } from '../types/task'
+import { toast } from 'sonner'
 
 export function TasksProvider({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Task[]>(
@@ -30,7 +31,9 @@ export function TasksProvider({ children }: PropsWithChildren) {
           completed: false,
         },
       ].sort((firstTask, secondTask) =>
-        firstTask.time.localeCompare(secondTask.time),
+        (firstTask.time ?? '23:59').localeCompare(
+          secondTask.time ?? '23:59'
+        )
       ),
     )
   }
@@ -50,7 +53,9 @@ export function TasksProvider({ children }: PropsWithChildren) {
 
           return dateComparison !== 0
             ? dateComparison
-            : firstTask.time.localeCompare(secondTask.time)
+            : (firstTask.time ?? '23:59').localeCompare(
+                secondTask.time ?? '23:59'
+              )
         }),
     )
   }
@@ -66,10 +71,12 @@ export function TasksProvider({ children }: PropsWithChildren) {
   }
 
   function deleteTask(taskId: string) {
-  setTasks((currentTasks) =>
-    currentTasks.filter((task) => task.id !== taskId),
-  )
-}
+    setTasks((currentTasks) =>
+      currentTasks.filter((task) => task.id !== taskId),
+    )
+
+    toast.success('Tarefa excluída com sucesso.')
+  }
 
   const contextValue: TasksContextValue = {
     tasks,

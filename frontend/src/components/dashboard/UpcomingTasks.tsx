@@ -17,7 +17,9 @@ export function UpcomingTasks() {
 
       return dateComparison !== 0
         ? dateComparison
-        : firstTask.time.localeCompare(secondTask.time)
+        : (firstTask.time ?? '23:59').localeCompare(
+            secondTask.time ?? '23:59'
+          )
     })
     .slice(0, 2)
 
@@ -53,7 +55,8 @@ export function UpcomingTasks() {
               className="border-b border-[#edf1ed] py-4 last:border-none last:pb-0"
             >
               <p className="text-xs text-[#8a938d]">
-                {formatTaskDate(task.dueDate)}, {task.time}
+                {formatTaskDate(task.dueDate)}
+                {task.time ? `, ${task.time}` : ', sem horário'}
               </p>
 
               <div className="mt-1 flex items-center justify-between gap-3">
