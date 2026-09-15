@@ -5,6 +5,7 @@ import { Sidebar } from '../components/navigation/Sidebar'
 
 export function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   return (
     <div className="flex min-h-screen bg-[#f7faf7]">
@@ -19,10 +20,19 @@ export function AppLayout() {
 
       <Sidebar
         isOpen={isSidebarOpen}
+        isCollapsed={isSidebarCollapsed}
         onClose={() => setIsSidebarOpen(false)}
+        onToggleCollapse={() =>
+          setIsSidebarCollapsed((current) => !current)
+        }
       />
 
-      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
+      <div
+        className={[
+          'flex min-w-0 flex-1 flex-col transition-[padding] duration-300 motion-reduce:transition-none',
+          isSidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64',
+        ].join(' ')}
+      >
         <header className="sticky top-0 z-30 grid h-16 grid-cols-[40px_1fr_40px] items-center border-b border-[#e4ebe5] bg-white px-4 lg:hidden">
           <button
             type="button"
