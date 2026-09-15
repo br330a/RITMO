@@ -8,8 +8,10 @@ import {
 } from 'lucide-react'
 import { categoryStyles } from '../../constants/categoryStyles'
 import type { Task } from '../../types/task'
+import { getLocalDateValue } from '../../utils/date'
 
 type TaskListProps = {
+  selectedDate: string
   tasks: Task[]
   onToggleTask: (taskId: string) => void
   onEditTask: (task: Task) => void
@@ -17,6 +19,7 @@ type TaskListProps = {
 }
 
 export function TaskList({
+  selectedDate,
   tasks,
   onToggleTask,
   onEditTask,
@@ -25,13 +28,25 @@ export function TaskList({
   const [openMenuTaskId, setOpenMenuTaskId] =
     useState<string | null>(null)
 
+  const [year, month, day] = selectedDate.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+
+  const selectedDateLabel =
+    selectedDate === getLocalDateValue()
+      ? 'hoje'
+      : new Intl.DateTimeFormat('pt-BR', {
+          weekday: 'long',
+          day: '2-digit',
+          month: '2-digit',
+        }).format(date)
+
   const completedTasks = tasks.filter((task) => task.completed).length
   const progress = tasks.length
     ? Math.round((completedTasks / tasks.length) * 100)
     : 0
 
   return (
-    <article className="rounded-2xl border border-[#e4ebe5] bg-white p-7 shadow-sm">
+    <article className="min-w-0 rounded-2xl border border-[#e4ebe5] bg-white p-4 shadow-sm sm:p-7">
       <header className="flex flex-wrap items-center justify-between gap-5 border-b border-[#edf1ed] pb-6">
         <div className="flex items-center gap-3">
           <div className="grid size-10 place-items-center rounded-xl bg-[#e4f3e8] text-[#19683a]">
@@ -39,7 +54,7 @@ export function TaskList({
           </div>
 
           <h2 className="text-xl font-semibold text-[#17211b]">
-            Suas tarefas de hoje
+            Suas tarefas de {selectedDateLabel}
           </h2>
         </div>
 
@@ -60,7 +75,7 @@ export function TaskList({
       {tasks.length === 0 ? (
         <div className="py-12 text-center">
           <p className="font-medium text-[#27312b]">
-            Nenhuma tarefa para hoje
+            Nenhuma tarefa para {selectedDateLabel}
           </p>
 
           <p className="mt-1 text-sm text-[#8a938d]">
@@ -72,7 +87,7 @@ export function TaskList({
           {tasks.map((task) => (
             <div
               key={task.id}
-              className="grid grid-cols-[40px_65px_minmax(0,1fr)_auto_32px] items-center gap-3 border-b border-[#edf1ed] py-4 last:border-none"
+              className="grid grid-cols-[32px_minmax(0,1fr)_32px] items-start gap-3 border-b border-[#edf1ed] py-4 last:border-none"
             >
               <button
                 type="button"
@@ -83,7 +98,7 @@ export function TaskList({
                     : `Marcar ${task.title} como concluída`
                 }
                 className={[
-                  'grid size-7 cursor-pointer place-items-center rounded-full border transition-colors',
+                  'mt-0.5 grid size-7 cursor-pointer place-items-center rounded-full border transition-colors',
                   task.completed
                     ? 'border-[#23834b] bg-[#23834b] text-white'
                     : 'border-[#aeb8b1] bg-white hover:border-[#23834b]',
@@ -94,29 +109,31 @@ export function TaskList({
                 )}
               </button>
 
-              <span className="text-sm text-[#8a938d]">
-                {task.time}
-              </span>
+              <div className="min-w-0">
+                <p
+                  className={[
+                    'break-words text-sm font-semibold leading-5',
+                    task.completed
+                      ? 'text-[#9aa29d] line-through'
+                      : 'text-[#27312b]',
+                  ].join(' ')}
+                >
+                  {task.title}
+                </p>
 
-              <span
-                className={[
-                  'truncate text-sm font-medium',
-                  task.completed
-                    ? 'text-[#9aa29d] line-through'
-                    : 'text-[#27312b]',
-                ].join(' ')}
-              >
-                {task.title}
-              </span>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span>{task.time ?? 'Sem horário'}</span>
 
-              <span
-                className={[
-                  'rounded-full px-3 py-1 text-xs font-medium',
-                  categoryStyles[task.category],
-                ].join(' ')}
-              >
-                {task.category}
-              </span>
+                  <span
+                    className={[
+                      'rounded-full px-2.5 py-1 text-xs font-medium',
+                      categoryStyles[task.category],
+                    ].join(' ')}
+                  >
+                    {task.category}
+                  </span>
+                </div>
+              </div>
 
               <div className="relative">
                 <button

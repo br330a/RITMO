@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router'
 import {
   Check,
   Pencil,
@@ -24,7 +25,29 @@ function formatSelectedDate(dateValue: string) {
   }).format(date)
 }
 
+function getInitialCalendarDate(dateValue: string | null) {
+  if (!dateValue || !/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date()
+  }
+
+  const [year, month, day] = dateValue.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+
+  if (getLocalDateValue(date) !== dateValue) {
+    return new Date()
+  }
+
+  return date
+}
+
 export function CalendarPage() {
+  const [searchParams] = useSearchParams()
+
+  const [initialCalendarDate] = useState(() =>
+    getInitialCalendarDate(searchParams.get('date'))
+  )
+
+  const todayValue = getLocalDateValue()
   const {
     tasks,
     createTask,
@@ -33,22 +56,32 @@ export function CalendarPage() {
     deleteTask,
   } = useTasks()
 
-  const [selectedDate, setSelectedDate] = useState(
-    getLocalDateValue(),
-  )
-  const [currentMonth, setCurrentMonth] = useState(
-    () => new Date(),
-  )
+    const [selectedDate, setSelectedDate] = useState(
+      () => getLocalDateValue(initialCalendarDate),
+    )
+
+    const [currentMonth, setCurrentMonth] = useState(
+      () => initialCalendarDate,
+    )
   const [isCreateModalOpen, setIsCreateModalOpen] =
     useState(false)
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] =
     useState<Task | null>(null)
 
+  const todayDate = new Date()
+
+  const isViewingToday =
+    selectedDate === todayValue &&
+    currentMonth.getMonth() === todayDate.getMonth() &&
+    currentMonth.getFullYear() === todayDate.getFullYear()
+
   const selectedTasks = tasks
     .filter((task) => task.dueDate === selectedDate)
     .sort((firstTask, secondTask) =>
-      firstTask.time.localeCompare(secondTask.time),
+      (firstTask.time ?? '23:59').localeCompare(
+        secondTask.time ?? '23:59'
+      )
     )
 
   function handleGoToToday() {
@@ -76,7 +109,13 @@ export function CalendarPage() {
             <button
               type="button"
               onClick={handleGoToToday}
-              className="cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-5 py-3 text-sm font-semibold text-[#667069] hover:bg-[#f3f7f3]"
+              disabled={isViewingToday}
+              className={[
+                'cursor-pointer rounded-xl border px-5 py-3 text-sm font-semibold transition-colors',
+                isViewingToday
+                  ? 'cursor-default border-[#dce4dd] bg-[#edf1ed] text-[#8a938d] shadow-inner'
+                  : 'border-[#23834b] bg-[#23834b] text-white hover:bg-[#19683a]',
+              ].join(' ')}
             >
               Hoje
             </button>
@@ -172,9 +211,7 @@ export function CalendarPage() {
                         </p>
 
                         <div className="mt-2 flex items-center justify-between gap-3">
-                          <span className="text-xs text-[#8a938d]">
-                            {task.time}
-                          </span>
+                          <span>{task.time ?? 'Sem horário'}</span>
 
                           <span
                             className={[

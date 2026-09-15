@@ -4,7 +4,7 @@ export type Task = {
   id: string
   title: string
   dueDate: string
-  time: string
+  time: string | null
   category: TaskCategory
   completed: boolean
 }

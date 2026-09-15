@@ -1,4 +1,10 @@
 import { CalendarDays } from 'lucide-react'
+import { getLocalDateValue } from '../../utils/date'
+
+type WeekOverviewProps = {
+  selectedDate: string
+  onSelectDate: (date: string) => void
+}
 
 function getCurrentWeek() {
   const today = new Date()
@@ -18,6 +24,7 @@ function getCurrentWeek() {
 
     return {
       date,
+      dateValue: getLocalDateValue(date),
       weekday,
       dayNumber: date.getDate(),
       isToday: date.toDateString() === today.toDateString(),
@@ -25,7 +32,10 @@ function getCurrentWeek() {
   })
 }
 
-export function WeekOverview() {
+export function WeekOverview({
+  selectedDate,
+  onSelectDate,
+}: WeekOverviewProps) {
   const weekDays = getCurrentWeek()
 
   return (
@@ -39,31 +49,42 @@ export function WeekOverview() {
       </header>
 
       <div className="grid grid-cols-7 gap-1">
-        {weekDays.map((day) => (
-          <div
-            key={day.date.toISOString()}
-            aria-current={day.isToday ? 'date' : undefined}
-            className={[
-              'flex min-w-0 flex-col items-center rounded-xl px-1 py-3',
-              day.isToday
-                ? 'bg-[#e4f3e8] text-[#19683a]'
-                : 'text-[#667069]',
-            ].join(' ')}
-          >
-            <span className="text-xs capitalize">{day.weekday}</span>
+        {weekDays.map((day) => {
+          const isSelected = day.dateValue === selectedDate
 
-            <span className="mt-2 text-sm font-semibold">
-              {day.dayNumber}
-            </span>
-
-            <span
+          return (
+            <button
+              key={day.dateValue}
+              type="button"
+              onClick={() => onSelectDate(day.dateValue)}
+              aria-label={`Mostrar tarefas de ${day.date.toLocaleDateString('pt-BR')}`}
+              aria-pressed={isSelected}
+              aria-current={day.isToday ? 'date' : undefined}
               className={[
-                'mt-2 size-1.5 rounded-full',
-                day.isToday ? 'bg-[#23834b]' : 'bg-[#cbd2cd]',
+                'flex min-w-0 cursor-pointer flex-col items-center rounded-xl px-1 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b]',
+                isSelected
+                  ? 'bg-[#e4f3e8] text-[#19683a]'
+                  : 'text-[#667069] hover:bg-[#f0f6f1]',
               ].join(' ')}
-            />
-          </div>
-        ))}
+            >
+              <span className="text-xs capitalize">
+                {day.weekday}
+              </span>
+
+              <span className="mt-2 text-sm font-semibold">
+                {day.dayNumber}
+              </span>
+
+              <span
+                aria-hidden="true"
+                className={[
+                  'mt-2 size-1.5 rounded-full',
+                  day.isToday ? 'bg-[#23834b]' : 'bg-[#cbd2cd]',
+                ].join(' ')}
+              />
+            </button>
+          )
+        })}
       </div>
     </article>
   )

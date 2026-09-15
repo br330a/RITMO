@@ -23,8 +23,17 @@ export function DashboardPage() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
-  const today = getLocalDateValue()
-  const todayTasks = tasks.filter((task) => task.dueDate === today)
+    const [selectedDate, setSelectedDate] = useState(
+      () => getLocalDateValue()
+    )
+
+    const selectedTasks = tasks
+      .filter((task) => task.dueDate === selectedDate)
+      .sort((firstTask, secondTask) =>
+        (firstTask.time ?? '99:99').localeCompare(
+          secondTask.time ?? '99:99'
+        )
+      )
 
   const currentDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
@@ -62,14 +71,19 @@ export function DashboardPage() {
 
         <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <TaskList
-            tasks={todayTasks}
+            key={selectedDate}
+            selectedDate={selectedDate}
+            tasks={selectedTasks}
             onToggleTask={toggleTask}
             onEditTask={setTaskToEdit}
             onDeleteTask={setTaskToDelete}
           />
 
           <aside className="flex flex-col gap-6">
-            <WeekOverview />
+            <WeekOverview
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+            />
             <UpcomingTasks />
           </aside>
         </div>
@@ -77,6 +91,7 @@ export function DashboardPage() {
 
       {isModalOpen && (
         <TaskFormModal
+          initialDate={selectedDate}
           onClose={() => setIsModalOpen(false)}
           onSubmit={createTask}
         />
