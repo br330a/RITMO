@@ -44,7 +44,7 @@ export function Sidebar({
     <aside
       className={[
         'fixed inset-y-0 left-0 z-50 flex h-dvh w-64 flex-col overflow-y-auto border-r border-[#e4ebe5] bg-white px-5 py-7 transition-transform duration-300',
-        'lg:static lg:min-h-screen lg:translate-x-0',
+        'lg:translate-x-0',
         isOpen ? 'translate-x-0' : '-translate-x-full',
       ].join(' ')}
     >

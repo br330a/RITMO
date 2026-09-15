@@ -22,7 +22,7 @@ export function AppLayout() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
         <header className="sticky top-0 z-30 grid h-16 grid-cols-[40px_1fr_40px] items-center border-b border-[#e4ebe5] bg-white px-4 lg:hidden">
           <button
             type="button"
