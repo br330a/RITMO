@@ -1,6 +1,5 @@
 import {
   CalendarDays,
-  CheckCircle2,
   PanelLeft,
   LayoutDashboard,
   ListTodo,
@@ -65,9 +64,11 @@ export function Sidebar({
         ].join(' ')}
       >
         <div className="flex min-w-0 items-center gap-3">
-          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#23834b] text-white">
-            <CheckCircle2 size={23} />
-          </div>
+          <img
+            src="/ritmo-logo.png"
+            alt="Logo do RITMO"
+            className="size-10 shrink-0 object-contain"
+          />
 
           <span
             className={[

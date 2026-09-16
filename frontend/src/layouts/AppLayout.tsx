@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle2, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Outlet } from 'react-router'
 import { Sidebar } from '../components/navigation/Sidebar'
 
@@ -44,9 +44,11 @@ export function AppLayout() {
           </button>
 
           <div className="flex items-center justify-center gap-2.5">
-            <div className="grid size-9 place-items-center rounded-xl bg-[#23834b] text-white">
-              <CheckCircle2 size={20} />
-            </div>
+            <img
+              src="/ritmo-logo.png"
+              alt="Logo do RITMO"
+              className="size-9 object-contain"
+            />
 
             <span className="font-bold tracking-wide text-[#17211b]">
               RITMO
