@@ -7,6 +7,7 @@ import {
   X,
 } from 'lucide-react'
 import { NavLink } from 'react-router'
+import { RitmoLogo } from '../branding/RitmoLogo'
 
 type SidebarProps = {
   isOpen: boolean
@@ -64,11 +65,7 @@ export function Sidebar({
         ].join(' ')}
       >
         <div className="flex min-w-0 items-center gap-3">
-          <img
-            src="/ritmo-logo.png"
-            alt="Logo do RITMO"
-            className="size-10 shrink-0 object-contain"
-          />
+          <RitmoLogo className="size-10" />
 
           <span
             className={[

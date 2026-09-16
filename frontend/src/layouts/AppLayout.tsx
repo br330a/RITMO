@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 import { Outlet } from 'react-router'
 import { Sidebar } from '../components/navigation/Sidebar'
+import { RitmoLogo } from '../components/branding/RitmoLogo'
 
 export function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -44,11 +45,7 @@ export function AppLayout() {
           </button>
 
           <div className="flex items-center justify-center gap-2.5">
-            <img
-              src="/ritmo-logo.png"
-              alt="Logo do RITMO"
-              className="size-9 object-contain"
-            />
+            <RitmoLogo className="size-9" />
 
             <span className="font-bold tracking-wide text-[#17211b]">
               RITMO
