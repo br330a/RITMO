@@ -64,9 +64,12 @@ export function TaskFormModal({
 
     onSubmit({
       title: title.trim(),
+      description: null,
       dueDate,
       time: time || null,
       category,
+      priority: 'medium',
+      estimatedMinutes: null,
     })
 
     toast.success(
