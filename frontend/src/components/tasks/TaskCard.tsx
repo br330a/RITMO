@@ -21,6 +21,7 @@ type TaskCardProps = {
   onToggle: (taskId: string) => void
   onEdit: (task: Task) => void
   onDelete: (task: Task) => void
+  onOpen: (task: Task) => void
 }
 
 export function TaskCard({
@@ -28,9 +29,28 @@ export function TaskCard({
   onToggle,
   onEdit,
   onDelete,
+  onOpen,
 }: TaskCardProps) {
   return (
-    <article className="min-w-0 rounded-2xl border border-[#e4ebe5] bg-white p-5 shadow-sm">
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpen(task)}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) {
+          return
+        }
+
+        if (
+          event.key === 'Enter' ||
+          event.key === ' '
+        ) {
+          event.preventDefault()
+          onOpen(task)
+        }
+      }}
+      className="min-w-0 cursor-pointer rounded-2xl border border-[#e4ebe5] bg-white p-5 shadow-sm transition-all hover:border-[#cbd9ce] hover:shadow-md"
+    >
       <div>
         <h2
           className={[
@@ -60,7 +80,10 @@ export function TaskCard({
       <div className="mt-4 flex items-center gap-3 border-t border-[#edf1ed] pt-4">
         <button
           type="button"
-          onClick={() => onToggle(task.id)}
+          onClick={(event) => {
+            event.stopPropagation()
+            onToggle(task.id)
+          }}
           aria-label={
             task.completed
               ? `Marcar ${task.title} como pendente`
@@ -119,7 +142,10 @@ export function TaskCard({
         <div className="flex shrink-0 items-center">
           <button
             type="button"
-            onClick={() => onEdit(task)}
+            onClick={(event) => {
+              event.stopPropagation()
+              onEdit(task)
+            }}
             aria-label={`Editar ${task.title}`}
             className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#e4f3e8] hover:text-[#19683a]"
           >
@@ -128,7 +154,10 @@ export function TaskCard({
 
           <button
             type="button"
-            onClick={() => onDelete(task)}
+            onClick={(event) => {
+              event.stopPropagation()
+              onDelete(task)
+            }}
             aria-label={`Excluir ${task.title}`}
             className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-red-50 hover:text-red-600"
           >

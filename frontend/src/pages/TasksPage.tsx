@@ -5,6 +5,7 @@ import { TaskCard } from '../components/tasks/TaskCard'
 import { useTasks } from '../hooks/useTasks'
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type { Task } from '../types/taskTypes'
+import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
 
 type TaskFilter = 'all' | 'pending' | 'completed'
 
@@ -27,6 +28,12 @@ export function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
+  const [selectedTaskId, setSelectedTaskId] =
+    useState<string | null>(null)
+
+  const selectedTask =
+    tasks.find((task) => task.id === selectedTaskId) ??
+    null
 
   const filteredTasks = [...tasks]
     .filter((task) => {
@@ -148,6 +155,7 @@ export function TasksPage() {
                 onToggle={toggleTask}
                 onDelete={setTaskToDelete}
                 onEdit={setTaskToEdit}
+                onOpen={(task) => setSelectedTaskId(task.id)}
               />
             ))
           )}
@@ -158,6 +166,16 @@ export function TasksPage() {
         <TaskFormModal
           onClose={() => setIsModalOpen(false)}
           onSubmit={createTask}
+        />
+      )}
+
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTaskId(null)}
+          onToggle={toggleTask}
+          onEdit={setTaskToEdit}
+          onDelete={setTaskToDelete}
         />
       )}
 

@@ -14,6 +14,8 @@ import { useTasks } from '../hooks/useTasks'
 import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from '../utils/date'
 
+import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
+
 function formatSelectedDate(dateValue: string) {
   const [year, month, day] = dateValue.split('-').map(Number)
   const date = new Date(year, month - 1, day)
@@ -68,6 +70,13 @@ export function CalendarPage() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] =
     useState<Task | null>(null)
+
+  const [selectedTaskId, setSelectedTaskId] =
+    useState<string | null>(null)
+
+  const selectedTask =
+    tasks.find((task) => task.id === selectedTaskId) ??
+    null
 
   const todayDate = new Date()
 
@@ -175,12 +184,31 @@ export function CalendarPage() {
                 {selectedTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="rounded-xl border border-[#e4ebe5] p-4"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedTaskId(task.id)}
+                    onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) {
+                        return
+                      }
+
+                      if (
+                        event.key === 'Enter' ||
+                        event.key === ' '
+                      ) {
+                        event.preventDefault()
+                        setSelectedTaskId(task.id)
+                      }
+                    }}
+                    className="cursor-pointer rounded-xl border border-[#e4ebe5] p-4 transition-all hover:border-[#cbd9ce] hover:bg-[#f8faf8] hover:shadow-sm"
                   >
                     <div className="flex items-start gap-3">
                       <button
                         type="button"
-                        onClick={() => toggleTask(task.id)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          toggleTask(task.id)
+                        }}
                         aria-label={
                           task.completed
                             ? `Marcar ${task.title} como pendente`
@@ -228,7 +256,10 @@ export function CalendarPage() {
                     <div className="mt-3 flex justify-end gap-1 border-t border-[#edf1ed] pt-3">
                       <button
                         type="button"
-                        onClick={() => setTaskToEdit(task)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setTaskToEdit(task)
+                        }}
                         aria-label={`Editar ${task.title}`}
                         className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#e4f3e8] hover:text-[#19683a]"
                       >
@@ -237,7 +268,10 @@ export function CalendarPage() {
 
                       <button
                         type="button"
-                        onClick={() => setTaskToDelete(task)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setTaskToDelete(task)
+                        }}
                         aria-label={`Excluir ${task.title}`}
                         className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-red-50 hover:text-red-600"
                       >
@@ -251,6 +285,16 @@ export function CalendarPage() {
           </aside>
         </div>
       </section>
+
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTaskId(null)}
+          onToggle={toggleTask}
+          onEdit={setTaskToEdit}
+          onDelete={setTaskToDelete}
+        />
+      )}
 
       {isCreateModalOpen && (
         <TaskFormModal

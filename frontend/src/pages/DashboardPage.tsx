@@ -6,6 +6,7 @@ import { UpcomingTasks } from '../components/dashboard/UpcomingTasks'
 import { WeekOverview } from '../components/dashboard/WeekOverview'
 import { useTasks } from '../hooks/useTasks'
 import { getLocalDateValue } from '../utils/date'
+import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
 
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type { Task } from '../types/taskTypes'
@@ -23,17 +24,24 @@ export function DashboardPage() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
-    const [selectedDate, setSelectedDate] = useState(
-      () => getLocalDateValue()
-    )
+  const [selectedTaskId, setSelectedTaskId] =
+    useState<string | null>(null)
 
-    const selectedTasks = tasks
-      .filter((task) => task.dueDate === selectedDate)
-      .sort((firstTask, secondTask) =>
-        (firstTask.time ?? '99:99').localeCompare(
-          secondTask.time ?? '99:99'
-        )
-      )
+  const selectedTask =
+    tasks.find((task) => task.id === selectedTaskId) ??
+    null
+
+  const [selectedDate, setSelectedDate] = useState(
+    () => getLocalDateValue(),
+  )
+
+  const selectedTasks = tasks
+    .filter((task) => task.dueDate === selectedDate)
+    .sort((firstTask, secondTask) =>
+      (firstTask.time ?? '99:99').localeCompare(
+        secondTask.time ?? '99:99',
+      ),
+    )
 
   const currentDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
@@ -77,6 +85,9 @@ export function DashboardPage() {
             onToggleTask={toggleTask}
             onEditTask={setTaskToEdit}
             onDeleteTask={setTaskToDelete}
+            onOpenTask={(task) =>
+              setSelectedTaskId(task.id)
+            }
           />
 
           <aside className="flex flex-col gap-6">
@@ -84,10 +95,25 @@ export function DashboardPage() {
               selectedDate={selectedDate}
               onSelectDate={setSelectedDate}
             />
-            <UpcomingTasks />
+
+            <UpcomingTasks
+              onOpenTask={(task) =>
+                setSelectedTaskId(task.id)
+              }
+            />
           </aside>
         </div>
       </section>
+
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTaskId(null)}
+          onToggle={toggleTask}
+          onEdit={setTaskToEdit}
+          onDelete={setTaskToDelete}
+        />
+      )}
 
       {isModalOpen && (
         <TaskFormModal

@@ -28,6 +28,7 @@ type TaskListProps = {
   onToggleTask: (taskId: string) => void
   onEditTask: (task: Task) => void
   onDeleteTask: (task: Task) => void
+  onOpenTask: (task: Task) => void
 }
 
 export function TaskList({
@@ -36,6 +37,7 @@ export function TaskList({
   onToggleTask,
   onEditTask,
   onDeleteTask,
+  onOpenTask,
 }: TaskListProps) {
   const [openMenuTaskId, setOpenMenuTaskId] =
     useState<string | null>(null)
@@ -82,7 +84,11 @@ export function TaskList({
       )
     }
   }, [openMenuTaskId])
-  const [year, month, day] = selectedDate.split('-').map(Number)
+
+  const [year, month, day] = selectedDate
+    .split('-')
+    .map(Number)
+
   const date = new Date(year, month - 1, day)
 
   const selectedDateLabel =
@@ -144,11 +150,30 @@ export function TaskList({
           {tasks.map((task) => (
             <div
               key={task.id}
-              className="grid grid-cols-[32px_minmax(0,1fr)_32px] items-start gap-3 border-b border-[#edf1ed] py-4 last:border-none"
+              role="button"
+              tabIndex={0}
+              onClick={() => onOpenTask(task)}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) {
+                  return
+                }
+
+                if (
+                  event.key === 'Enter' ||
+                  event.key === ' '
+                ) {
+                  event.preventDefault()
+                  onOpenTask(task)
+                }
+              }}
+              className="grid cursor-pointer grid-cols-[32px_minmax(0,1fr)_32px] items-start gap-3 border-b border-[#edf1ed] px-2 py-4 transition-colors last:border-none hover:bg-[#f8faf8]"
             >
               <button
                 type="button"
-                onClick={() => onToggleTask(task.id)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onToggleTask(task.id)
+                }}
                 aria-label={
                   task.completed
                     ? `Marcar ${task.title} como pendente`
@@ -200,6 +225,7 @@ export function TaskList({
                   {task.estimatedMinutes !== null && (
                     <span className="flex items-center gap-1">
                       <Timer size={13} />
+
                       {formatEstimatedMinutes(
                         task.estimatedMinutes,
                       )}
@@ -222,6 +248,7 @@ export function TaskList({
                     ].join(' ')}
                   >
                     <Flag size={11} />
+
                     {priorityLabels[task.priority]}
                   </span>
                 </div>
@@ -232,6 +259,9 @@ export function TaskList({
                   openMenuTaskId === task.id
                     ? menuRef
                     : null
+                }
+                onClick={(event) =>
+                  event.stopPropagation()
                 }
                 className="relative"
               >

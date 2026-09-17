@@ -11,13 +11,20 @@ import {
   priorityStyles,
 } from '../../constants/taskStyles'
 import { useTasks } from '../../hooks/useTasks'
+import type { Task } from '../../types/taskTypes'
 import {
   formatTaskDate,
   getLocalDateValue,
 } from '../../utils/date'
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
-export function UpcomingTasks() {
+type UpcomingTasksProps = {
+  onOpenTask: (task: Task) => void
+}
+
+export function UpcomingTasks({
+  onOpenTask,
+}: UpcomingTasksProps) {
   const { tasks } = useTasks()
   const today = getLocalDateValue()
 
@@ -72,10 +79,23 @@ export function UpcomingTasks() {
           {upcomingTasks.map((task) => (
             <div
               key={task.id}
-              className="border-b border-[#edf1ed] py-4 last:border-none last:pb-0"
+              role="button"
+              tabIndex={0}
+              onClick={() => onOpenTask(task)}
+              onKeyDown={(event) => {
+                if (
+                  event.key === 'Enter' ||
+                  event.key === ' '
+                ) {
+                  event.preventDefault()
+                  onOpenTask(task)
+                }
+              }}
+              className="-mx-2 cursor-pointer rounded-xl border-b border-[#edf1ed] px-2 py-4 transition-colors last:border-none last:pb-2 hover:bg-[#f7faf7]"
             >
               <p className="text-xs text-[#8a938d]">
                 {formatTaskDate(task.dueDate)}
+
                 {task.time
                   ? `, ${task.time}`
                   : ', sem horário'}
@@ -108,12 +128,14 @@ export function UpcomingTasks() {
                   ].join(' ')}
                 >
                   <Flag size={11} />
+
                   {priorityLabels[task.priority]}
                 </span>
 
                 {task.estimatedMinutes !== null && (
                   <span className="flex items-center gap-1 text-[#7b847e]">
                     <Timer size={13} />
+
                     {formatEstimatedMinutes(
                       task.estimatedMinutes,
                     )}
