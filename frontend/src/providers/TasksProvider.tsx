@@ -7,9 +7,9 @@ import {
   TasksContext,
   type TasksContextValue,
 } from '../context/tasksContext'
-import { initialTasks } from '../data/tasks'
+import { initialTasks } from '../data/initialTasks'
 import { loadTasks, saveTasks } from '../services/taskStorage'
-import type { CreateTaskData, Task } from '../types/task'
+import type { CreateTaskData, Task } from '../types/taskTypes'
 import { toast } from 'sonner'
 
 export function TasksProvider({ children }: PropsWithChildren) {

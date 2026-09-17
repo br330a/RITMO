@@ -1,4 +1,4 @@
-import type { Task } from '../types/task'
+import type { Task } from '../types/taskTypes'
 
 const STORAGE_KEY = 'ritmo:tasks'
 

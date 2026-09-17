@@ -1,4 +1,4 @@
-import type { TaskCategory } from '../types/task'
+import type { TaskCategory } from '../types/taskTypes'
 
 export const categoryStyles: Record<TaskCategory, string> = {
   Faculdade: 'bg-[#e4f3e8] text-[#19683a]',

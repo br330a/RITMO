@@ -14,9 +14,9 @@ import {
   priorityLabels,
   priorityStyles,
 } from '../../constants/taskStyles'
-import type { Task } from '../../types/task'
+import type { Task } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
-import { formatEstimatedMinutes } from '../../utils/task'
+import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
 type TaskListProps = {
   selectedDate: string

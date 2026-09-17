@@ -12,9 +12,9 @@ import {
   priorityLabels,
   priorityStyles,
 } from '../../constants/taskStyles'
-import type { Task } from '../../types/task'
+import type { Task } from '../../types/taskTypes'
 import { formatTaskDate } from '../../utils/date'
-import { formatEstimatedMinutes } from '../../utils/task'
+import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
 type TaskCardProps = {
   task: Task

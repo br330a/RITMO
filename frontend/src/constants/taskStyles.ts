@@ -1,4 +1,4 @@
-import type { TaskPriority } from '../types/task'
+import type { TaskPriority } from '../types/taskTypes'
 
 export const priorityLabels: Record<TaskPriority, string> = {
   low: 'Baixa',

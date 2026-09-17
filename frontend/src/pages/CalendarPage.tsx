@@ -11,7 +11,7 @@ import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { categoryStyles } from '../constants/categoryStyles'
 import { useTasks } from '../hooks/useTasks'
-import type { Task } from '../types/task'
+import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from '../utils/date'
 
 function formatSelectedDate(dateValue: string) {

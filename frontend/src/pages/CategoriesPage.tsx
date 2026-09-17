@@ -1,6 +1,6 @@
 import { CategoryCard } from '../components/categories/CategoryCard'
 import { useTasks } from '../hooks/useTasks'
-import type { TaskCategory } from '../types/task'
+import type { TaskCategory } from '../types/taskTypes'
 
 const categories: TaskCategory[] = [
   'Faculdade',

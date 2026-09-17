@@ -15,7 +15,7 @@ import {
   formatTaskDate,
   getLocalDateValue,
 } from '../../utils/date'
-import { formatEstimatedMinutes } from '../../utils/task'
+import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
 export function UpcomingTasks() {
   const { tasks } = useTasks()

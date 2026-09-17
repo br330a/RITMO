@@ -6,7 +6,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Link } from 'react-router'
-import type { Task, TaskCategory } from '../../types/task'
+import type { Task, TaskCategory } from '../../types/taskTypes'
 
 type CategoryCardProps = {
   category: TaskCategory

@@ -5,7 +5,7 @@ import type {
   Task,
   TaskCategory,
   TaskPriority,
-} from '../../types/task'
+} from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
 import { toast } from 'sonner'
 

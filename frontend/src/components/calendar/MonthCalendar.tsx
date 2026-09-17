@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import type { Task } from '../../types/task'
+import type { Task } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
 
 type MonthCalendarProps = {

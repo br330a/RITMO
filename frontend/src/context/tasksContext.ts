@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import type { CreateTaskData, Task } from '../types/task'
+import type { CreateTaskData, Task } from '../types/taskTypes'
 
 export type TasksContextValue = {
   tasks: Task[]

@@ -4,7 +4,7 @@ import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { TaskCard } from '../components/tasks/TaskCard'
 import { useTasks } from '../hooks/useTasks'
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
-import type { Task } from '../types/task'
+import type { Task } from '../types/taskTypes'
 
 type TaskFilter = 'all' | 'pending' | 'completed'
 

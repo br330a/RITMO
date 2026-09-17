@@ -8,7 +8,7 @@ import { useTasks } from '../hooks/useTasks'
 import { getLocalDateValue } from '../utils/date'
 
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
-import type { Task } from '../types/task'
+import type { Task } from '../types/taskTypes'
 
 export function DashboardPage() {
   const {
