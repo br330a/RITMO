@@ -1,8 +1,9 @@
 import {
   CalendarDays,
-  PanelLeft,
   LayoutDashboard,
   ListTodo,
+  PanelLeftClose,
+  PanelLeftOpen,
   Shapes,
   X,
 } from 'lucide-react'
@@ -45,9 +46,6 @@ export function Sidebar({
   onClose,
   onToggleCollapse,
 }: SidebarProps) {
-  const collapseLabel = isCollapsed
-    ? 'Expandir barra lateral'
-    : 'Recolher barra lateral'
 
   return (
     <aside
@@ -61,11 +59,32 @@ export function Sidebar({
       <div
         className={[
           'mb-10 flex items-center justify-between gap-2 px-3',
-          isCollapsed ? 'lg:flex-col lg:gap-4 lg:px-0' : 'lg:px-0',
+          isCollapsed ? 'lg:px-0' : 'lg:px-0',
         ].join(' ')}
       >
         <div className="flex min-w-0 items-center gap-3">
-          <RitmoLogo className="size-10" />
+          <div className="group relative size-10 shrink-0">
+            <RitmoLogo
+              className={[
+                'size-10 transition-opacity duration-200',
+                isCollapsed
+                  ? 'lg:group-hover:opacity-0 lg:group-focus-within:opacity-0'
+                  : '',
+              ].join(' ')}
+            />
+
+            {isCollapsed && (
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Expandir barra lateral"
+                title="Expandir barra lateral"
+                className="absolute inset-0 hidden size-10 cursor-ew-resize place-items-center rounded-xl text-[#19683a] opacity-0 transition-all duration-200 hover:bg-[#e4f3e8] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b] lg:grid lg:group-hover:opacity-100 lg:group-focus-within:opacity-100"
+              >
+                <PanelLeftOpen size={21} />
+              </button>
+            )}
+          </div>
 
           <span
             className={[
@@ -77,16 +96,18 @@ export function Sidebar({
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          aria-label={collapseLabel}
-          title={collapseLabel}
-          aria-expanded={!isCollapsed}
-          className="hidden size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[#667069] hover:bg-[#f3f7f3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b] lg:grid"
-        >
-          <PanelLeft size={20} />
-        </button>
+        {!isCollapsed && (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label="Recolher barra lateral"
+            title="Recolher barra lateral"
+            aria-expanded="true"
+            className="hidden size-9 shrink-0 cursor-ew-resize place-items-center rounded-lg text-[#667069] transition-colors hover:bg-[#f3f7f3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b] lg:grid"
+          >
+            <PanelLeftClose size={20} />
+          </button>
+        )}
 
         <button
           type="button"
