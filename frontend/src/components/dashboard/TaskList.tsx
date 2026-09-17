@@ -1,14 +1,22 @@
 import { useState } from 'react'
 import {
   Check,
+  Clock3,
+  Flag,
   ListTodo,
   MoreHorizontal,
   Pencil,
+  Timer,
   Trash2,
 } from 'lucide-react'
 import { categoryStyles } from '../../constants/categoryStyles'
+import {
+  priorityLabels,
+  priorityStyles,
+} from '../../constants/taskStyles'
 import type { Task } from '../../types/task'
 import { getLocalDateValue } from '../../utils/date'
+import { formatEstimatedMinutes } from '../../utils/task'
 
 type TaskListProps = {
   selectedDate: string
@@ -40,7 +48,10 @@ export function TaskList({
           month: '2-digit',
         }).format(date)
 
-  const completedTasks = tasks.filter((task) => task.completed).length
+  const completedTasks = tasks.filter(
+    (task) => task.completed,
+  ).length
+
   const progress = tasks.length
     ? Math.round((completedTasks / tasks.length) * 100)
     : 0
@@ -112,7 +123,7 @@ export function TaskList({
               <div className="min-w-0">
                 <p
                   className={[
-                    'break-words text-sm font-semibold leading-5',
+                    'break-words text-sm leading-5 font-semibold',
                     task.completed
                       ? 'text-[#9aa29d] line-through'
                       : 'text-[#27312b]',
@@ -121,16 +132,51 @@ export function TaskList({
                   {task.title}
                 </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span>{task.time ?? 'Sem horário'}</span>
+                {task.description && (
+                  <p
+                    className={[
+                      'mt-1 break-words text-xs leading-5',
+                      task.completed
+                        ? 'text-[#a7afa9]'
+                        : 'text-[#7b847e]',
+                    ].join(' ')}
+                  >
+                    {task.description}
+                  </p>
+                )}
+
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#7b847e]">
+                  <span className="flex items-center gap-1">
+                    <Clock3 size={13} />
+                    {task.time ?? 'Sem horário'}
+                  </span>
+
+                  {task.estimatedMinutes !== null && (
+                    <span className="flex items-center gap-1">
+                      <Timer size={13} />
+                      {formatEstimatedMinutes(
+                        task.estimatedMinutes,
+                      )}
+                    </span>
+                  )}
 
                   <span
                     className={[
-                      'rounded-full px-2.5 py-1 text-xs font-medium',
+                      'rounded-full px-2.5 py-1 font-medium',
                       categoryStyles[task.category],
                     ].join(' ')}
                   >
                     {task.category}
+                  </span>
+
+                  <span
+                    className={[
+                      'flex items-center gap-1 rounded-full px-2.5 py-1 font-medium',
+                      priorityStyles[task.priority],
+                    ].join(' ')}
+                  >
+                    <Flag size={11} />
+                    {priorityLabels[task.priority]}
                   </span>
                 </div>
               </div>
@@ -140,11 +186,15 @@ export function TaskList({
                   type="button"
                   onClick={() =>
                     setOpenMenuTaskId((currentId) =>
-                      currentId === task.id ? null : task.id,
+                      currentId === task.id
+                        ? null
+                        : task.id,
                     )
                   }
                   aria-label={`Ações para ${task.title}`}
-                  aria-expanded={openMenuTaskId === task.id}
+                  aria-expanded={
+                    openMenuTaskId === task.id
+                  }
                   className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#f3f7f3]"
                 >
                   <MoreHorizontal size={18} />

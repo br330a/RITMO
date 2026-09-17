@@ -2,12 +2,19 @@ import {
   CalendarDays,
   Check,
   Clock3,
+  Flag,
   Pencil,
+  Timer,
   Trash2,
 } from 'lucide-react'
 import { categoryStyles } from '../../constants/categoryStyles'
+import {
+  priorityLabels,
+  priorityStyles,
+} from '../../constants/taskStyles'
 import type { Task } from '../../types/task'
 import { formatTaskDate } from '../../utils/date'
+import { formatEstimatedMinutes } from '../../utils/task'
 
 type TaskCardProps = {
   task: Task
@@ -24,16 +31,31 @@ export function TaskCard({
 }: TaskCardProps) {
   return (
     <article className="min-w-0 rounded-2xl border border-[#e4ebe5] bg-white p-5 shadow-sm">
-      <h2
-        className={[
-          'break-words text-base font-semibold leading-6',
-          task.completed
-            ? 'text-[#9aa29d] line-through'
-            : 'text-[#27312b]',
-        ].join(' ')}
-      >
-        {task.title}
-      </h2>
+      <div>
+        <h2
+          className={[
+            'break-words text-base leading-6 font-semibold',
+            task.completed
+              ? 'text-[#9aa29d] line-through'
+              : 'text-[#27312b]',
+          ].join(' ')}
+        >
+          {task.title}
+        </h2>
+
+        {task.description && (
+          <p
+            className={[
+              'mt-1.5 break-words text-sm leading-5',
+              task.completed
+                ? 'text-[#a7afa9]'
+                : 'text-[#667069]',
+            ].join(' ')}
+          >
+            {task.description}
+          </p>
+        )}
+      </div>
 
       <div className="mt-4 flex items-center gap-3 border-t border-[#edf1ed] pt-4">
         <button
@@ -67,6 +89,13 @@ export function TaskCard({
             {task.time ?? 'Sem horário'}
           </span>
 
+          {task.estimatedMinutes !== null && (
+            <span className="flex items-center gap-1.5">
+              <Timer size={14} />
+              {formatEstimatedMinutes(task.estimatedMinutes)}
+            </span>
+          )}
+
           <span
             className={[
               'rounded-full px-2.5 py-1 font-medium',
@@ -74,6 +103,16 @@ export function TaskCard({
             ].join(' ')}
           >
             {task.category}
+          </span>
+
+          <span
+            className={[
+              'flex items-center gap-1 rounded-full px-2.5 py-1 font-medium',
+              priorityStyles[task.priority],
+            ].join(' ')}
+          >
+            <Flag size={12} />
+            {priorityLabels[task.priority]}
           </span>
         </div>
 
