@@ -4,6 +4,7 @@ import type {
   CreateTaskData,
   Task,
   TaskCategory,
+  TaskPriority,
 } from '../../types/task'
 import { getLocalDateValue } from '../../utils/date'
 import { toast } from 'sonner'
@@ -19,6 +20,55 @@ const categories: TaskCategory[] = [
   'Faculdade',
   'Pessoal',
   'Saúde',
+]
+
+const priorities: {
+  value: TaskPriority
+  label: string
+}[] = [
+  {
+    value: 'low',
+    label: 'Baixa',
+  },
+  {
+    value: 'medium',
+    label: 'Média',
+  },
+  {
+    value: 'high',
+    label: 'Alta',
+  },
+]
+
+const durationOptions = [
+  {
+    value: '15',
+    label: '15 min',
+  },
+  {
+    value: '30',
+    label: '30 min',
+  },
+  {
+    value: '45',
+    label: '45 min',
+  },
+  {
+    value: '60',
+    label: '1 hora',
+  },
+  {
+    value: '90',
+    label: '1h 30min',
+  },
+  {
+    value: '120',
+    label: '2 horas',
+  },
+  {
+    value: '180',
+    label: '3 horas',
+  },
 ]
 
 const inputStyles =
@@ -37,6 +87,18 @@ export function TaskFormModal({
     )
 
     const [time, setTime] = useState(task?.time ?? '')
+
+    const [description, setDescription] = useState(
+      task?.description ?? ''
+    )
+
+    const [priority, setPriority] = useState<TaskPriority>(
+      task?.priority ?? 'medium'
+    )
+
+    const [estimatedMinutes, setEstimatedMinutes] = useState(
+      task?.estimatedMinutes?.toString() ?? ''
+    )
 
     const [category, setCategory] = useState<TaskCategory | ''>(
       task?.category ?? ''
@@ -64,12 +126,14 @@ export function TaskFormModal({
 
     onSubmit({
       title: title.trim(),
-      description: null,
+      description: description.trim() || null,
       dueDate,
       time: time || null,
       category,
-      priority: 'medium',
-      estimatedMinutes: null,
+      priority,
+      estimatedMinutes: estimatedMinutes
+        ? Number(estimatedMinutes)
+        : null,
     })
 
     toast.success(
@@ -89,7 +153,7 @@ export function TaskFormModal({
     >
       <section
         onMouseDown={(event) => event.stopPropagation()}
-        className="w-full max-w-md rounded-2xl bg-white p-7 shadow-xl"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-7 shadow-xl"
       >
         <header className="mb-6 flex items-start justify-between gap-4">
           <div>
@@ -130,6 +194,20 @@ export function TaskFormModal({
               placeholder="Ex.: Estudar Java"
               autoFocus
               className={inputStyles}
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              Descrição (opcional)
+            </span>
+
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Ex.: Revisar orientação a objetos e fazer exercícios"
+              rows={3}
+              className={`${inputStyles} resize-none`}
             />
           </label>
 
@@ -184,6 +262,58 @@ export function TaskFormModal({
               ))}
             </select>
           </label>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Prioridade
+              </span>
+
+              <select
+                value={priority}
+                onChange={(event) =>
+                  setPriority(event.target.value as TaskPriority)
+                }
+                className={inputStyles}
+              >
+                {priorities.map((priorityOption) => (
+                  <option
+                    key={priorityOption.value}
+                    value={priorityOption.value}
+                  >
+                    {priorityOption.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                Duração estimada
+              </span>
+
+              <select
+                value={estimatedMinutes}
+                onChange={(event) =>
+                  setEstimatedMinutes(event.target.value)
+                }
+                className={inputStyles}
+              >
+                <option value="">
+                  Não informar
+                </option>
+
+                {durationOptions.map((duration) => (
+                  <option
+                    key={duration.value}
+                    value={duration.value}
+                  >
+                    {duration.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
           <div className="flex justify-end gap-3 pt-2">
             <button
