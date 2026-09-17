@@ -1,4 +1,8 @@
-import { useState } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Check,
   Clock3,
@@ -36,6 +40,48 @@ export function TaskList({
   const [openMenuTaskId, setOpenMenuTaskId] =
     useState<string | null>(null)
 
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!openMenuTaskId) {
+      return
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target
+
+      if (!(target instanceof Node)) {
+        return
+      }
+
+      if (!menuRef.current?.contains(target)) {
+        setOpenMenuTaskId(null)
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpenMenuTaskId(null)
+      }
+    }
+
+    document.addEventListener(
+      'pointerdown',
+      handlePointerDown,
+    )
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener(
+        'pointerdown',
+        handlePointerDown,
+      )
+      document.removeEventListener(
+        'keydown',
+        handleKeyDown,
+      )
+    }
+  }, [openMenuTaskId])
   const [year, month, day] = selectedDate.split('-').map(Number)
   const date = new Date(year, month - 1, day)
 
@@ -181,7 +227,14 @@ export function TaskList({
                 </div>
               </div>
 
-              <div className="relative">
+              <div
+                ref={
+                  openMenuTaskId === task.id
+                    ? menuRef
+                    : null
+                }
+                className="relative"
+              >
                 <button
                   type="button"
                   onClick={() =>
