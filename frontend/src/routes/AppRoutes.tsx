@@ -4,6 +4,7 @@ import { CalendarPage } from '../pages/CalendarPage'
 import { CategoriesPage } from '../pages/CategoriesPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { TasksPage } from '../pages/TasksPage'
+import { HistoryPage } from '../pages/HistoryPage'
 
 export function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export function AppRoutes() {
         <Route path="/tarefas" element={<TasksPage />} />
         <Route path="/calendario" element={<CalendarPage />} />
         <Route path="/categorias" element={<CategoriesPage />} />
+        <Route path="/historico" element={<HistoryPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

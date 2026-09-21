@@ -2,6 +2,7 @@ import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from '../utils/date'
 
 const today = getLocalDateValue()
+const now = new Date().toISOString()
 
 export const initialTasks: Task[] = [
   {
@@ -14,6 +15,7 @@ export const initialTasks: Task[] = [
     priority: 'medium',
     estimatedMinutes: 30,
     completed: true,
+    completedAt: now,
   },
   {
     id: 'task-2',
@@ -25,6 +27,7 @@ export const initialTasks: Task[] = [
     priority: 'medium',
     estimatedMinutes: 60,
     completed: true,
+    completedAt: now,
   },
   {
     id: 'task-3',
@@ -36,6 +39,7 @@ export const initialTasks: Task[] = [
     priority: 'high',
     estimatedMinutes: 60,
     completed: false,
+    completedAt: null,
   },
   {
     id: 'task-4',
@@ -47,6 +51,7 @@ export const initialTasks: Task[] = [
     priority: 'low',
     estimatedMinutes: 30,
     completed: false,
+    completedAt: null,
   },
   {
     id: 'task-5',
@@ -58,5 +63,6 @@ export const initialTasks: Task[] = [
     priority: 'medium',
     estimatedMinutes: 20,
     completed: false,
+    completedAt: null,
   },
 ]

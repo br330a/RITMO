@@ -9,6 +9,7 @@ import type {
   TaskPriority,
 } from '../types/taskTypes'
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
+import { isTaskArchived } from '../utils/taskStatus'
 
 type TaskFilter = 'all' | 'pending' | 'completed'
 
@@ -114,12 +115,20 @@ export function TasksPage() {
     .sort(sortPendingTasks)
 
   const completedTasks = tasks
-    .filter((task) => task.completed)
+    .filter(
+      (task) =>
+        task.completed &&
+        !isTaskArchived(task),
+    )
     .sort(sortCompletedTasks)
+
+  const visibleTasksCount =
+    pendingTasks.length +
+    completedTasks.length
 
   const hasTasksForActiveFilter =
     activeFilter === 'all'
-      ? tasks.length > 0
+      ? visibleTasksCount > 0
       : activeFilter === 'pending'
         ? pendingTasks.length > 0
         : completedTasks.length > 0
@@ -167,7 +176,7 @@ export function TasksPage() {
         <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[#e4ebe5] bg-white shadow-sm">
           <div className="px-3 py-4 text-center">
             <strong className="block text-xl text-[#17211b]">
-              {tasks.length}
+              {visibleTasksCount}
             </strong>
 
             <span className="text-xs text-[#8a938d]">

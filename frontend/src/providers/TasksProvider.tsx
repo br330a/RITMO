@@ -8,11 +8,19 @@ import {
   type TasksContextValue,
 } from '../context/tasksContext'
 import { initialTasks } from '../data/initialTasks'
-import { loadTasks, saveTasks } from '../services/taskStorage'
-import type { CreateTaskData, Task } from '../types/taskTypes'
+import {
+  loadTasks,
+  saveTasks,
+} from '../services/taskStorage'
+import type {
+  CreateTaskData,
+  Task,
+} from '../types/taskTypes'
 import { toast } from 'sonner'
 
-export function TasksProvider({ children }: PropsWithChildren) {
+export function TasksProvider({
+  children,
+}: PropsWithChildren) {
   const [tasks, setTasks] = useState<Task[]>(
     () => loadTasks() ?? initialTasks,
   )
@@ -29,32 +37,42 @@ export function TasksProvider({ children }: PropsWithChildren) {
           ...taskData,
           id: crypto.randomUUID(),
           completed: false,
+          completedAt: null,
         },
       ].sort((firstTask, secondTask) =>
         (firstTask.time ?? '23:59').localeCompare(
-          secondTask.time ?? '23:59'
-        )
+          secondTask.time ?? '23:59',
+        ),
       ),
     )
   }
 
-  function updateTask(taskId: string, taskData: CreateTaskData) {
+  function updateTask(
+    taskId: string,
+    taskData: CreateTaskData,
+  ) {
     setTasks((currentTasks) =>
       currentTasks
         .map((task) =>
           task.id === taskId
-            ? { ...task, ...taskData }
+            ? {
+                ...task,
+                ...taskData,
+              }
             : task,
         )
         .sort((firstTask, secondTask) => {
-          const dateComparison = firstTask.dueDate.localeCompare(
-            secondTask.dueDate,
-          )
+          const dateComparison =
+            firstTask.dueDate.localeCompare(
+              secondTask.dueDate,
+            )
 
           return dateComparison !== 0
             ? dateComparison
-            : (firstTask.time ?? '23:59').localeCompare(
-                secondTask.time ?? '23:59'
+            : (
+                firstTask.time ?? '23:59'
+              ).localeCompare(
+                secondTask.time ?? '23:59',
               )
         }),
     )
@@ -62,20 +80,38 @@ export function TasksProvider({ children }: PropsWithChildren) {
 
   function toggleTask(taskId: string) {
     setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, completed: !task.completed }
-          : task,
-      ),
+      currentTasks.map((task) => {
+        if (task.id !== taskId) {
+          return task
+        }
+
+        if (task.completed) {
+          return {
+            ...task,
+            completed: false,
+            completedAt: null,
+          }
+        }
+
+        return {
+          ...task,
+          completed: true,
+          completedAt: new Date().toISOString(),
+        }
+      }),
     )
   }
 
   function deleteTask(taskId: string) {
     setTasks((currentTasks) =>
-      currentTasks.filter((task) => task.id !== taskId),
+      currentTasks.filter(
+        (task) => task.id !== taskId,
+      ),
     )
 
-    toast.success('Tarefa excluída com sucesso.')
+    toast.success(
+      'Tarefa excluída com sucesso.',
+    )
   }
 
   const contextValue: TasksContextValue = {

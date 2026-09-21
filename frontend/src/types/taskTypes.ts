@@ -1,6 +1,12 @@
-export type TaskCategory = 'Faculdade' | 'Pessoal' | 'Saúde'
+export type TaskCategory =
+  | 'Faculdade'
+  | 'Pessoal'
+  | 'Saúde'
 
-export type TaskPriority = 'low' | 'medium' | 'high'
+export type TaskPriority =
+  | 'low'
+  | 'medium'
+  | 'high'
 
 export type Task = {
   id: string
@@ -12,6 +18,10 @@ export type Task = {
   priority: TaskPriority
   estimatedMinutes: number | null
   completed: boolean
+  completedAt: string | null
 }
 
-export type CreateTaskData = Omit<Task, 'id' | 'completed'>
+export type CreateTaskData = Omit<
+  Task,
+  'id' | 'completed' | 'completedAt'
+>

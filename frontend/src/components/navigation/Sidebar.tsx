@@ -6,6 +6,7 @@ import {
   PanelLeftOpen,
   Shapes,
   X,
+  History,
 } from 'lucide-react'
 import { NavLink } from 'react-router'
 import { RitmoLogo } from '../branding/RitmoLogo'
@@ -37,6 +38,12 @@ const navigationItems = [
     label: 'Categorias',
     path: '/categorias',
     icon: Shapes,
+  },
+
+  {
+    label: 'Histórico',
+    path: '/historico',
+    icon: History,
   },
 ]
 
