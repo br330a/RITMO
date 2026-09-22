@@ -5,6 +5,7 @@ import {
   Clock3,
   Flag,
   Pencil,
+  Repeat2,
   Tag,
   Timer,
   Trash2,
@@ -17,26 +18,39 @@ import {
 } from '../../constants/taskStyles'
 import type { Task } from '../../types/taskTypes'
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
+import {
+  formatRecurrenceEndDate,
+  formatTaskRecurrence,
+} from '../../utils/taskRecurrence'
 
 type TaskDetailsModalProps = {
   task: Task
   onClose: () => void
-  onToggle: (taskId: string) => void
+  onToggle: (
+    taskId: string,
+    occurrenceDate?: string,
+  ) => void
   onEdit: (task: Task) => void
   onDelete: (task: Task) => void
 }
 
-function formatDetailsDate(dateValue: string) {
-  const [year, month, day] = dateValue
-    .split('-')
-    .map(Number)
+function formatDetailsDate(
+  dateValue: string,
+) {
+  const [year, month, day] =
+    dateValue.split('-').map(Number)
 
-  return new Intl.DateTimeFormat('pt-BR', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(year, month - 1, day))
+  return new Intl.DateTimeFormat(
+    'pt-BR',
+    {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    },
+  ).format(
+    new Date(year, month - 1, day),
+  )
 }
 
 export function TaskDetailsModal({
@@ -47,19 +61,29 @@ export function TaskDetailsModal({
   onDelete,
 }: TaskDetailsModalProps) {
   useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
+    function handleKeyDown(
+      event: KeyboardEvent,
+    ) {
       if (event.key === 'Escape') {
         onClose()
       }
     }
 
-    const previousOverflow = document.body.style.overflow
+    const previousOverflow =
+      document.body.style.overflow
 
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow =
+      'hidden'
+
+    document.addEventListener(
+      'keydown',
+      handleKeyDown,
+    )
 
     return () => {
-      document.body.style.overflow = previousOverflow
+      document.body.style.overflow =
+        previousOverflow
+
       document.removeEventListener(
         'keydown',
         handleKeyDown,
@@ -77,7 +101,9 @@ export function TaskDetailsModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="task-details-title"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(event) =>
+          event.stopPropagation()
+        }
         className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
       >
         <header className="flex items-start justify-between gap-5 border-b border-[#edf1ed] p-6 sm:p-7">
@@ -99,17 +125,25 @@ export function TaskDetailsModal({
               <span
                 className={[
                   'flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold',
-                  priorityStyles[task.priority],
+                  priorityStyles[
+                  task.priority
+                  ],
                 ].join(' ')}
               >
                 <Flag size={12} />
-                {priorityLabels[task.priority]}
+                {
+                  priorityLabels[
+                  task.priority
+                  ]
+                }
               </span>
 
               <span
                 className={[
                   'rounded-full px-3 py-1 text-xs font-semibold',
-                  categoryStyles[task.category],
+                  categoryStyles[
+                  task.category
+                  ],
                 ].join(' ')}
               >
                 {task.category}
@@ -155,42 +189,51 @@ export function TaskDetailsModal({
             <div className="rounded-2xl bg-[#f7faf7] p-4">
               <div className="flex items-center gap-2 text-[#19683a]">
                 <CalendarDays size={18} />
+
                 <span className="text-xs font-semibold uppercase">
-                  Data
+                  {task.recurrence
+                    ? 'Ocorrência'
+                    : 'Data'}
                 </span>
               </div>
 
               <p className="mt-2 text-sm font-medium text-[#27312b] capitalize">
-                {formatDetailsDate(task.dueDate)}
+                {formatDetailsDate(
+                  task.dueDate,
+                )}
               </p>
             </div>
 
             <div className="rounded-2xl bg-[#f7faf7] p-4">
               <div className="flex items-center gap-2 text-[#19683a]">
                 <Clock3 size={18} />
+
                 <span className="text-xs font-semibold uppercase">
                   Horário
                 </span>
               </div>
 
               <p className="mt-2 text-sm font-medium text-[#27312b]">
-                {task.time ?? 'Sem horário definido'}
+                {task.time ??
+                  'Sem horário definido'}
               </p>
             </div>
 
             <div className="rounded-2xl bg-[#f7faf7] p-4">
               <div className="flex items-center gap-2 text-[#19683a]">
                 <Timer size={18} />
+
                 <span className="text-xs font-semibold uppercase">
                   Duração estimada
                 </span>
               </div>
 
               <p className="mt-2 text-sm font-medium text-[#27312b]">
-                {task.estimatedMinutes !== null
+                {task.estimatedMinutes !==
+                  null
                   ? formatEstimatedMinutes(
-                      task.estimatedMinutes,
-                    )
+                    task.estimatedMinutes,
+                  )
                   : 'Não informada'}
               </p>
             </div>
@@ -198,6 +241,7 @@ export function TaskDetailsModal({
             <div className="rounded-2xl bg-[#f7faf7] p-4">
               <div className="flex items-center gap-2 text-[#19683a]">
                 <Tag size={18} />
+
                 <span className="text-xs font-semibold uppercase">
                   Categoria
                 </span>
@@ -207,13 +251,42 @@ export function TaskDetailsModal({
                 {task.category}
               </p>
             </div>
+
+            <div className="rounded-2xl bg-[#f7faf7] p-4 sm:col-span-2">
+              <div className="flex items-center gap-2 text-[#19683a]">
+                <Repeat2 size={18} />
+
+                <span className="text-xs font-semibold uppercase">
+                  Repetição
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm font-medium text-[#27312b]">
+                {formatTaskRecurrence(
+                  task,
+                )}
+              </p>
+
+              {task.recurrence && (
+                <p className="mt-1 text-xs text-[#7b847e]">
+                  {formatRecurrenceEndDate(
+                    task,
+                  )}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
         <footer className="flex flex-col-reverse gap-3 border-t border-[#edf1ed] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <button
             type="button"
-            onClick={() => onToggle(task.id)}
+            onClick={() =>
+              onToggle(
+                task.id,
+                task.dueDate,
+              )
+            }
             className={[
               'flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors',
               task.completed

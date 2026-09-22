@@ -7,9 +7,18 @@ import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import { useTasks } from '../hooks/useTasks'
 import type { Task } from '../types/taskTypes'
 import {
+  getCompletedOccurrences,
+  getTaskOccurrence,
+} from '../utils/taskRecurrence'
+import {
   COMPLETED_TASK_RETENTION_DAYS,
   isTaskArchived,
 } from '../utils/taskStatus'
+
+type TaskReference = {
+  taskId: string
+  occurrenceDate: string
+}
 
 export function HistoryPage() {
   const {
@@ -25,16 +34,46 @@ export function HistoryPage() {
   const [taskToDelete, setTaskToDelete] =
     useState<Task | null>(null)
 
-  const [selectedTaskId, setSelectedTaskId] =
-    useState<string | null>(null)
+  const [
+    selectedTaskReference,
+    setSelectedTaskReference,
+  ] = useState<TaskReference | null>(null)
 
-  const selectedTask =
-    tasks.find(
-      (task) => task.id === selectedTaskId,
-    ) ?? null
+  const selectedTask = (() => {
+    if (!selectedTaskReference) {
+      return null
+    }
+
+    const baseTask = tasks.find(
+      (task) =>
+        task.id ===
+        selectedTaskReference.taskId,
+    )
+
+    if (!baseTask) {
+      return null
+    }
+
+    return getTaskOccurrence(
+      baseTask,
+      selectedTaskReference.occurrenceDate,
+    )
+  })()
 
   const archivedTasks = tasks
-    .filter((task) => isTaskArchived(task))
+    .flatMap((task) => {
+      if (!task.recurrence) {
+        return isTaskArchived(task)
+          ? [task]
+          : []
+      }
+
+      return getCompletedOccurrences(task)
+        .filter(
+          (occurrence) =>
+            isTaskArchived(occurrence),
+        )
+    })
     .sort((firstTask, secondTask) =>
       (
         secondTask.completedAt ?? ''
@@ -42,6 +81,15 @@ export function HistoryPage() {
         firstTask.completedAt ?? '',
       ),
     )
+
+  function getBaseTask(task: Task) {
+    return (
+      tasks.find(
+        (currentTask) =>
+          currentTask.id === task.id,
+      ) ?? task
+    )
+  }
 
   return (
     <>
@@ -101,15 +149,30 @@ export function HistoryPage() {
           <div className="mt-8 space-y-3">
             {archivedTasks.map((task) => (
               <TaskCard
-                key={task.id}
+                key={`${task.id}-${task.dueDate}`}
                 task={task}
                 onToggle={toggleTask}
-                onEdit={setTaskToEdit}
-                onDelete={setTaskToDelete}
-                onOpen={(selectedTask) =>
-                  setSelectedTaskId(
-                    selectedTask.id,
+                onEdit={(selectedTask) =>
+                  setTaskToEdit(
+                    getBaseTask(
+                      selectedTask,
+                    ),
                   )
+                }
+                onDelete={(selectedTask) =>
+                  setTaskToDelete(
+                    getBaseTask(
+                      selectedTask,
+                    ),
+                  )
+                }
+                onOpen={(selectedTask) =>
+                  setSelectedTaskReference({
+                    taskId:
+                      selectedTask.id,
+                    occurrenceDate:
+                      selectedTask.dueDate,
+                  })
                 }
               />
             ))}
@@ -121,11 +184,19 @@ export function HistoryPage() {
         <TaskDetailsModal
           task={selectedTask}
           onClose={() =>
-            setSelectedTaskId(null)
+            setSelectedTaskReference(null)
           }
           onToggle={toggleTask}
-          onEdit={setTaskToEdit}
-          onDelete={setTaskToDelete}
+          onEdit={(task) =>
+            setTaskToEdit(
+              getBaseTask(task),
+            )
+          }
+          onDelete={(task) =>
+            setTaskToDelete(
+              getBaseTask(task),
+            )
+          }
         />
       )}
 

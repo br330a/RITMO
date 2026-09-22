@@ -4,7 +4,10 @@ import type { CreateTaskData, Task } from '../types/taskTypes'
 export type TasksContextValue = {
   tasks: Task[]
   createTask: (task: CreateTaskData) => void
-  toggleTask: (taskId: string) => void
+  toggleTask: (
+    taskId: string,
+    occurrenceDate?: string,
+  ) => void
   deleteTask: (taskId: string) => void
   updateTask: (taskId: string, taskData: CreateTaskData) => void
 }

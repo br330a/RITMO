@@ -18,7 +18,10 @@ import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
 type TaskCardProps = {
   task: Task
-  onToggle: (taskId: string) => void
+  onToggle: (
+    taskId: string,
+    occurrenceDate?: string,
+  ) => void
   onEdit: (task: Task) => void
   onDelete: (task: Task) => void
   onOpen: (task: Task) => void
@@ -82,7 +85,11 @@ export function TaskCard({
           type="button"
           onClick={(event) => {
             event.stopPropagation()
-            onToggle(task.id)
+
+            onToggle(
+              task.id,
+              task.dueDate,
+            )
           }}
           aria-label={
             task.completed
@@ -115,7 +122,9 @@ export function TaskCard({
           {task.estimatedMinutes !== null && (
             <span className="flex items-center gap-1.5">
               <Timer size={14} />
-              {formatEstimatedMinutes(task.estimatedMinutes)}
+              {formatEstimatedMinutes(
+                task.estimatedMinutes,
+              )}
             </span>
           )}
 

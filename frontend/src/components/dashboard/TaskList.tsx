@@ -25,7 +25,10 @@ import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 type TaskListProps = {
   selectedDate: string
   tasks: Task[]
-  onToggleTask: (taskId: string) => void
+  onToggleTask: (
+    taskId: string,
+    occurrenceDate?: string,
+  ) => void
   onEditTask: (task: Task) => void
   onDeleteTask: (task: Task) => void
   onOpenTask: (task: Task) => void
@@ -172,7 +175,7 @@ export function TaskList({
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation()
-                  onToggleTask(task.id)
+                  onToggleTask(task.id, task.dueDate)
                 }}
                 aria-label={
                   task.completed

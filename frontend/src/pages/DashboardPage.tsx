@@ -10,6 +10,10 @@ import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
 
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type { Task } from '../types/taskTypes'
+import {
+  getTaskOccurrence,
+  getTasksForDate,
+} from '../utils/taskRecurrence'
 
 export function DashboardPage() {
   const {
@@ -24,24 +28,46 @@ export function DashboardPage() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
 
-  const [selectedTaskId, setSelectedTaskId] =
-    useState<string | null>(null)
+  const [
+    selectedTaskReference,
+    setSelectedTaskReference,
+  ] = useState<{
+    taskId: string
+    occurrenceDate: string
+  } | null>(null)
 
-  const selectedTask =
-    tasks.find((task) => task.id === selectedTaskId) ??
-    null
+  const selectedTask = (() => {
+    if (!selectedTaskReference) {
+      return null
+    }
+
+    const baseTask = tasks.find(
+      (task) =>
+        task.id === selectedTaskReference.taskId,
+    )
+
+    if (!baseTask) {
+      return null
+    }
+
+    return getTaskOccurrence(
+      baseTask,
+      selectedTaskReference.occurrenceDate,
+    )
+  })()
 
   const [selectedDate, setSelectedDate] = useState(
     () => getLocalDateValue(),
   )
 
-  const selectedTasks = tasks
-    .filter((task) => task.dueDate === selectedDate)
-    .sort((firstTask, secondTask) =>
-      (firstTask.time ?? '99:99').localeCompare(
-        secondTask.time ?? '99:99',
-      ),
-    )
+  const selectedTasks = getTasksForDate(
+    tasks,
+    selectedDate,
+  ).sort((firstTask, secondTask) =>
+    (firstTask.time ?? '99:99').localeCompare(
+      secondTask.time ?? '99:99',
+    ),
+  )
 
   const currentDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
@@ -83,10 +109,21 @@ export function DashboardPage() {
             selectedDate={selectedDate}
             tasks={selectedTasks}
             onToggleTask={toggleTask}
-            onEditTask={setTaskToEdit}
+            onEditTask={(task) => {
+              const baseTask =
+                tasks.find(
+                  (currentTask) =>
+                    currentTask.id === task.id,
+                ) ?? task
+
+              setTaskToEdit(baseTask)
+            }}
             onDeleteTask={setTaskToDelete}
             onOpenTask={(task) =>
-              setSelectedTaskId(task.id)
+              setSelectedTaskReference({
+                taskId: task.id,
+                occurrenceDate: task.dueDate,
+              })
             }
           />
 
@@ -98,7 +135,10 @@ export function DashboardPage() {
 
             <UpcomingTasks
               onOpenTask={(task) =>
-                setSelectedTaskId(task.id)
+                setSelectedTaskReference({
+                  taskId: task.id,
+                  occurrenceDate: task.dueDate,
+                })
               }
             />
           </aside>
@@ -108,9 +148,19 @@ export function DashboardPage() {
       {selectedTask && (
         <TaskDetailsModal
           task={selectedTask}
-          onClose={() => setSelectedTaskId(null)}
+          onClose={() =>
+            setSelectedTaskReference(null)
+          }
           onToggle={toggleTask}
-          onEdit={setTaskToEdit}
+          onEdit={(task) => {
+            const baseTask =
+              tasks.find(
+                (currentTask) =>
+                  currentTask.id === task.id,
+              ) ?? task
+
+            setTaskToEdit(baseTask)
+          }}
           onDelete={setTaskToDelete}
         />
       )}

@@ -17,6 +17,7 @@ import {
   getLocalDateValue,
 } from '../../utils/date'
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
+import { getNextPendingOccurrence } from '../../utils/taskRecurrence'
 
 type UpcomingTasksProps = {
   onOpenTask: (task: Task) => void
@@ -29,10 +30,17 @@ export function UpcomingTasks({
   const today = getLocalDateValue()
 
   const upcomingTasks = tasks
-    .filter(
-      (task) =>
-        !task.completed && task.dueDate > today,
-    )
+    .flatMap((task) => {
+      const occurrence =
+        getNextPendingOccurrence(
+          task,
+          today,
+        )
+
+      return occurrence
+        ? [occurrence]
+        : []
+    })
     .sort((firstTask, secondTask) => {
       const dateComparison =
         firstTask.dueDate.localeCompare(
@@ -41,9 +49,11 @@ export function UpcomingTasks({
 
       return dateComparison !== 0
         ? dateComparison
-        : (firstTask.time ?? '23:59').localeCompare(
-            secondTask.time ?? '23:59',
-          )
+        : (
+          firstTask.time ?? '23:59'
+        ).localeCompare(
+          secondTask.time ?? '23:59',
+        )
     })
     .slice(0, 2)
 
@@ -78,7 +88,7 @@ export function UpcomingTasks({
         <div>
           {upcomingTasks.map((task) => (
             <div
-              key={task.id}
+              key={`${task.id}-${task.dueDate}`}
               role="button"
               tabIndex={0}
               onClick={() => onOpenTask(task)}
@@ -115,7 +125,9 @@ export function UpcomingTasks({
                 <span
                   className={[
                     'rounded-full px-2.5 py-1 font-medium',
-                    categoryStyles[task.category],
+                    categoryStyles[
+                    task.category
+                    ],
                   ].join(' ')}
                 >
                   {task.category}
@@ -124,23 +136,30 @@ export function UpcomingTasks({
                 <span
                   className={[
                     'flex items-center gap-1 rounded-full px-2.5 py-1 font-medium',
-                    priorityStyles[task.priority],
+                    priorityStyles[
+                    task.priority
+                    ],
                   ].join(' ')}
                 >
                   <Flag size={11} />
 
-                  {priorityLabels[task.priority]}
+                  {
+                    priorityLabels[
+                    task.priority
+                    ]
+                  }
                 </span>
 
-                {task.estimatedMinutes !== null && (
-                  <span className="flex items-center gap-1 text-[#7b847e]">
-                    <Timer size={13} />
+                {task.estimatedMinutes !==
+                  null && (
+                    <span className="flex items-center gap-1 text-[#7b847e]">
+                      <Timer size={13} />
 
-                    {formatEstimatedMinutes(
-                      task.estimatedMinutes,
-                    )}
-                  </span>
-                )}
+                      {formatEstimatedMinutes(
+                        task.estimatedMinutes,
+                      )}
+                    </span>
+                  )}
               </div>
             </div>
           ))}

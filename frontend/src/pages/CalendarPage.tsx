@@ -15,6 +15,10 @@ import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from '../utils/date'
 
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
+import {
+  getTaskOccurrence,
+  getTasksForDate,
+} from '../utils/taskRecurrence'
 
 function formatSelectedDate(dateValue: string) {
   const [year, month, day] = dateValue.split('-').map(Number)
@@ -71,12 +75,34 @@ export function CalendarPage() {
   const [taskToDelete, setTaskToDelete] =
     useState<Task | null>(null)
 
-  const [selectedTaskId, setSelectedTaskId] =
-    useState<string | null>(null)
+  const [
+    selectedTaskReference,
+    setSelectedTaskReference,
+  ] = useState<{
+    taskId: string
+    occurrenceDate: string
+  } | null>(null)
 
-  const selectedTask =
-    tasks.find((task) => task.id === selectedTaskId) ??
-    null
+  const selectedTask = (() => {
+    if (!selectedTaskReference) {
+      return null
+    }
+
+    const baseTask = tasks.find(
+      (task) =>
+        task.id ===
+        selectedTaskReference.taskId,
+    )
+
+    if (!baseTask) {
+      return null
+    }
+
+    return getTaskOccurrence(
+      baseTask,
+      selectedTaskReference.occurrenceDate,
+    )
+  })()
 
   const todayDate = new Date()
 
@@ -85,13 +111,14 @@ export function CalendarPage() {
     currentMonth.getMonth() === todayDate.getMonth() &&
     currentMonth.getFullYear() === todayDate.getFullYear()
 
-  const selectedTasks = tasks
-    .filter((task) => task.dueDate === selectedDate)
-    .sort((firstTask, secondTask) =>
-      (firstTask.time ?? '23:59').localeCompare(
-        secondTask.time ?? '23:59'
-      )
-    )
+  const selectedTasks = getTasksForDate(
+    tasks,
+    selectedDate,
+  ).sort((firstTask, secondTask) =>
+    (firstTask.time ?? '23:59').localeCompare(
+      secondTask.time ?? '23:59',
+    ),
+  )
 
   function handleGoToToday() {
     const today = new Date()
@@ -183,10 +210,15 @@ export function CalendarPage() {
               <div className="mt-5 space-y-3">
                 {selectedTasks.map((task) => (
                   <div
-                    key={task.id}
+                    key={`${task.id}-${task.dueDate}`}
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedTaskId(task.id)}
+                    onClick={() =>
+                      setSelectedTaskReference({
+                        taskId: task.id,
+                        occurrenceDate: task.dueDate,
+                      })
+                    }
                     onKeyDown={(event) => {
                       if (event.target !== event.currentTarget) {
                         return
@@ -197,7 +229,10 @@ export function CalendarPage() {
                         event.key === ' '
                       ) {
                         event.preventDefault()
-                        setSelectedTaskId(task.id)
+                        setSelectedTaskReference({
+                          taskId: task.id,
+                          occurrenceDate: task.dueDate,
+                        })
                       }
                     }}
                     className="cursor-pointer rounded-xl border border-[#e4ebe5] p-4 transition-all hover:border-[#cbd9ce] hover:bg-[#f8faf8] hover:shadow-sm"
@@ -207,7 +242,10 @@ export function CalendarPage() {
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation()
-                          toggleTask(task.id)
+                          toggleTask(
+                            task.id,
+                            task.dueDate,
+                          )
                         }}
                         aria-label={
                           task.completed
@@ -258,7 +296,12 @@ export function CalendarPage() {
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation()
-                          setTaskToEdit(task)
+                          setTaskToEdit(
+                            tasks.find(
+                              (currentTask) =>
+                                currentTask.id === task.id,
+                            ) ?? task,
+                          )
                         }}
                         aria-label={`Editar ${task.title}`}
                         className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#e4f3e8] hover:text-[#19683a]"
@@ -289,9 +332,19 @@ export function CalendarPage() {
       {selectedTask && (
         <TaskDetailsModal
           task={selectedTask}
-          onClose={() => setSelectedTaskId(null)}
+          onClose={() =>
+            setSelectedTaskReference(null)
+          }
           onToggle={toggleTask}
-          onEdit={setTaskToEdit}
+          onEdit={(task) => {
+            const baseTask =
+              tasks.find(
+                (currentTask) =>
+                  currentTask.id === task.id,
+              ) ?? task
+
+            setTaskToEdit(baseTask)
+          }}
           onDelete={setTaskToDelete}
         />
       )}

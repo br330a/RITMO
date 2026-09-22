@@ -8,6 +8,8 @@ type StoredTask = Omit<
   | 'priority'
   | 'estimatedMinutes'
   | 'completedAt'
+  | 'recurrence'
+  | 'completedOccurrences'
 > &
   Partial<
     Pick<
@@ -16,11 +18,14 @@ type StoredTask = Omit<
       | 'priority'
       | 'estimatedMinutes'
       | 'completedAt'
+      | 'recurrence'
+      | 'completedOccurrences'
     >
   >
 
 export function loadTasks(): Task[] | null {
-  const storedTasks = localStorage.getItem(STORAGE_KEY)
+  const storedTasks =
+    localStorage.getItem(STORAGE_KEY)
 
   if (!storedTasks) {
     return null
@@ -36,9 +41,15 @@ export function loadTasks(): Task[] | null {
       priority: task.priority ?? 'medium',
       estimatedMinutes:
         task.estimatedMinutes ?? null,
+
+      recurrence: task.recurrence ?? null,
+
+      completedOccurrences:
+        task.completedOccurrences ?? {},
+
       completedAt: task.completed
         ? task.completedAt ??
-          new Date().toISOString()
+        new Date().toISOString()
         : null,
     }))
   } catch {

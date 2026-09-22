@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Task } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
+import { getTasksForDate } from '../../utils/taskRecurrence'
 
 type MonthCalendarProps = {
   currentMonth: Date
@@ -93,8 +94,9 @@ export function MonthCalendar({
 
         {calendarDays.map((date) => {
           const dateValue = getLocalDateValue(date)
-          const dayTasks = tasks.filter(
-            (task) => task.dueDate === dateValue,
+          const dayTasks = getTasksForDate(
+            tasks,
+            dateValue,
           )
 
           const isCurrentMonth =

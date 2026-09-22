@@ -8,6 +8,22 @@ export type TaskPriority =
   | 'medium'
   | 'high'
 
+export type RecurrenceFrequency =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+
+export type TaskRecurrence = {
+  frequency: RecurrenceFrequency
+  daysOfWeek: number[]
+  endDate: string | null
+}
+
+export type CompletedOccurrences = Record<
+  string,
+  string
+>
+
 export type Task = {
   id: string
   title: string
@@ -17,11 +33,18 @@ export type Task = {
   category: TaskCategory
   priority: TaskPriority
   estimatedMinutes: number | null
+
+  recurrence: TaskRecurrence | null
+  completedOccurrences: CompletedOccurrences
+
   completed: boolean
   completedAt: string | null
 }
 
 export type CreateTaskData = Omit<
   Task,
-  'id' | 'completed' | 'completedAt'
+  | 'id'
+  | 'completed'
+  | 'completedAt'
+  | 'completedOccurrences'
 >

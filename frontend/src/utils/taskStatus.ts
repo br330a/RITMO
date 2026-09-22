@@ -1,6 +1,6 @@
 import type { Task } from '../types/taskTypes'
 
-export const COMPLETED_TASK_RETENTION_DAYS = 30
+export const COMPLETED_TASK_RETENTION_DAYS = 14
 
 const DAY_IN_MILLISECONDS =
   24 * 60 * 60 * 1000

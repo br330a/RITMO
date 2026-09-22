@@ -38,6 +38,7 @@ export function TasksProvider({
           id: crypto.randomUUID(),
           completed: false,
           completedAt: null,
+          completedOccurrences: {},
         },
       ].sort((firstTask, secondTask) =>
         (firstTask.time ?? '23:59').localeCompare(
@@ -78,11 +79,46 @@ export function TasksProvider({
     )
   }
 
-  function toggleTask(taskId: string) {
+  function toggleTask(
+    taskId: string,
+    occurrenceDate?: string,
+  ) {
     setTasks((currentTasks) =>
       currentTasks.map((task) => {
         if (task.id !== taskId) {
           return task
+        }
+
+        if (task.recurrence) {
+          const targetDate =
+            occurrenceDate ?? task.dueDate
+
+          const currentCompletedAt =
+            task.completedOccurrences[
+            targetDate
+            ]
+
+          const nextCompletedOccurrences = {
+            ...task.completedOccurrences,
+          }
+
+          if (currentCompletedAt) {
+            delete nextCompletedOccurrences[
+              targetDate
+            ]
+          } else {
+            nextCompletedOccurrences[
+              targetDate
+            ] = new Date().toISOString()
+          }
+
+          return {
+            ...task,
+            completed: false,
+            completedAt: null,
+            completedOccurrences:
+              nextCompletedOccurrences,
+          }
         }
 
         if (task.completed) {
@@ -96,7 +132,8 @@ export function TasksProvider({
         return {
           ...task,
           completed: true,
-          completedAt: new Date().toISOString(),
+          completedAt:
+            new Date().toISOString(),
         }
       }),
     )

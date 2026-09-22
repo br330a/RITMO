@@ -9,29 +9,46 @@ import type {
   TaskPriority,
 } from '../types/taskTypes'
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
+import {
+  getCompletedOccurrences,
+  getNextPendingOccurrence,
+  getTaskOccurrence,
+} from '../utils/taskRecurrence'
 import { isTaskArchived } from '../utils/taskStatus'
+import { getLocalDateValue } from '../utils/date'
 
-type TaskFilter = 'all' | 'pending' | 'completed'
+type TaskFilter =
+  | 'all'
+  | 'pending'
+  | 'completed'
+
+type TaskReference = {
+  taskId: string
+  occurrenceDate: string
+}
 
 const filters: {
   label: string
   value: TaskFilter
 }[] = [
-  {
-    label: 'Todas',
-    value: 'all',
-  },
-  {
-    label: 'Pendentes',
-    value: 'pending',
-  },
-  {
-    label: 'Concluídas',
-    value: 'completed',
-  },
-]
+    {
+      label: 'Todas',
+      value: 'all',
+    },
+    {
+      label: 'Pendentes',
+      value: 'pending',
+    },
+    {
+      label: 'Concluídas',
+      value: 'completed',
+    },
+  ]
 
-const priorityOrder: Record<TaskPriority, number> = {
+const priorityOrder: Record<
+  TaskPriority,
+  number
+> = {
   high: 0,
   medium: 1,
   low: 2,
@@ -58,7 +75,9 @@ function sortPendingTasks(
     return dateComparison
   }
 
-  return (firstTask.time ?? '23:59').localeCompare(
+  return (
+    firstTask.time ?? '23:59'
+  ).localeCompare(
     secondTask.time ?? '23:59',
   )
 }
@@ -67,17 +86,10 @@ function sortCompletedTasks(
   firstTask: Task,
   secondTask: Task,
 ) {
-  const dateComparison =
-    secondTask.dueDate.localeCompare(
-      firstTask.dueDate,
-    )
-
-  if (dateComparison !== 0) {
-    return dateComparison
-  }
-
-  return (secondTask.time ?? '00:00').localeCompare(
-    firstTask.time ?? '00:00',
+  return (
+    secondTask.completedAt ?? ''
+  ).localeCompare(
+    firstTask.completedAt ?? '',
   )
 }
 
@@ -89,6 +101,8 @@ export function TasksPage() {
     toggleTask,
     deleteTask,
   } = useTasks()
+
+  const today = getLocalDateValue()
 
   const [activeFilter, setActiveFilter] =
     useState<TaskFilter>('all')
@@ -102,24 +116,72 @@ export function TasksPage() {
   const [taskToDelete, setTaskToDelete] =
     useState<Task | null>(null)
 
-  const [selectedTaskId, setSelectedTaskId] =
-    useState<string | null>(null)
+  const [
+    selectedTaskReference,
+    setSelectedTaskReference,
+  ] = useState<TaskReference | null>(null)
 
-  const selectedTask =
-    tasks.find(
-      (task) => task.id === selectedTaskId,
-    ) ?? null
+  const selectedTask = (() => {
+    if (!selectedTaskReference) {
+      return null
+    }
+
+    const baseTask = tasks.find(
+      (task) =>
+        task.id ===
+        selectedTaskReference.taskId,
+    )
+
+    if (!baseTask) {
+      return null
+    }
+
+    return getTaskOccurrence(
+      baseTask,
+      selectedTaskReference.occurrenceDate,
+    )
+  })()
 
   const pendingTasks = tasks
-    .filter((task) => !task.completed)
+    .flatMap((task) => {
+      if (!task.recurrence) {
+        return task.completed
+          ? []
+          : [task]
+      }
+
+      const nextOccurrence =
+        getNextPendingOccurrence(
+          task,
+          today,
+          true,
+        )
+
+      return nextOccurrence
+        ? [nextOccurrence]
+        : []
+    })
     .sort(sortPendingTasks)
 
   const completedTasks = tasks
-    .filter(
-      (task) =>
-        task.completed &&
-        !isTaskArchived(task),
-    )
+    .flatMap((task) => {
+      if (!task.recurrence) {
+        if (
+          task.completed &&
+          !isTaskArchived(task)
+        ) {
+          return [task]
+        }
+
+        return []
+      }
+
+      return getCompletedOccurrences(task)
+        .filter(
+          (occurrence) =>
+            !isTaskArchived(occurrence),
+        )
+    })
     .sort(sortCompletedTasks)
 
   const visibleTasksCount =
@@ -133,16 +195,37 @@ export function TasksPage() {
         ? pendingTasks.length > 0
         : completedTasks.length > 0
 
+  function getBaseTask(task: Task) {
+    return (
+      tasks.find(
+        (currentTask) =>
+          currentTask.id === task.id,
+      ) ?? task
+    )
+  }
+
   function renderTaskCard(task: Task) {
     return (
       <TaskCard
-        key={task.id}
+        key={`${task.id}-${task.dueDate}`}
         task={task}
         onToggle={toggleTask}
-        onDelete={setTaskToDelete}
-        onEdit={setTaskToEdit}
+        onEdit={(selectedTask) =>
+          setTaskToEdit(
+            getBaseTask(selectedTask),
+          )
+        }
+        onDelete={(selectedTask) =>
+          setTaskToDelete(
+            getBaseTask(selectedTask),
+          )
+        }
         onOpen={(selectedTask) =>
-          setSelectedTaskId(selectedTask.id)
+          setSelectedTaskReference({
+            taskId: selectedTask.id,
+            occurrenceDate:
+              selectedTask.dueDate,
+          })
         }
       />
     )
@@ -165,7 +248,9 @@ export function TasksPage() {
 
           <button
             type="button"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() =>
+              setIsModalOpen(true)
+            }
             className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
           >
             <Plus size={19} />
@@ -211,7 +296,9 @@ export function TasksPage() {
               key={filter.value}
               type="button"
               onClick={() =>
-                setActiveFilter(filter.value)
+                setActiveFilter(
+                  filter.value,
+                )
               }
               className={[
                 'cursor-pointer rounded-xl px-4 py-2 text-sm font-medium transition-colors',
@@ -260,13 +347,16 @@ export function TasksPage() {
                   </div>
 
                   <div className="space-y-3">
-                    {pendingTasks.map(renderTaskCard)}
+                    {pendingTasks.map(
+                      renderTaskCard,
+                    )}
                   </div>
                 </section>
               )}
 
             {(activeFilter === 'all' ||
-              activeFilter === 'completed') &&
+              activeFilter ===
+              'completed') &&
               completedTasks.length > 0 && (
                 <section>
                   <div className="mb-4 flex items-center justify-between gap-4">
@@ -287,7 +377,9 @@ export function TasksPage() {
                   </div>
 
                   <div className="space-y-3">
-                    {completedTasks.map(renderTaskCard)}
+                    {completedTasks.map(
+                      renderTaskCard,
+                    )}
                   </div>
                 </section>
               )}
@@ -297,7 +389,9 @@ export function TasksPage() {
 
       {isModalOpen && (
         <TaskFormModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() =>
+            setIsModalOpen(false)
+          }
           onSubmit={createTask}
         />
       )}
@@ -305,10 +399,20 @@ export function TasksPage() {
       {selectedTask && (
         <TaskDetailsModal
           task={selectedTask}
-          onClose={() => setSelectedTaskId(null)}
+          onClose={() =>
+            setSelectedTaskReference(null)
+          }
           onToggle={toggleTask}
-          onEdit={setTaskToEdit}
-          onDelete={setTaskToDelete}
+          onEdit={(task) =>
+            setTaskToEdit(
+              getBaseTask(task),
+            )
+          }
+          onDelete={(task) =>
+            setTaskToDelete(
+              getBaseTask(task),
+            )
+          }
         />
       )}
 
@@ -316,9 +420,14 @@ export function TasksPage() {
         <TaskFormModal
           key={taskToEdit.id}
           task={taskToEdit}
-          onClose={() => setTaskToEdit(null)}
+          onClose={() =>
+            setTaskToEdit(null)
+          }
           onSubmit={(taskData) =>
-            updateTask(taskToEdit.id, taskData)
+            updateTask(
+              taskToEdit.id,
+              taskData,
+            )
           }
         />
       )}
@@ -326,7 +435,9 @@ export function TasksPage() {
       {taskToDelete && (
         <ConfirmDeleteModal
           taskTitle={taskToDelete.title}
-          onCancel={() => setTaskToDelete(null)}
+          onCancel={() =>
+            setTaskToDelete(null)
+          }
           onConfirm={() => {
             deleteTask(taskToDelete.id)
             setTaskToDelete(null)
