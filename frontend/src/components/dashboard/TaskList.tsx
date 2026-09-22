@@ -13,7 +13,10 @@ import {
   Timer,
   Trash2,
 } from 'lucide-react'
-import { categoryStyles } from '../../constants/categoryStyles'
+import { categoryColorStyles } from '../../constants/categoryStyles'
+import { useCategories } from '../../hooks/useCategories'
+import { getCategoryById } from '../../utils/categoryUtils'
+
 import {
   priorityLabels,
   priorityStyles,
@@ -42,6 +45,7 @@ export function TaskList({
   onDeleteTask,
   onOpenTask,
 }: TaskListProps) {
+  const { categories } = useCategories()
   const [openMenuTaskId, setOpenMenuTaskId] =
     useState<string | null>(null)
 
@@ -150,7 +154,13 @@ export function TaskList({
         </div>
       ) : (
         <div>
-          {tasks.map((task) => (
+            {tasks.map((task) => {
+              const category = getCategoryById(
+                categories,
+                task.categoryId,
+              )
+
+              return (
             <div
               key={task.id}
               role="button"
@@ -235,14 +245,18 @@ export function TaskList({
                     </span>
                   )}
 
-                  <span
-                    className={[
-                      'rounded-full px-2.5 py-1 font-medium',
-                      categoryStyles[task.category],
-                    ].join(' ')}
-                  >
-                    {task.category}
-                  </span>
+                      <span
+                        className={[
+                          'rounded-full px-2.5 py-1 font-medium',
+                          category
+                            ? categoryColorStyles[
+                            category.color
+                            ]
+                            : 'bg-[#f1f3f1] text-[#667069]',
+                        ].join(' ')}
+                      >
+                        {category?.name ?? 'Sem categoria'}
+                      </span>
 
                   <span
                     className={[
@@ -314,8 +328,9 @@ export function TaskList({
                   </div>
                 )}
               </div>
-            </div>
-          ))}
+                </div>
+              )
+            })}
         </div>
       )}
     </article>

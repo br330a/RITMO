@@ -11,7 +11,9 @@ import {
   Trash2,
   X,
 } from 'lucide-react'
-import { categoryStyles } from '../../constants/categoryStyles'
+import { categoryColorStyles } from '../../constants/categoryStyles'
+import { useCategories } from '../../hooks/useCategories'
+import { getCategoryById } from '../../utils/categoryUtils'
 import {
   priorityLabels,
   priorityStyles,
@@ -60,6 +62,12 @@ export function TaskDetailsModal({
   onEdit,
   onDelete,
 }: TaskDetailsModalProps) {
+  const { categories } = useCategories()
+
+  const category = getCategoryById(
+    categories,
+    task.categoryId,
+  )
   useEffect(() => {
     function handleKeyDown(
       event: KeyboardEvent,
@@ -112,14 +120,14 @@ export function TaskDetailsModal({
               <span
                 className={[
                   'rounded-full px-3 py-1 text-xs font-semibold',
-                  task.completed
-                    ? 'bg-[#e4f3e8] text-[#19683a]'
+                  category
+                    ? categoryColorStyles[
+                    category.color
+                    ]
                     : 'bg-[#f1f3f1] text-[#667069]',
                 ].join(' ')}
               >
-                {task.completed
-                  ? 'Concluída'
-                  : 'Pendente'}
+                {category?.name ?? 'Sem categoria'}
               </span>
 
               <span
@@ -141,12 +149,14 @@ export function TaskDetailsModal({
               <span
                 className={[
                   'rounded-full px-3 py-1 text-xs font-semibold',
-                  categoryStyles[
-                  task.category
-                  ],
+                  category
+                    ? categoryColorStyles[
+                    category.color
+                    ]
+                    : 'bg-[#f1f3f1] text-[#667069]',
                 ].join(' ')}
               >
-                {task.category}
+                {category?.name ?? 'Sem categoria'}
               </span>
             </div>
 
@@ -248,7 +258,7 @@ export function TaskDetailsModal({
               </div>
 
               <p className="mt-2 text-sm font-medium text-[#27312b]">
-                {task.category}
+                {category?.name ?? 'Sem categoria'}
               </p>
             </div>
 

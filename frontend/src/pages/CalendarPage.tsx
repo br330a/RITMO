@@ -9,7 +9,9 @@ import {
 import { MonthCalendar } from '../components/calendar/MonthCalendar'
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import { TaskFormModal } from '../components/tasks/TaskFormModal'
-import { categoryStyles } from '../constants/categoryStyles'
+import { categoryColorStyles } from '../constants/categoryStyles'
+import { useCategories } from '../hooks/useCategories'
+import { getCategoryById } from '../utils/categoryUtils'
 import { useTasks } from '../hooks/useTasks'
 import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from '../utils/date'
@@ -61,6 +63,8 @@ export function CalendarPage() {
     toggleTask,
     deleteTask,
   } = useTasks()
+
+  const { categories } = useCategories()
 
     const [selectedDate, setSelectedDate] = useState(
       () => getLocalDateValue(initialCalendarDate),
@@ -208,7 +212,13 @@ export function CalendarPage() {
               </div>
             ) : (
               <div className="mt-5 space-y-3">
-                {selectedTasks.map((task) => (
+                  {selectedTasks.map((task) => {
+                    const category = getCategoryById(
+                      categories,
+                      task.categoryId,
+                    )
+
+                    return (
                   <div
                     key={`${task.id}-${task.dueDate}`}
                     role="button"
@@ -279,14 +289,18 @@ export function CalendarPage() {
                         <div className="mt-2 flex items-center justify-between gap-3">
                           <span>{task.time ?? 'Sem horário'}</span>
 
-                          <span
-                            className={[
-                              'rounded-full px-2.5 py-1 text-xs font-medium',
-                              categoryStyles[task.category],
-                            ].join(' ')}
-                          >
-                            {task.category}
-                          </span>
+                              <span
+                                className={[
+                                  'rounded-full px-2.5 py-1 text-xs font-medium',
+                                  category
+                                    ? categoryColorStyles[
+                                    category.color
+                                    ]
+                                    : 'bg-[#f1f3f1] text-[#667069]',
+                                ].join(' ')}
+                              >
+                                {category?.name ?? 'Sem categoria'}
+                              </span>
                         </div>
                       </div>
                     </div>
@@ -321,8 +335,9 @@ export function CalendarPage() {
                         <Trash2 size={16} />
                       </button>
                     </div>
-                  </div>
-                ))}
+                      </div>
+                    )
+                  })}
               </div>
             )}
           </aside>

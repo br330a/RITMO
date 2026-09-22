@@ -14,7 +14,6 @@ import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type {
   RecurrenceFrequency,
   Task,
-  TaskCategory,
   TaskPriority,
 } from '../types/taskTypes'
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
@@ -25,15 +24,14 @@ import {
 } from '../utils/taskRecurrence'
 import { isTaskArchived } from '../utils/taskStatus'
 import { getLocalDateValue } from '../utils/date'
+import { useCategories } from '../hooks/useCategories'
 
 type TaskFilter =
   | 'all'
   | 'pending'
   | 'completed'
 
-type CategoryFilter =
-  | 'all'
-  | TaskCategory
+type CategoryFilter = string
 
 type PriorityFilter =
   | 'all'
@@ -67,27 +65,6 @@ const filters: {
     },
   ]
 
-const categories: {
-  label: string
-  value: CategoryFilter
-}[] = [
-    {
-      label: 'Todas as categorias',
-      value: 'all',
-    },
-    {
-      label: 'Faculdade',
-      value: 'Faculdade',
-    },
-    {
-      label: 'Pessoal',
-      value: 'Pessoal',
-    },
-    {
-      label: 'Saúde',
-      value: 'Saúde',
-    },
-  ]
 
 const priorities: {
   label: string
@@ -194,6 +171,7 @@ export function TasksPage() {
     deleteTask,
   } = useTasks()
 
+  const { categories } = useCategories()
   const today = getLocalDateValue()
 
   const [activeFilter, setActiveFilter] =
@@ -314,7 +292,7 @@ export function TasksPage() {
 
     const matchesCategory =
       categoryFilter === 'all' ||
-      task.category === categoryFilter
+      task.categoryId === categoryFilter
 
     const matchesPriority =
       priorityFilter === 'all' ||
@@ -586,24 +564,18 @@ export function TasksPage() {
                   Categoria
                 </span>
 
-                <select
-                  value={categoryFilter}
-                  onChange={(event) =>
-                    setCategoryFilter(
-                      event.target.value as CategoryFilter,
-                    )
-                  }
-                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
-                >
-                  {categories.map((category) => (
-                    <option
-                      key={category.value}
-                      value={category.value}
-                    >
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
+                <option value="all">
+                  Todas as categorias
+                </option>
+
+                {categories.map((category) => (
+                  <option
+                    key={category.id}
+                    value={category.id}
+                  >
+                    {category.name}
+                  </option>
+                ))}
               </label>
 
               <label>
@@ -614,8 +586,8 @@ export function TasksPage() {
                 <select
                   value={priorityFilter}
                   onChange={(event) =>
-                    setPriorityFilter(
-                      event.target.value as PriorityFilter,
+                    setCategoryFilter(
+                      event.target.value,
                     )
                   }
                   className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"

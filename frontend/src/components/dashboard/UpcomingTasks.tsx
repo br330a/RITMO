@@ -5,7 +5,9 @@ import {
   Timer,
 } from 'lucide-react'
 import { Link } from 'react-router'
-import { categoryStyles } from '../../constants/categoryStyles'
+import { categoryColorStyles } from '../../constants/categoryStyles'
+import { useCategories } from '../../hooks/useCategories'
+import { getCategoryById } from '../../utils/categoryUtils'
 import {
   priorityLabels,
   priorityStyles,
@@ -27,6 +29,7 @@ export function UpcomingTasks({
   onOpenTask,
 }: UpcomingTasksProps) {
   const { tasks } = useTasks()
+  const { categories } = useCategories()
   const today = getLocalDateValue()
 
   const upcomingTasks = tasks
@@ -86,8 +89,14 @@ export function UpcomingTasks({
         </p>
       ) : (
         <div>
-          {upcomingTasks.map((task) => (
-            <div
+            {upcomingTasks.map((task) => {
+              const category = getCategoryById(
+                categories,
+                task.categoryId,
+              )
+
+              return (
+                <div
               key={`${task.id}-${task.dueDate}`}
               role="button"
               tabIndex={0}
@@ -122,16 +131,18 @@ export function UpcomingTasks({
               )}
 
               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                <span
-                  className={[
-                    'rounded-full px-2.5 py-1 font-medium',
-                    categoryStyles[
-                    task.category
-                    ],
-                  ].join(' ')}
-                >
-                  {task.category}
-                </span>
+                    <span
+                      className={[
+                        'rounded-full px-2.5 py-1 font-medium',
+                        category
+                          ? categoryColorStyles[
+                          category.color
+                          ]
+                          : 'bg-[#f1f3f1] text-[#667069]',
+                      ].join(' ')}
+                    >
+                      {category?.name ?? 'Sem categoria'}
+                    </span>
 
                 <span
                   className={[
@@ -161,8 +172,9 @@ export function UpcomingTasks({
                     </span>
                   )}
               </div>
-            </div>
-          ))}
+                </div>
+              )
+            })}
         </div>
       )}
     </article>

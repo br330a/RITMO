@@ -3,6 +3,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
+import { toast } from 'sonner'
 import {
   TasksContext,
   type TasksContextValue,
@@ -16,7 +17,6 @@ import type {
   CreateTaskData,
   Task,
 } from '../types/taskTypes'
-import { toast } from 'sonner'
 
 export function TasksProvider({
   children,
@@ -29,19 +29,27 @@ export function TasksProvider({
     saveTasks(tasks)
   }, [tasks])
 
-  function createTask(taskData: CreateTaskData) {
+  function createTask(
+    taskData: CreateTaskData,
+  ) {
     setTasks((currentTasks) =>
       [
         ...currentTasks,
         {
           ...taskData,
+
           id: crypto.randomUUID(),
+
+          
+
           completed: false,
           completedAt: null,
           completedOccurrences: {},
         },
       ].sort((firstTask, secondTask) =>
-        (firstTask.time ?? '23:59').localeCompare(
+        (
+          firstTask.time ?? '23:59'
+        ).localeCompare(
           secondTask.time ?? '23:59',
         ),
       ),
@@ -57,25 +65,33 @@ export function TasksProvider({
         .map((task) =>
           task.id === taskId
             ? {
-                ...task,
-                ...taskData,
-              }
+              ...task,
+              ...taskData,
+
+            }
             : task,
         )
-        .sort((firstTask, secondTask) => {
-          const dateComparison =
-            firstTask.dueDate.localeCompare(
-              secondTask.dueDate,
-            )
-
-          return dateComparison !== 0
-            ? dateComparison
-            : (
-                firstTask.time ?? '23:59'
-              ).localeCompare(
-                secondTask.time ?? '23:59',
+        .sort(
+          (
+            firstTask,
+            secondTask,
+          ) => {
+            const dateComparison =
+              firstTask.dueDate.localeCompare(
+                secondTask.dueDate,
               )
-        }),
+
+            return dateComparison !== 0
+              ? dateComparison
+              : (
+                firstTask.time ??
+                '23:59'
+              ).localeCompare(
+                secondTask.time ??
+                '23:59',
+              )
+          },
+        ),
     )
   }
 
@@ -91,7 +107,8 @@ export function TasksProvider({
 
         if (task.recurrence) {
           const targetDate =
-            occurrenceDate ?? task.dueDate
+            occurrenceDate ??
+            task.dueDate
 
           const currentCompletedAt =
             task.completedOccurrences[
@@ -109,7 +126,8 @@ export function TasksProvider({
           } else {
             nextCompletedOccurrences[
               targetDate
-            ] = new Date().toISOString()
+            ] =
+              new Date().toISOString()
           }
 
           return {
@@ -142,7 +160,8 @@ export function TasksProvider({
   function deleteTask(taskId: string) {
     setTasks((currentTasks) =>
       currentTasks.filter(
-        (task) => task.id !== taskId,
+        (task) =>
+          task.id !== taskId,
       ),
     )
 
@@ -160,7 +179,9 @@ export function TasksProvider({
   }
 
   return (
-    <TasksContext.Provider value={contextValue}>
+    <TasksContext.Provider
+      value={contextValue}
+    >
       {children}
     </TasksContext.Provider>
   )

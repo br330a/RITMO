@@ -1,4 +1,5 @@
 import type { Task } from '../types/taskTypes'
+import { getLegacyCategoryId } from '../utils/categoryMigration'
 
 const STORAGE_KEY = 'ritmo:tasks'
 
@@ -10,6 +11,7 @@ type StoredTask = Omit<
   | 'completedAt'
   | 'recurrence'
   | 'completedOccurrences'
+  | 'categoryId'
 > &
   Partial<
     Pick<
@@ -20,6 +22,7 @@ type StoredTask = Omit<
       | 'completedAt'
       | 'recurrence'
       | 'completedOccurrences'
+      | 'categoryId'
     >
   >
 
@@ -37,12 +40,24 @@ export function loadTasks(): Task[] | null {
 
     return parsedTasks.map((task) => ({
       ...task,
-      description: task.description ?? null,
-      priority: task.priority ?? 'medium',
+
+      description:
+        task.description ?? null,
+
+      priority:
+        task.priority ?? 'medium',
+
       estimatedMinutes:
         task.estimatedMinutes ?? null,
 
-      recurrence: task.recurrence ?? null,
+      categoryId:
+        task.categoryId ??
+        getLegacyCategoryId(
+          task.category,
+        ),
+
+      recurrence:
+        task.recurrence ?? null,
 
       completedOccurrences:
         task.completedOccurrences ?? {},
@@ -54,6 +69,7 @@ export function loadTasks(): Task[] | null {
     }))
   } catch {
     localStorage.removeItem(STORAGE_KEY)
+
     return null
   }
 }

@@ -7,7 +7,9 @@ import {
   Timer,
   Trash2,
 } from 'lucide-react'
-import { categoryStyles } from '../../constants/categoryStyles'
+import { categoryColorStyles } from '../../constants/categoryStyles'
+import { useCategories } from '../../hooks/useCategories'
+import { getCategoryById } from '../../utils/categoryUtils'
 import {
   priorityLabels,
   priorityStyles,
@@ -34,6 +36,12 @@ export function TaskCard({
   onDelete,
   onOpen,
 }: TaskCardProps) {
+  const { categories } = useCategories()
+
+  const category = getCategoryById(
+    categories,
+    task.categoryId,
+  )
   return (
     <article
       role="button"
@@ -131,10 +139,14 @@ export function TaskCard({
           <span
             className={[
               'rounded-full px-2.5 py-1 font-medium',
-              categoryStyles[task.category],
+              category
+                ? categoryColorStyles[
+                category.color
+                ]
+                : 'bg-[#f1f3f1] text-[#667069]',
             ].join(' ')}
           >
-            {task.category}
+            {category?.name ?? 'Sem categoria'}
           </span>
 
           <span

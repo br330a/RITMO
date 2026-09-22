@@ -4,9 +4,9 @@ import type {
   CreateTaskData,
   RecurrenceFrequency,
   Task,
-  TaskCategory,
   TaskPriority,
 } from '../../types/taskTypes'
+import { useCategories } from '../../hooks/useCategories'
 import { getLocalDateValue } from '../../utils/date'
 import { toast } from 'sonner'
 
@@ -21,11 +21,7 @@ type RecurrenceOption =
   | 'none'
   | RecurrenceFrequency
 
-const categories: TaskCategory[] = [
-  'Faculdade',
-  'Pessoal',
-  'Saúde',
-]
+
 
 const priorities: {
   value: TaskPriority
@@ -156,6 +152,7 @@ export function TaskFormModal({
   onSubmit,
   initialDate,
 }: TaskFormModalProps) {
+  const { categories } = useCategories()
   const [title, setTitle] = useState(
     task?.title ?? '',
   )
@@ -185,9 +182,10 @@ export function TaskFormModal({
     task?.estimatedMinutes?.toString() ?? '',
   )
 
-  const [category, setCategory] = useState<
-    TaskCategory | ''
-  >(task?.category ?? '')
+  const [categoryId, setCategoryId] =
+    useState(
+      task?.categoryId ?? '',
+    )
 
   const [
     recurrenceFrequency,
@@ -263,9 +261,22 @@ export function TaskFormModal({
       return
     }
 
-    if (!category) {
+    if (!categoryId) {
       toast.error(
         'Selecione uma categoria.',
+      )
+      return
+    }
+
+    const selectedCategory =
+      categories.find(
+        (category) =>
+          category.id === categoryId,
+      )
+
+    if (!selectedCategory) {
+      toast.error(
+        'A categoria selecionada não existe mais.',
       )
       return
     }
@@ -311,7 +322,12 @@ export function TaskFormModal({
         description.trim() || null,
       dueDate,
       time: time || null,
-      category,
+
+      category:
+        selectedCategory.name,
+      categoryId:
+        selectedCategory.id,
+
       priority,
       estimatedMinutes:
         estimatedMinutes
@@ -450,12 +466,10 @@ export function TaskFormModal({
             </span>
 
             <select
-              value={category}
+              value={categoryId}
               onChange={(event) =>
-                setCategory(
-                  event.target.value as
-                  | TaskCategory
-                  | '',
+                setCategoryId(
+                  event.target.value,
                 )
               }
               className={inputStyles}
@@ -464,16 +478,14 @@ export function TaskFormModal({
                 Selecione uma categoria
               </option>
 
-              {categories.map(
-                (categoryName) => (
-                  <option
-                    key={categoryName}
-                    value={categoryName}
-                  >
-                    {categoryName}
-                  </option>
-                ),
-              )}
+              {categories.map((category) => (
+                <option
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </option>
+              ))}
             </select>
           </label>
 

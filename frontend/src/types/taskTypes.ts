@@ -30,7 +30,10 @@ export type Task = {
   description: string | null
   dueDate: string
   time: string | null
-  category: TaskCategory
+
+  category: string
+  categoryId: string
+
   priority: TaskPriority
   estimatedMinutes: number | null
 
