@@ -1,11 +1,20 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react'
 import { TaskFormModal } from '../components/tasks/TaskFormModal'
 import { TaskCard } from '../components/tasks/TaskCard'
 import { useTasks } from '../hooks/useTasks'
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type {
+  RecurrenceFrequency,
   Task,
+  TaskCategory,
   TaskPriority,
 } from '../types/taskTypes'
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
@@ -21,6 +30,19 @@ type TaskFilter =
   | 'all'
   | 'pending'
   | 'completed'
+
+type CategoryFilter =
+  | 'all'
+  | TaskCategory
+
+type PriorityFilter =
+  | 'all'
+  | TaskPriority
+
+type RecurrenceFilter =
+  | 'all'
+  | 'none'
+  | RecurrenceFrequency
 
 type TaskReference = {
   taskId: string
@@ -42,6 +64,76 @@ const filters: {
     {
       label: 'Concluídas',
       value: 'completed',
+    },
+  ]
+
+const categories: {
+  label: string
+  value: CategoryFilter
+}[] = [
+    {
+      label: 'Todas as categorias',
+      value: 'all',
+    },
+    {
+      label: 'Faculdade',
+      value: 'Faculdade',
+    },
+    {
+      label: 'Pessoal',
+      value: 'Pessoal',
+    },
+    {
+      label: 'Saúde',
+      value: 'Saúde',
+    },
+  ]
+
+const priorities: {
+  label: string
+  value: PriorityFilter
+}[] = [
+    {
+      label: 'Todas as prioridades',
+      value: 'all',
+    },
+    {
+      label: 'Alta',
+      value: 'high',
+    },
+    {
+      label: 'Média',
+      value: 'medium',
+    },
+    {
+      label: 'Baixa',
+      value: 'low',
+    },
+  ]
+
+const recurrences: {
+  label: string
+  value: RecurrenceFilter
+}[] = [
+    {
+      label: 'Qualquer repetição',
+      value: 'all',
+    },
+    {
+      label: 'Não recorrentes',
+      value: 'none',
+    },
+    {
+      label: 'Diárias',
+      value: 'daily',
+    },
+    {
+      label: 'Semanais',
+      value: 'weekly',
+    },
+    {
+      label: 'Mensais',
+      value: 'monthly',
     },
   ]
 
@@ -106,6 +198,27 @@ export function TasksPage() {
 
   const [activeFilter, setActiveFilter] =
     useState<TaskFilter>('all')
+
+  const [isFiltersOpen, setIsFiltersOpen] =
+    useState(false)
+
+  const [searchTerm, setSearchTerm] =
+    useState('')
+
+  const [
+    categoryFilter,
+    setCategoryFilter,
+  ] = useState<CategoryFilter>('all')
+
+  const [
+    priorityFilter,
+    setPriorityFilter,
+  ] = useState<PriorityFilter>('all')
+
+  const [
+    recurrenceFilter,
+    setRecurrenceFilter,
+  ] = useState<RecurrenceFilter>('all')
 
   const [isModalOpen, setIsModalOpen] =
     useState(false)
@@ -184,16 +297,80 @@ export function TasksPage() {
     })
     .sort(sortCompletedTasks)
 
-  const visibleTasksCount =
-    pendingTasks.length +
-    completedTasks.length
+  const normalizedSearchTerm =
+    searchTerm.trim().toLocaleLowerCase(
+      'pt-BR',
+    )
+
+  function matchesFilters(task: Task) {
+    const matchesSearch =
+      normalizedSearchTerm.length === 0 ||
+      task.title
+        .toLocaleLowerCase('pt-BR')
+        .includes(normalizedSearchTerm) ||
+      (task.description ?? '')
+        .toLocaleLowerCase('pt-BR')
+        .includes(normalizedSearchTerm)
+
+    const matchesCategory =
+      categoryFilter === 'all' ||
+      task.category === categoryFilter
+
+    const matchesPriority =
+      priorityFilter === 'all' ||
+      task.priority === priorityFilter
+
+    const matchesRecurrence =
+      recurrenceFilter === 'all' ||
+      (recurrenceFilter === 'none'
+        ? task.recurrence === null
+        : task.recurrence?.frequency ===
+        recurrenceFilter)
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesPriority &&
+      matchesRecurrence
+    )
+  }
+
+  const filteredPendingTasks =
+    pendingTasks.filter(matchesFilters)
+
+  const filteredCompletedTasks =
+    completedTasks.filter(matchesFilters)
+
+  const filteredTasksCount =
+    filteredPendingTasks.length +
+    filteredCompletedTasks.length
+
+  const hasActiveFilters =
+    searchTerm.trim().length > 0 ||
+    categoryFilter !== 'all' ||
+    priorityFilter !== 'all' ||
+    recurrenceFilter !== 'all'
+
+  const activeFiltersCount = [
+    searchTerm.trim().length > 0,
+    categoryFilter !== 'all',
+    priorityFilter !== 'all',
+    recurrenceFilter !== 'all',
+  ].filter(Boolean).length
 
   const hasTasksForActiveFilter =
     activeFilter === 'all'
-      ? visibleTasksCount > 0
+      ? filteredTasksCount > 0
       : activeFilter === 'pending'
-        ? pendingTasks.length > 0
-        : completedTasks.length > 0
+        ? filteredPendingTasks.length > 0
+        : filteredCompletedTasks.length > 0
+
+  function clearFilters() {
+    setSearchTerm('')
+    setCategoryFilter('all')
+    setPriorityFilter('all')
+    setRecurrenceFilter('all')
+  }
 
   function getBaseTask(task: Task) {
     return (
@@ -261,7 +438,7 @@ export function TasksPage() {
         <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[#e4ebe5] bg-white shadow-sm">
           <div className="px-3 py-4 text-center">
             <strong className="block text-xl text-[#17211b]">
-              {visibleTasksCount}
+              {filteredTasksCount}
             </strong>
 
             <span className="text-xs text-[#8a938d]">
@@ -271,7 +448,7 @@ export function TasksPage() {
 
           <div className="px-3 py-4 text-center">
             <strong className="block text-xl text-[#b06b24]">
-              {pendingTasks.length}
+              {filteredPendingTasks.length}
             </strong>
 
             <span className="text-xs text-[#8a938d]">
@@ -281,7 +458,7 @@ export function TasksPage() {
 
           <div className="px-3 py-4 text-center">
             <strong className="block text-xl text-[#23834b]">
-              {completedTasks.length}
+              {filteredCompletedTasks.length}
             </strong>
 
             <span className="text-xs text-[#8a938d]">
@@ -290,44 +467,242 @@ export function TasksPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-2">
-          {filters.map((filter) => (
-            <button
-              key={filter.value}
-              type="button"
-              onClick={() =>
-                setActiveFilter(
-                  filter.value,
-                )
-              }
-              className={[
-                'cursor-pointer rounded-xl px-4 py-2 text-sm font-medium transition-colors',
-                activeFilter === filter.value
-                  ? 'bg-[#23834b] text-white'
-                  : 'border border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
-              ].join(' ')}
-            >
-              {filter.label}
-            </button>
-          ))}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <button
+                key={filter.value}
+                type="button"
+                onClick={() =>
+                  setActiveFilter(filter.value)
+                }
+                className={[
+                  'cursor-pointer rounded-xl px-4 py-2 text-sm font-medium transition-colors',
+                  activeFilter === filter.value
+                    ? 'bg-[#23834b] text-white'
+                    : 'border border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
+                ].join(' ')}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setIsFiltersOpen(
+                (currentValue) => !currentValue,
+              )
+            }
+            aria-expanded={isFiltersOpen}
+            className={[
+              'flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors',
+              isFiltersOpen || hasActiveFilters
+                ? 'border-[#b9d8c2] bg-[#e4f3e8] text-[#19683a]'
+                : 'border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
+            ].join(' ')}
+          >
+            <SlidersHorizontal size={16} />
+
+            Filtros
+
+            {activeFiltersCount > 0 && (
+              <span className="grid min-w-5 place-items-center rounded-full bg-[#23834b] px-1.5 py-0.5 text-[11px] font-bold text-white">
+                {activeFiltersCount}
+              </span>
+            )}
+
+            {isFiltersOpen ? (
+              <ChevronUp size={16} />
+            ) : (
+              <ChevronDown size={16} />
+            )}
+          </button>
         </div>
+
+        {isFiltersOpen && (
+          <div className="mt-4 rounded-2xl border border-[#e4ebe5] bg-white p-4 shadow-sm sm:p-5">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal
+                  size={18}
+                  className="text-[#19683a]"
+                />
+
+                <h2 className="text-sm font-semibold text-[#27312b]">
+                  Buscar e filtrar
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={clearFilters}
+                disabled={!hasActiveFilters}
+                className={[
+                  'flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
+                  hasActiveFilters
+                    ? 'cursor-pointer text-[#19683a] hover:bg-[#e4f3e8]'
+                    : 'cursor-not-allowed text-[#b3bab5]',
+                ].join(' ')}
+              >
+                <X size={14} />
+                Limpar filtros
+              </button>
+            </div>
+
+            <div className="relative">
+              <Search
+                size={18}
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[#8a938d]"
+              />
+
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) =>
+                  setSearchTerm(event.target.value)
+                }
+                placeholder="Buscar por título ou descrição..."
+                aria-label="Buscar tarefas"
+                className="w-full rounded-xl border border-[#dce4dd] bg-white py-3 pr-11 pl-11 text-sm text-[#27312b] outline-none transition placeholder:text-[#9aa29d] focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+              />
+
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  aria-label="Limpar busca"
+                  className="absolute top-1/2 right-3 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#f3f7f3] hover:text-[#27312b]"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <label>
+                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                  Categoria
+                </span>
+
+                <select
+                  value={categoryFilter}
+                  onChange={(event) =>
+                    setCategoryFilter(
+                      event.target.value as CategoryFilter,
+                    )
+                  }
+                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                >
+                  {categories.map((category) => (
+                    <option
+                      key={category.value}
+                      value={category.value}
+                    >
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                  Prioridade
+                </span>
+
+                <select
+                  value={priorityFilter}
+                  onChange={(event) =>
+                    setPriorityFilter(
+                      event.target.value as PriorityFilter,
+                    )
+                  }
+                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                >
+                  {priorities.map((priority) => (
+                    <option
+                      key={priority.value}
+                      value={priority.value}
+                    >
+                      {priority.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="sm:col-span-2 lg:col-span-1">
+                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                  Recorrência
+                </span>
+
+                <select
+                  value={recurrenceFilter}
+                  onChange={(event) =>
+                    setRecurrenceFilter(
+                      event.target.value as RecurrenceFilter,
+                    )
+                  }
+                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                >
+                  {recurrences.map((recurrence) => (
+                    <option
+                      key={recurrence.value}
+                      value={recurrence.value}
+                    >
+                      {recurrence.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            {hasActiveFilters && (
+              <p className="mt-4 border-t border-[#edf1ed] pt-4 text-xs text-[#8a938d]">
+                {filteredTasksCount}{' '}
+                {filteredTasksCount === 1
+                  ? 'tarefa encontrada'
+                  : 'tarefas encontradas'}
+              </p>
+            )}
+          </div>
+        )}
 
         {!hasTasksForActiveFilter ? (
           <div className="mt-6 rounded-2xl border border-dashed border-[#cfd8d1] bg-white px-6 py-12 text-center">
-            <p className="font-medium text-[#27312b]">
-              Nenhuma tarefa encontrada
+            <Search
+              size={30}
+              className="mx-auto text-[#a1aaa4]"
+            />
+
+            <p className="mt-4 font-medium text-[#27312b]">
+              {hasActiveFilters
+                ? 'Nenhuma tarefa corresponde aos filtros'
+                : 'Nenhuma tarefa encontrada'}
             </p>
 
-            <p className="mt-1 text-sm text-[#8a938d]">
-              Experimente outro filtro ou crie uma nova
-              tarefa.
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[#8a938d]">
+              {hasActiveFilters
+                ? 'Altere a busca ou os filtros para encontrar outras tarefas.'
+                : 'Experimente outro status ou crie uma nova tarefa.'}
             </p>
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-5 cursor-pointer rounded-xl bg-[#e4f3e8] px-4 py-2.5 text-sm font-semibold text-[#19683a] hover:bg-[#d8eddd]"
+              >
+                Limpar filtros
+              </button>
+            )}
           </div>
         ) : (
           <div className="mt-8 space-y-10">
             {(activeFilter === 'all' ||
               activeFilter === 'pending') &&
-              pendingTasks.length > 0 && (
+              filteredPendingTasks.length >
+              0 && (
                 <section>
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div>
@@ -342,12 +717,14 @@ export function TasksPage() {
                     </div>
 
                     <span className="rounded-full bg-[#fff3dc] px-3 py-1 text-xs font-semibold text-[#96651f]">
-                      {pendingTasks.length}
+                      {
+                        filteredPendingTasks.length
+                      }
                     </span>
                   </div>
 
                   <div className="space-y-3">
-                    {pendingTasks.map(
+                    {filteredPendingTasks.map(
                       renderTaskCard,
                     )}
                   </div>
@@ -357,7 +734,8 @@ export function TasksPage() {
             {(activeFilter === 'all' ||
               activeFilter ===
               'completed') &&
-              completedTasks.length > 0 && (
+              filteredCompletedTasks.length >
+              0 && (
                 <section>
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div>
@@ -372,12 +750,14 @@ export function TasksPage() {
                     </div>
 
                     <span className="rounded-full bg-[#e4f3e8] px-3 py-1 text-xs font-semibold text-[#19683a]">
-                      {completedTasks.length}
+                      {
+                        filteredCompletedTasks.length
+                      }
                     </span>
                   </div>
 
                   <div className="space-y-3">
-                    {completedTasks.map(
+                    {filteredCompletedTasks.map(
                       renderTaskCard,
                     )}
                   </div>
