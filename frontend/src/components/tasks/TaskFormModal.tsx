@@ -322,12 +322,7 @@ export function TaskFormModal({
         description.trim() || null,
       dueDate,
       time: time || null,
-
-      category:
-        selectedCategory.name,
-      categoryId:
-        selectedCategory.id,
-
+      categoryId: selectedCategory.id,
       priority,
       estimatedMinutes:
         estimatedMinutes

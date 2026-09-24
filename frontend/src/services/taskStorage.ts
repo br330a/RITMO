@@ -24,7 +24,9 @@ type StoredTask = Omit<
       | 'completedOccurrences'
       | 'categoryId'
     >
-  >
+  > & {
+    category?: string
+  }
 
 export function loadTasks(): Task[] | null {
   const storedTasks =
@@ -38,35 +40,47 @@ export function loadTasks(): Task[] | null {
     const parsedTasks =
       JSON.parse(storedTasks) as StoredTask[]
 
-    return parsedTasks.map((task) => ({
-      ...task,
+    return parsedTasks.map((task) => {
+      const {
+        category: legacyCategory,
+        ...storedTask
+      } = task
 
-      description:
-        task.description ?? null,
+      return {
+        ...storedTask,
 
-      priority:
-        task.priority ?? 'medium',
+        description:
+          storedTask.description ?? null,
 
-      estimatedMinutes:
-        task.estimatedMinutes ?? null,
+        priority:
+          storedTask.priority ?? 'medium',
 
-      categoryId:
-        task.categoryId ??
-        getLegacyCategoryId(
-          task.category,
-        ),
+        estimatedMinutes:
+          storedTask.estimatedMinutes ??
+          null,
 
-      recurrence:
-        task.recurrence ?? null,
+        categoryId:
+          storedTask.categoryId ??
+          (legacyCategory
+            ? getLegacyCategoryId(
+                legacyCategory,
+              )
+            : 'sem-categoria'),
 
-      completedOccurrences:
-        task.completedOccurrences ?? {},
+        recurrence:
+          storedTask.recurrence ?? null,
 
-      completedAt: task.completed
-        ? task.completedAt ??
-        new Date().toISOString()
-        : null,
-    }))
+        completedOccurrences:
+          storedTask.completedOccurrences ??
+          {},
+
+        completedAt:
+          storedTask.completed
+            ? storedTask.completedAt ??
+              new Date().toISOString()
+            : null,
+      }
+    })
   } catch {
     localStorage.removeItem(STORAGE_KEY)
 

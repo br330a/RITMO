@@ -1,8 +1,3 @@
-export type TaskCategory =
-  | 'Faculdade'
-  | 'Pessoal'
-  | 'Saúde'
-
 export type TaskPriority =
   | 'low'
   | 'medium'
@@ -31,7 +26,6 @@ export type Task = {
   dueDate: string
   time: string | null
 
-  category: string
   categoryId: string
 
   priority: TaskPriority
