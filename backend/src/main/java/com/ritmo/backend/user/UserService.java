@@ -23,6 +23,21 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public UserResponse findById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Usuário não encontrado."
+                ));
+
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getCreatedAt()
+        );
+        }
+
     public UserResponse register(RegisterUserRequest request) {
         String name = request.name().trim();
         String email = request.email()

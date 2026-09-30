@@ -1,5 +1,7 @@
 package com.ritmo.backend.auth;
 
+import com.ritmo.backend.auth.dto.AuthResponse;
+import com.ritmo.backend.auth.dto.LoginRequest;
 import com.ritmo.backend.auth.dto.RegisterUserRequest;
 import com.ritmo.backend.auth.dto.UserResponse;
 import com.ritmo.backend.user.UserService;
@@ -16,9 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
+    public AuthController(
+            UserService userService,
+            AuthService authService
+    ) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
@@ -30,5 +37,14 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(
+                authService.login(request)
+        );
     }
 }
