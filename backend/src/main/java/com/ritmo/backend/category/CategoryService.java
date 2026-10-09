@@ -3,6 +3,7 @@ package com.ritmo.backend.category;
 import com.ritmo.backend.category.dto.CategoryResponse;
 import com.ritmo.backend.category.dto.CreateCategoryRequest;
 import com.ritmo.backend.category.dto.UpdateCategoryRequest;
+import com.ritmo.backend.task.TaskRepository;
 import com.ritmo.backend.user.User;
 import com.ritmo.backend.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,16 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
 
     public CategoryService(
             CategoryRepository categoryRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            TaskRepository taskRepository
     ) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Transactional(readOnly = true)
@@ -63,9 +67,7 @@ public class CategoryService {
                 user
         );
 
-        Category savedCategory = categoryRepository.save(category);
-
-        return toResponse(savedCategory);
+        return toResponse(categoryRepository.save(category));
     }
 
     @Transactional
@@ -109,6 +111,16 @@ public class CategoryService {
                         HttpStatus.NOT_FOUND,
                         "Categoria não encontrada."
                 ));
+
+        if (taskRepository.existsByCategoryIdAndUserId(
+                categoryId,
+                userId
+        )) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A categoria possui tarefas vinculadas."
+            );
+        }
 
         categoryRepository.delete(category);
     }
