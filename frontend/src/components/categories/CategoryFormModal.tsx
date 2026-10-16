@@ -24,7 +24,7 @@ type CategoryFormModalProps = {
   onClose: () => void
   onSubmit: (
     categoryData: CreateCategoryData,
-  ) => boolean
+  ) => Promise<boolean>
 }
 
 const colors: CategoryColor[] = [
@@ -66,9 +66,12 @@ export function CategoryFormModal({
       category?.icon ?? 'other',
     )
 
+    const [isSubmitting, setIsSubmitting] =
+      useState(false)
+
   const isEditing = Boolean(category)
 
-  function handleSubmit(
+  async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
@@ -91,14 +94,20 @@ export function CategoryFormModal({
       return
     }
 
-    const success = onSubmit({
-      name: normalizedName,
-      color,
-      icon,
-    })
+    setIsSubmitting(true)
 
-    if (success) {
-      onClose()
+    try {
+      const success = await onSubmit({
+        name: normalizedName,
+        color,
+        icon,
+      })
+
+      if (success) {
+        onClose()
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -303,11 +312,14 @@ export function CategoryFormModal({
 
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
+              disabled={isSubmitting}
+              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isEditing
-                ? 'Salvar alterações'
-                : 'Criar categoria'}
+              {isSubmitting
+                ? 'Salvando...'
+                : isEditing
+                  ? 'Salvar alterações'
+                  : 'Criar categoria'}
             </button>
           </div>
         </form>

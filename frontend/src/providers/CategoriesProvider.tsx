@@ -1,166 +1,285 @@
 import {
-    useEffect,
-    useState,
-    type PropsWithChildren,
+  useEffect,
+  useState,
+  type PropsWithChildren,
 } from 'react'
 import { toast } from 'sonner'
 import {
-    CategoriesContext,
-    type CategoriesContextValue,
+  CategoriesContext,
+  type CategoriesContextValue,
 } from '../context/categoriesContext'
-import { initialCategories } from '../data/initialCategories'
+import { useAuth } from '../hooks/useAuth'
+import { ApiError } from '../services/apiClient'
 import {
-    loadCategories,
-    saveCategories,
-} from '../services/categoryStorage'
+  createCategoryRequest,
+  deleteCategoryRequest,
+  getCategories,
+  updateCategoryRequest,
+} from '../services/categoryService'
 import type {
-    Category,
-    CreateCategoryData,
+  Category,
+  CreateCategoryData,
 } from '../types/categoryTypes'
 
-function normalizeCategoryName(
-    name: string,
+type CategoriesState = {
+  ownerToken: string | null
+  categories: Category[]
+  status: 'idle' | 'ready' | 'error'
+}
+
+function sortCategories(
+  categories: Category[],
 ) {
-    return name
-        .trim()
-        .toLocaleLowerCase('pt-BR')
+  return [...categories].sort(
+    (firstCategory, secondCategory) =>
+      firstCategory.name.localeCompare(
+        secondCategory.name,
+        'pt-BR',
+      ),
+  )
+}
+
+function getErrorMessage(
+  error: unknown,
+  fallbackMessage: string,
+) {
+  if (error instanceof ApiError) {
+    return (
+      error.payload?.message ??
+      fallbackMessage
+    )
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return fallbackMessage
 }
 
 export function CategoriesProvider({
-    children,
+  children,
 }: PropsWithChildren) {
-    const [categories, setCategories] =
-        useState<Category[]>(
-            () =>
-                loadCategories() ??
-                initialCategories,
+  const { token } = useAuth()
+
+  const [state, setState] =
+    useState<CategoriesState>({
+      ownerToken: null,
+      categories: [],
+      status: 'idle',
+    })
+
+  const categories =
+    token && state.ownerToken === token
+      ? state.categories
+      : []
+
+  const isLoadingCategories =
+    Boolean(token) &&
+    state.ownerToken !== token
+
+  useEffect(() => {
+    if (!token) {
+      return
+    }
+
+    let isActive = true
+
+    getCategories(token)
+      .then((loadedCategories) => {
+        if (!isActive) {
+          return
+        }
+
+        setState({
+          ownerToken: token,
+          categories:
+            sortCategories(
+              loadedCategories,
+            ),
+          status: 'ready',
+        })
+      })
+      .catch((error: unknown) => {
+        if (!isActive) {
+          return
+        }
+
+        setState({
+          ownerToken: token,
+          categories: [],
+          status: 'error',
+        })
+
+        toast.error(
+          getErrorMessage(
+            error,
+            'Não foi possível carregar as categorias.',
+          ),
+        )
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [token])
+
+  async function createCategory(
+    categoryData: CreateCategoryData,
+  ) {
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
+      return false
+    }
+
+    try {
+      const newCategory =
+        await createCategoryRequest(
+          token,
+          categoryData,
         )
 
-    useEffect(() => {
-        saveCategories(categories)
-    }, [categories])
-
-    function createCategory(
-        categoryData: CreateCategoryData,
-    ) {
-        const normalizedName =
-            normalizeCategoryName(
-                categoryData.name,
-            )
-
-        const categoryAlreadyExists =
-            categories.some(
-                (category) =>
-                    normalizeCategoryName(
-                        category.name,
-                    ) === normalizedName,
-            )
-
-        if (categoryAlreadyExists) {
-            toast.error(
-                'Já existe uma categoria com esse nome.',
-            )
-
-            return false
-        }
-
-        const newCategory: Category = {
-            ...categoryData,
-            id: crypto.randomUUID(),
-            name: categoryData.name.trim(),
-        }
-
-        setCategories(
-            (currentCategories) => [
-                ...currentCategories,
+      setState((currentState) => ({
+        ownerToken: token,
+        categories: sortCategories(
+          currentState.ownerToken === token
+            ? [
+                ...currentState.categories,
                 newCategory,
-            ],
-        )
+              ]
+            : [newCategory],
+        ),
+        status: 'ready',
+      }))
 
-        toast.success(
-            'Categoria criada com sucesso.',
-        )
+      toast.success(
+        'Categoria criada com sucesso.',
+      )
 
-        return true
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível criar a categoria.',
+        ),
+      )
+
+      return false
+    }
+  }
+
+  async function updateCategory(
+    categoryId: string,
+    categoryData: CreateCategoryData,
+  ) {
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
+      return false
     }
 
-    function updateCategory(
-        categoryId: string,
-        categoryData: CreateCategoryData,
-    ) {
-        const normalizedName =
-            normalizeCategoryName(
-                categoryData.name,
-            )
+    try {
+      const updatedCategory =
+        await updateCategoryRequest(
+          token,
+          categoryId,
+          categoryData,
+        )
 
-        const categoryAlreadyExists =
-            categories.some(
+      setState((currentState) => ({
+        ownerToken: token,
+        categories: sortCategories(
+          currentState.ownerToken === token
+            ? currentState.categories.map(
                 (category) =>
-                    category.id !== categoryId &&
-                    normalizeCategoryName(
-                        category.name,
-                    ) === normalizedName,
-            )
+                  category.id === categoryId
+                    ? updatedCategory
+                    : category,
+              )
+            : [updatedCategory],
+        ),
+        status: 'ready',
+      }))
 
-        if (categoryAlreadyExists) {
-            toast.error(
-                'Já existe uma categoria com esse nome.',
-            )
+      toast.success(
+        'Categoria atualizada com sucesso.',
+      )
 
-            return false
-        }
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível atualizar a categoria.',
+        ),
+      )
 
-        setCategories(
-            (currentCategories) =>
-                currentCategories.map(
-                    (category) =>
-                        category.id === categoryId
-                            ? {
-                                ...category,
-                                ...categoryData,
-                                name:
-                                    categoryData.name.trim(),
-                            }
-                            : category,
-                ),
-        )
+      return false
+    }
+  }
 
-        toast.success(
-            'Categoria atualizada com sucesso.',
-        )
-
-        return true
+  async function deleteCategory(
+    categoryId: string,
+  ) {
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
+      return false
     }
 
-    function deleteCategory(
-        categoryId: string,
-    ) {
-        setCategories(
-            (currentCategories) =>
-                currentCategories.filter(
-                    (category) =>
-                        category.id !== categoryId,
-                ),
-        )
+    try {
+      await deleteCategoryRequest(
+        token,
+        categoryId,
+      )
 
-        toast.success(
-            'Categoria excluída com sucesso.',
-        )
+      setState((currentState) => ({
+        ownerToken: token,
+        categories:
+          currentState.ownerToken === token
+            ? currentState.categories.filter(
+                (category) =>
+                  category.id !== categoryId,
+              )
+            : [],
+        status: 'ready',
+      }))
+
+      toast.success(
+        'Categoria excluída com sucesso.',
+      )
+
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível excluir a categoria.',
+        ),
+      )
+
+      return false
+    }
+  }
+
+  const contextValue: CategoriesContextValue = {
+    categories,
+    isLoadingCategories,
+    createCategory,
+    updateCategory,
+    deleteCategory,
     }
 
-    const contextValue: CategoriesContextValue =
-    {
-        categories,
-        createCategory,
-        updateCategory,
-        deleteCategory,
-    }
-
-    return (
-        <CategoriesContext.Provider
-            value={contextValue}
-        >
-            {children}
-        </CategoriesContext.Provider>
-    )
+  return (
+    <CategoriesContext.Provider
+      value={contextValue}
+    >
+      {children}
+    </CategoriesContext.Provider>
+  )
 }

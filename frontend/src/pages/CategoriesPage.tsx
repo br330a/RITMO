@@ -18,6 +18,7 @@ export function CategoriesPage() {
 
   const {
     categories,
+    isLoadingCategories,
     createCategory,
     updateCategory,
     deleteCategory,
@@ -61,6 +62,22 @@ export function CategoriesPage() {
     }
 
     setCategoryToDelete(category)
+  }
+
+  if (isLoadingCategories) {
+    return (
+      <section className="mx-auto max-w-[1200px]">
+        <div className="grid min-h-64 place-items-center rounded-2xl border border-[#e4ebe5] bg-white">
+          <div className="text-center">
+            <div className="mx-auto size-6 animate-spin rounded-full border-2 border-[#cfe1d3] border-t-[#23834b]" />
+
+            <p className="mt-3 text-sm text-[#667069]">
+              Carregando categorias...
+            </p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -270,14 +287,15 @@ export function CategoriesPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  deleteCategory(
-                    categoryToDelete.id,
-                  )
+                onClick={async () => {
+                  const success =
+                    await deleteCategory(
+                      categoryToDelete.id,
+                    )
 
-                  setCategoryToDelete(
-                    null,
-                  )
+                  if (success) {
+                    setCategoryToDelete(null)
+                  }
                 }}
                 className="cursor-pointer rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
               >
