@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   Check,
@@ -136,11 +136,11 @@ export function CalendarPage() {
       <section className="mx-auto max-w-[1500px]">
         <header className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-[#17211b]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Calendário
             </h1>
 
-            <p className="mt-2 text-[#667069]">
+            <p className="mt-2 text-[var(--text-secondary)]">
               Visualize sua rotina e selecione um dia.
             </p>
           </div>
@@ -153,8 +153,8 @@ export function CalendarPage() {
               className={[
                 'cursor-pointer rounded-xl border px-5 py-3 text-sm font-semibold transition-colors',
                 isViewingToday
-                  ? 'cursor-default border-[#dce4dd] bg-[#edf1ed] text-[#8a938d] shadow-inner'
-                  : 'border-[#23834b] bg-[#23834b] text-white hover:bg-[#19683a]',
+                  ? 'cursor-default border-[var(--border)] bg-[#edf1ed] text-[var(--text-muted)] shadow-inner'
+                  : 'border-[var(--primary)] bg-[var(--primary)] text-white hover:bg-[var(--primary-strong)]',
               ].join(' ')}
             >
               Hoje
@@ -163,7 +163,7 @@ export function CalendarPage() {
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
+              className="flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)]"
             >
               <Plus size={19} />
               Nova tarefa
@@ -180,14 +180,14 @@ export function CalendarPage() {
             onSelectDate={setSelectedDate}
           />
 
-          <aside className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
+          <aside className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold capitalize text-[#17211b]">
+                <h2 className="text-lg font-semibold capitalize text-[var(--text-primary)]">
                   {formatSelectedDate(selectedDate)}
                 </h2>
 
-                <p className="mt-1 text-sm text-[#8a938d]">
+                <p className="mt-1 text-sm text-[var(--text-muted)]">
                   {selectedTasks.length === 1
                     ? '1 tarefa agendada'
                     : `${selectedTasks.length} tarefas agendadas`}
@@ -198,7 +198,7 @@ export function CalendarPage() {
                 type="button"
                 onClick={() => setIsCreateModalOpen(true)}
                 aria-label="Criar tarefa neste dia"
-                className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg bg-[#e4f3e8] text-[#19683a] hover:bg-[#d5ebda]"
+                className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]"
               >
                 <Plus size={18} />
               </button>
@@ -206,7 +206,7 @@ export function CalendarPage() {
 
             {selectedTasks.length === 0 ? (
               <div className="py-10 text-center">
-                <p className="text-sm text-[#8a938d]">
+                <p className="text-sm text-[var(--text-muted)]">
                   Nenhuma tarefa para este dia.
                 </p>
               </div>
@@ -245,7 +245,7 @@ export function CalendarPage() {
                         })
                       }
                     }}
-                    className="cursor-pointer rounded-xl border border-[#e4ebe5] p-4 transition-all hover:border-[#cbd9ce] hover:bg-[#f8faf8] hover:shadow-sm"
+                    className="cursor-pointer rounded-xl border border-[var(--border-soft)] p-4 transition-all hover:border-[var(--border)] hover:bg-[var(--surface-hover)] hover:shadow-sm"
                   >
                     <div className="flex items-start gap-3">
                       <button
@@ -265,8 +265,8 @@ export function CalendarPage() {
                         className={[
                           'mt-0.5 grid size-6 shrink-0 cursor-pointer place-items-center rounded-full border',
                           task.completed
-                            ? 'border-[#23834b] bg-[#23834b] text-white'
-                            : 'border-[#aeb8b1]',
+                            ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
+                            : 'border-[var(--border)]',
                         ].join(' ')}
                       >
                         {task.completed && (
@@ -279,8 +279,8 @@ export function CalendarPage() {
                           className={[
                             'text-sm font-medium',
                             task.completed
-                              ? 'text-[#9aa29d] line-through'
-                              : 'text-[#27312b]',
+                              ? 'text-[var(--text-faint)] line-through'
+                              : 'text-[var(--text-strong)]',
                           ].join(' ')}
                         >
                           {task.title}
@@ -296,7 +296,7 @@ export function CalendarPage() {
                                     ? categoryColorStyles[
                                     category.color
                                     ]
-                                    : 'bg-[#f1f3f1] text-[#667069]',
+                                    : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
                                 ].join(' ')}
                               >
                                 {category?.name ?? 'Sem categoria'}
@@ -305,7 +305,7 @@ export function CalendarPage() {
                       </div>
                     </div>
 
-                    <div className="mt-3 flex justify-end gap-1 border-t border-[#edf1ed] pt-3">
+                    <div className="mt-3 flex justify-end gap-1 border-t border-[var(--border-soft)] pt-3">
                       <button
                         type="button"
                         onClick={(event) => {
@@ -318,7 +318,7 @@ export function CalendarPage() {
                           )
                         }}
                         aria-label={`Editar ${task.title}`}
-                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#e4f3e8] hover:text-[#19683a]"
+                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--primary-soft-hover)] hover:text-[var(--primary-strong)]"
                       >
                         <Pencil size={16} />
                       </button>
@@ -330,7 +330,7 @@ export function CalendarPage() {
                           setTaskToDelete(task)
                         }}
                         aria-label={`Excluir ${task.title}`}
-                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-red-50 hover:text-red-600"
+                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -395,3 +395,4 @@ export function CalendarPage() {
     </>
   )
 }
+

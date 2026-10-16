@@ -1,4 +1,4 @@
-import {
+﻿import {
   useState,
   type FormEvent,
 } from 'react'
@@ -45,25 +45,25 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f7faf7] px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--app-bg)] px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-7 flex justify-center">
           <div className="flex items-center gap-3">
             <RitmoLogo className="size-12" />
 
-            <span className="text-2xl font-bold tracking-wide text-[#17211b]">
+            <span className="text-2xl font-bold tracking-wide text-[var(--text-primary)]">
               RITMO
             </span>
           </div>
         </div>
 
-        <section className="rounded-3xl border border-[#e1e9e2] bg-white p-6 shadow-sm sm:p-8">
+        <section className="rounded-3xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm sm:p-8">
           <div className="mb-7">
-            <h1 className="text-2xl font-bold text-[#17211b]">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Bem-vindo de volta
             </h1>
 
-            <p className="mt-2 text-sm leading-6 text-[#667069]">
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
               Entre na sua conta para continuar organizando sua rotina.
             </p>
           </div>
@@ -75,7 +75,7 @@ export function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-2 block text-sm font-medium text-[#27312b]"
+                className="mb-2 block text-sm font-medium text-[var(--text-strong)]"
               >
                 E-mail
               </label>
@@ -90,14 +90,14 @@ export function LoginPage() {
                 required
                 autoComplete="email"
                 placeholder="seu@email.com"
-                className="w-full rounded-xl border border-[#dce4dd] bg-white px-4 py-3 text-sm text-[#17211b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="mb-2 block text-sm font-medium text-[#27312b]"
+                className="mb-2 block text-sm font-medium text-[var(--text-strong)]"
               >
                 Senha
               </label>
@@ -112,7 +112,7 @@ export function LoginPage() {
                 required
                 autoComplete="current-password"
                 placeholder="Digite sua senha"
-                className="w-full rounded-xl border border-[#dce4dd] bg-white px-4 py-3 text-sm text-[#17211b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
               />
             </div>
 
@@ -128,7 +128,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#23834b] px-4 py-3 font-semibold text-white transition hover:bg-[#1d7040] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 font-semibold text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <LogIn size={18} />
 
@@ -138,11 +138,11 @@ export function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-[#667069]">
+          <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
             Ainda não tem uma conta?{' '}
             <Link
               to="/cadastro"
-              className="font-semibold text-[#23834b] hover:underline"
+              className="font-semibold text-[var(--primary)] hover:underline"
             >
               Criar conta
             </Link>
@@ -152,3 +152,4 @@ export function LoginPage() {
     </main>
   )
 }
+

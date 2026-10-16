@@ -1,4 +1,4 @@
-import { CalendarDays } from 'lucide-react'
+﻿import { CalendarDays } from 'lucide-react'
 import { getLocalDateValue } from '../../utils/date'
 
 type WeekOverviewProps = {
@@ -39,11 +39,11 @@ export function WeekOverview({
   const weekDays = getCurrentWeek()
 
   return (
-    <article className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
+    <article className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
       <header className="mb-6 flex items-center gap-3">
-        <CalendarDays size={22} className="text-[#19683a]" />
+        <CalendarDays size={22} className="text-[var(--primary-strong)]" />
 
-        <h2 className="text-xl font-semibold text-[#17211b]">
+        <h2 className="text-xl font-semibold text-[var(--text-primary)]">
           Esta semana
         </h2>
       </header>
@@ -61,10 +61,10 @@ export function WeekOverview({
               aria-pressed={isSelected}
               aria-current={day.isToday ? 'date' : undefined}
               className={[
-                'flex min-w-0 cursor-pointer flex-col items-center rounded-xl px-1 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b]',
+                'flex min-w-0 cursor-pointer flex-col items-center rounded-xl px-1 py-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]',
                 isSelected
-                  ? 'bg-[#e4f3e8] text-[#19683a]'
-                  : 'text-[#667069] hover:bg-[#f0f6f1]',
+                  ? 'bg-[var(--primary-soft)] text-[var(--primary-strong)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
               ].join(' ')}
             >
               <span className="text-xs capitalize">
@@ -79,7 +79,7 @@ export function WeekOverview({
                 aria-hidden="true"
                 className={[
                   'mt-2 size-1.5 rounded-full',
-                  day.isToday ? 'bg-[#23834b]' : 'bg-[#cbd2cd]',
+                  day.isToday ? 'bg-[var(--primary)]' : 'bg-[#cbd2cd]',
                 ].join(' ')}
               />
             </button>

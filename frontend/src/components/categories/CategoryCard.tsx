@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowRight,
   Pencil,
   Trash2,
@@ -55,7 +55,7 @@ export function CategoryCard({
     : 0
 
   return (
-    <article className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
+    <article className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
       <header className="flex items-start justify-between gap-4">
         <div
           className={[
@@ -78,7 +78,7 @@ export function CategoryCard({
               onEdit(category)
             }
             aria-label={`Editar ${category.name}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] transition-colors hover:bg-[#e4f3e8] hover:text-[#19683a]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--primary-soft-hover)] hover:text-[var(--primary-strong)]"
           >
             <Pencil size={16} />
           </button>
@@ -89,7 +89,7 @@ export function CategoryCard({
               onDelete(category)
             }
             aria-label={`Excluir ${category.name}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] transition-colors hover:bg-red-50 hover:text-red-600"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 size={16} />
           </button>
@@ -98,18 +98,18 @@ export function CategoryCard({
 
       <div className="mt-5 flex items-start justify-between gap-4">
         <div>
-          <h2 className="break-words text-xl font-semibold text-[#17211b]">
+          <h2 className="break-words text-xl font-semibold text-[var(--text-primary)]">
             {category.name}
           </h2>
 
-          <p className="mt-1 text-sm text-[#7b847e]">
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             {pendingTasks === 1
               ? '1 tarefa pendente'
               : `${pendingTasks} tarefas pendentes`}
           </p>
         </div>
 
-        <span className="shrink-0 text-sm font-semibold text-[#8a938d]">
+        <span className="shrink-0 text-sm font-semibold text-[var(--text-muted)]">
           {categoryTasks.length}{' '}
           {categoryTasks.length === 1
             ? 'tarefa'
@@ -119,16 +119,16 @@ export function CategoryCard({
 
       <div className="mt-6">
         <div className="mb-2 flex items-center justify-between text-xs">
-          <span className="text-[#8a938d]">
+          <span className="text-[var(--text-muted)]">
             Progresso
           </span>
 
-          <span className="font-semibold text-[#27312b]">
+          <span className="font-semibold text-[var(--text-strong)]">
             {progress}%
           </span>
         </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-[#e7ece8]">
+        <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-muted)]">
           <div
             className={[
               'h-full rounded-full transition-all',
@@ -145,7 +145,7 @@ export function CategoryCard({
 
       <Link
         to="/tarefas"
-        className="mt-6 flex items-center justify-between border-t border-[#edf1ed] pt-4 text-sm font-semibold text-[#19683a] hover:underline"
+        className="mt-6 flex items-center justify-between border-t border-[var(--border-soft)] pt-4 text-sm font-semibold text-[var(--primary-strong)] hover:underline"
       >
         Ver tarefas
         <ArrowRight size={17} />

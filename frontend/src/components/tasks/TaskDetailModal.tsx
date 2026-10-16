@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import {
   CalendarDays,
   Check,
@@ -112,9 +112,9 @@ export function TaskDetailsModal({
         onClick={(event) =>
           event.stopPropagation()
         }
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-[var(--surface)] shadow-2xl"
       >
-        <header className="flex items-start justify-between gap-5 border-b border-[#edf1ed] p-6 sm:p-7">
+        <header className="flex items-start justify-between gap-5 border-b border-[var(--border-soft)] p-6 sm:p-7">
           <div className="min-w-0">
             <div className="mb-3 flex flex-wrap gap-2">
               <span
@@ -124,7 +124,7 @@ export function TaskDetailsModal({
                     ? categoryColorStyles[
                     category.color
                     ]
-                    : 'bg-[#f1f3f1] text-[#667069]',
+                    : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
                 ].join(' ')}
               >
                 {category?.name ?? 'Sem categoria'}
@@ -153,7 +153,7 @@ export function TaskDetailsModal({
                     ? categoryColorStyles[
                     category.color
                     ]
-                    : 'bg-[#f1f3f1] text-[#667069]',
+                    : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
                 ].join(' ')}
               >
                 {category?.name ?? 'Sem categoria'}
@@ -166,7 +166,7 @@ export function TaskDetailsModal({
                 'break-words text-2xl font-bold tracking-tight sm:text-3xl',
                 task.completed
                   ? 'text-[#7d8780] line-through'
-                  : 'text-[#17211b]',
+                  : 'text-[var(--text-primary)]',
               ].join(' ')}
             >
               {task.title}
@@ -177,7 +177,7 @@ export function TaskDetailsModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar detalhes da tarefa"
-            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl text-[#7b847e] transition-colors hover:bg-[#f1f5f1] hover:text-[#27312b]"
+            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-strong)]"
           >
             <X size={21} />
           </button>
@@ -185,7 +185,7 @@ export function TaskDetailsModal({
 
         <div className="p-6 sm:p-7">
           <section>
-            <p className="text-xs font-semibold tracking-wide text-[#8a938d] uppercase">
+            <p className="text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
               Descrição
             </p>
 
@@ -196,8 +196,8 @@ export function TaskDetailsModal({
           </section>
 
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-[#f7faf7] p-4">
-              <div className="flex items-center gap-2 text-[#19683a]">
+            <div className="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div className="flex items-center gap-2 text-[var(--primary-strong)]">
                 <CalendarDays size={18} />
 
                 <span className="text-xs font-semibold uppercase">
@@ -207,15 +207,15 @@ export function TaskDetailsModal({
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-medium text-[#27312b] capitalize">
+              <p className="mt-2 text-sm font-medium text-[var(--text-strong)] capitalize">
                 {formatDetailsDate(
                   task.dueDate,
                 )}
               </p>
             </div>
 
-            <div className="rounded-2xl bg-[#f7faf7] p-4">
-              <div className="flex items-center gap-2 text-[#19683a]">
+            <div className="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div className="flex items-center gap-2 text-[var(--primary-strong)]">
                 <Clock3 size={18} />
 
                 <span className="text-xs font-semibold uppercase">
@@ -223,14 +223,14 @@ export function TaskDetailsModal({
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-medium text-[#27312b]">
+              <p className="mt-2 text-sm font-medium text-[var(--text-strong)]">
                 {task.time ??
                   'Sem horário definido'}
               </p>
             </div>
 
-            <div className="rounded-2xl bg-[#f7faf7] p-4">
-              <div className="flex items-center gap-2 text-[#19683a]">
+            <div className="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div className="flex items-center gap-2 text-[var(--primary-strong)]">
                 <Timer size={18} />
 
                 <span className="text-xs font-semibold uppercase">
@@ -238,7 +238,7 @@ export function TaskDetailsModal({
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-medium text-[#27312b]">
+              <p className="mt-2 text-sm font-medium text-[var(--text-strong)]">
                 {task.estimatedMinutes !==
                   null
                   ? formatEstimatedMinutes(
@@ -248,8 +248,8 @@ export function TaskDetailsModal({
               </p>
             </div>
 
-            <div className="rounded-2xl bg-[#f7faf7] p-4">
-              <div className="flex items-center gap-2 text-[#19683a]">
+            <div className="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div className="flex items-center gap-2 text-[var(--primary-strong)]">
                 <Tag size={18} />
 
                 <span className="text-xs font-semibold uppercase">
@@ -257,13 +257,13 @@ export function TaskDetailsModal({
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-medium text-[#27312b]">
+              <p className="mt-2 text-sm font-medium text-[var(--text-strong)]">
                 {category?.name ?? 'Sem categoria'}
               </p>
             </div>
 
-            <div className="rounded-2xl bg-[#f7faf7] p-4 sm:col-span-2">
-              <div className="flex items-center gap-2 text-[#19683a]">
+            <div className="rounded-2xl bg-[var(--app-bg)] p-4 sm:col-span-2">
+              <div className="flex items-center gap-2 text-[var(--primary-strong)]">
                 <Repeat2 size={18} />
 
                 <span className="text-xs font-semibold uppercase">
@@ -271,14 +271,14 @@ export function TaskDetailsModal({
                 </span>
               </div>
 
-              <p className="mt-2 text-sm font-medium text-[#27312b]">
+              <p className="mt-2 text-sm font-medium text-[var(--text-strong)]">
                 {formatTaskRecurrence(
                   task,
                 )}
               </p>
 
               {task.recurrence && (
-                <p className="mt-1 text-xs text-[#7b847e]">
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
                   {formatRecurrenceEndDate(
                     task,
                   )}
@@ -288,7 +288,7 @@ export function TaskDetailsModal({
           </div>
         </div>
 
-        <footer className="flex flex-col-reverse gap-3 border-t border-[#edf1ed] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <footer className="flex flex-col-reverse gap-3 border-t border-[var(--border-soft)] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
           <button
             type="button"
             onClick={() =>
@@ -300,8 +300,8 @@ export function TaskDetailsModal({
             className={[
               'flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors',
               task.completed
-                ? 'border border-[#dce4dd] text-[#526057] hover:bg-[#f3f7f3]'
-                : 'bg-[#e4f3e8] text-[#19683a] hover:bg-[#d8eddd]',
+                ? 'border border-[var(--border)] text-[#526057] hover:bg-[var(--surface-hover)]'
+                : 'bg-[var(--primary-soft)] text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]',
             ].join(' ')}
           >
             <Check size={18} />
@@ -318,7 +318,7 @@ export function TaskDetailsModal({
                 onEdit(task)
                 onClose()
               }}
-              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#dce4dd] px-4 py-2.5 text-sm font-semibold text-[#27312b] transition-colors hover:bg-[#f3f7f3] sm:flex-none"
+              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:bg-[var(--surface-hover)] sm:flex-none"
             >
               <Pencil size={17} />
               Editar
@@ -341,3 +341,4 @@ export function TaskDetailsModal({
     </div>
   )
 }
+

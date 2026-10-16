@@ -1,4 +1,4 @@
-import type { Task } from '../types/taskTypes'
+﻿import type { Task } from '../types/taskTypes'
 import { getLocalDateValue } from './date'
 
 function parseLocalDate(dateValue: string) {
@@ -169,14 +169,14 @@ const weekDayLabels: Record<
     3: 'Qua',
     4: 'Qui',
     5: 'Sex',
-    6: 'Sáb',
+    6: 'S�b',
 }
 
 export function formatTaskRecurrence(
     task: Task,
 ) {
     if (!task.recurrence) {
-        return 'Não se repete'
+        return 'N�o se repete'
     }
 
     if (
@@ -213,7 +213,7 @@ export function formatTaskRecurrence(
         task.dueDate.split('-')[2],
     )
 
-    return `Todo mês no dia ${dayOfMonth}`
+    return `Todo m�s no dia ${dayOfMonth}`
 }
 
 export function formatRecurrenceEndDate(

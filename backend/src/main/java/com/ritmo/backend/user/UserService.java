@@ -2,9 +2,11 @@ package com.ritmo.backend.user;
 
 import com.ritmo.backend.auth.dto.RegisterUserRequest;
 import com.ritmo.backend.auth.dto.UserResponse;
+import com.ritmo.backend.user.dto.UpdateThemeRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Locale;
@@ -24,34 +26,34 @@ public class UserService {
     }
 
     public UserResponse findById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Usuário não encontrado."
-                ));
+        User user = findUser(id);
 
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt()
-        );
-        }
+        return toResponse(user);
+    }
 
-    public UserResponse register(RegisterUserRequest request) {
+    public UserResponse register(
+            RegisterUserRequest request
+    ) {
         String name = request.name().trim();
+
         String email = request.email()
                 .trim()
                 .toLowerCase(Locale.ROOT);
 
-        if (userRepository.existsByEmailIgnoreCase(email)) {
+        if (
+                userRepository
+                        .existsByEmailIgnoreCase(email)
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "E-mail já cadastrado."
             );
         }
 
-        String passwordHash = passwordEncoder.encode(request.password());
+        String passwordHash =
+                passwordEncoder.encode(
+                        request.password()
+                );
 
         User user = new User(
                 name,
@@ -59,13 +61,49 @@ public class UserService {
                 passwordHash
         );
 
-        User savedUser = userRepository.save(user);
+        User savedUser =
+                userRepository.save(user);
+
+        return toResponse(savedUser);
+    }
+
+    @Transactional
+    public UserResponse updateTheme(
+            Long userId,
+            UpdateThemeRequest request
+    ) {
+        User user = findUser(userId);
+
+        user.setTheme(
+                request.theme()
+                        .toLowerCase(Locale.ROOT)
+        );
+
+        return toResponse(user);
+    }
+
+    private User findUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Usuário não encontrado."
+                        )
+                );
+    }
+
+    private UserResponse toResponse(User user) {
+        String theme =
+                user.getTheme() == null
+                        ? "light"
+                        : user.getTheme();
 
         return new UserResponse(
-                savedUser.getId(),
-                savedUser.getName(),
-                savedUser.getEmail(),
-                savedUser.getCreatedAt()
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                theme,
+                user.getCreatedAt()
         );
     }
 }

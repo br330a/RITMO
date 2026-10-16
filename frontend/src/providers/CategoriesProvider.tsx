@@ -1,4 +1,4 @@
-import {
+﻿import {
   useEffect,
   useState,
   type PropsWithChildren,
@@ -114,7 +114,7 @@ export function CategoriesProvider({
         toast.error(
           getErrorMessage(
             error,
-            'Não foi possível carregar as categorias.',
+            'N�o foi poss�vel carregar as categorias.',
           ),
         )
       })
@@ -129,7 +129,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
       return false
     }
@@ -163,7 +163,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível criar a categoria.',
+          'N�o foi poss�vel criar a categoria.',
         ),
       )
 
@@ -177,7 +177,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
       return false
     }
@@ -214,7 +214,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível atualizar a categoria.',
+          'N�o foi poss�vel atualizar a categoria.',
         ),
       )
 
@@ -227,7 +227,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
       return false
     }
@@ -251,7 +251,7 @@ export function CategoriesProvider({
       }))
 
       toast.success(
-        'Categoria excluída com sucesso.',
+        'Categoria exclu�da com sucesso.',
       )
 
       return true
@@ -259,7 +259,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível excluir a categoria.',
+          'N�o foi poss�vel excluir a categoria.',
         ),
       )
 

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+﻿import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Task } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
 import { getTasksForDate } from '../../utils/taskRecurrence'
@@ -55,9 +55,9 @@ export function MonthCalendar({
   }
 
   return (
-    <article className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
+    <article className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
       <header className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold capitalize text-[#17211b]">
+        <h2 className="text-xl font-semibold capitalize text-[var(--text-primary)]">
           {monthLabel}
         </h2>
 
@@ -66,7 +66,7 @@ export function MonthCalendar({
             type="button"
             onClick={() => changeMonth(-1)}
             aria-label="Mês anterior"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[#dce4dd] text-[#667069] hover:bg-[#f3f7f3]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
           >
             <ChevronLeft size={19} />
           </button>
@@ -75,7 +75,7 @@ export function MonthCalendar({
             type="button"
             onClick={() => changeMonth(1)}
             aria-label="Próximo mês"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[#dce4dd] text-[#667069] hover:bg-[#f3f7f3]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
           >
             <ChevronRight size={19} />
           </button>
@@ -86,7 +86,7 @@ export function MonthCalendar({
         {weekdays.map((weekday) => (
           <div
             key={weekday}
-            className="pb-3 text-center text-xs font-semibold text-[#8a938d]"
+            className="pb-3 text-center text-xs font-semibold text-[var(--text-muted)]"
           >
             {weekday}
           </div>
@@ -111,18 +111,18 @@ export function MonthCalendar({
               onClick={() => onSelectDate(dateValue)}
               aria-label={`Selecionar dia ${date.getDate()}`}
               className={[
-                'relative min-h-20 cursor-pointer border-t border-[#edf1ed] p-2 text-left transition-colors hover:bg-[#f7faf7]',
-                isSelected ? 'bg-[#eaf5ed]' : '',
+                'relative min-h-20 cursor-pointer border-t border-[var(--border-soft)] p-2 text-left transition-colors hover:bg-[var(--surface-hover)]',
+                isSelected ? 'bg-[var(--primary-soft)]' : '',
                 isCurrentMonth
-                  ? 'text-[#27312b]'
-                  : 'text-[#b4bcb6]',
+                  ? 'text-[var(--text-strong)]'
+                  : 'text-[var(--text-faint)]',
               ].join(' ')}
             >
               <span
                 className={[
                   'grid size-7 place-items-center rounded-full text-sm',
                   isToday
-                    ? 'bg-[#23834b] font-semibold text-white'
+                    ? 'bg-[var(--primary)] font-semibold text-white'
                     : '',
                 ].join(' ')}
               >
@@ -130,7 +130,7 @@ export function MonthCalendar({
               </span>
 
               {dayTasks.length > 0 && (
-                <span className="absolute right-2 bottom-2 grid size-6 place-items-center rounded-full bg-[#dcefe1] text-xs font-semibold text-[#19683a]">
+                <span className="absolute right-2 bottom-2 grid size-6 place-items-center rounded-full bg-[var(--primary-soft)] text-xs font-semibold text-[var(--primary-strong)]">
                   {dayTasks.length}
                 </span>
               )}
@@ -141,3 +141,4 @@ export function MonthCalendar({
     </article>
   )
 }
+

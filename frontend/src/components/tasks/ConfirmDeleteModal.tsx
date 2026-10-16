@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Trash2, X } from 'lucide-react'
 
 type ConfirmDeleteModalProps = {
@@ -44,7 +44,7 @@ export function ConfirmDeleteModal({
         onMouseDown={(event) =>
           event.stopPropagation()
         }
-        className="w-full max-w-md rounded-2xl bg-white p-7 shadow-xl"
+        className="w-full max-w-md rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
       >
         <header className="flex items-start justify-between gap-4">
           <div className="grid size-11 place-items-center rounded-xl bg-red-50 text-red-600">
@@ -56,7 +56,7 @@ export function ConfirmDeleteModal({
             onClick={onCancel}
             disabled={isDeleting}
             aria-label="Fechar"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#667069] hover:bg-[#f3f7f3] disabled:cursor-not-allowed disabled:opacity-50"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X size={20} />
           </button>
@@ -64,12 +64,12 @@ export function ConfirmDeleteModal({
 
         <h2
           id="delete-task-title"
-          className="mt-5 text-xl font-semibold text-[#17211b]"
+          className="mt-5 text-xl font-semibold text-[var(--text-primary)]"
         >
           Excluir tarefa?
         </h2>
 
-        <p className="mt-2 text-sm leading-6 text-[#667069]">
+        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
           A tarefa <strong>“{taskTitle}”</strong>{' '}
           será removida permanentemente.
         </p>
@@ -79,7 +79,7 @@ export function ConfirmDeleteModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="cursor-pointer rounded-xl border border-[#dce4dd] px-5 py-3 text-sm font-semibold text-[#667069] hover:bg-[#f7faf7] disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancelar
           </button>
@@ -99,3 +99,4 @@ export function ConfirmDeleteModal({
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowRight,
   Clock3,
   Flag,
@@ -61,22 +61,22 @@ export function UpcomingTasks({
     .slice(0, 2)
 
   return (
-    <article className="rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
+    <article className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
       <header className="mb-2 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Clock3
             size={22}
-            className="text-[#19683a]"
+            className="text-[var(--primary-strong)]"
           />
 
-          <h2 className="text-xl font-semibold text-[#17211b]">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
             Próximas tarefas
           </h2>
         </div>
 
         <Link
           to="/tarefas"
-          className="flex items-center gap-1 text-xs font-semibold text-[#19683a] hover:underline"
+          className="flex items-center gap-1 text-xs font-semibold text-[var(--primary-strong)] hover:underline"
         >
           Ver todas
           <ArrowRight size={14} />
@@ -84,7 +84,7 @@ export function UpcomingTasks({
       </header>
 
       {upcomingTasks.length === 0 ? (
-        <p className="pt-4 text-sm text-[#8a938d]">
+        <p className="pt-4 text-sm text-[var(--text-muted)]">
           Nenhuma tarefa futura.
         </p>
       ) : (
@@ -110,9 +110,9 @@ export function UpcomingTasks({
                   onOpenTask(task)
                 }
               }}
-              className="-mx-2 cursor-pointer rounded-xl border-b border-[#edf1ed] px-2 py-4 transition-colors last:border-none last:pb-2 hover:bg-[#f7faf7]"
+              className="-mx-2 cursor-pointer rounded-xl border-b border-[var(--border-soft)] px-2 py-4 transition-colors last:border-none last:pb-2 hover:bg-[var(--surface-hover)]"
             >
-              <p className="text-xs text-[#8a938d]">
+              <p className="text-xs text-[var(--text-muted)]">
                 {formatTaskDate(task.dueDate)}
 
                 {task.time
@@ -120,12 +120,12 @@ export function UpcomingTasks({
                   : ', sem horário'}
               </p>
 
-              <p className="mt-1 break-words text-sm font-medium text-[#27312b]">
+              <p className="mt-1 break-words text-sm font-medium text-[var(--text-strong)]">
                 {task.title}
               </p>
 
               {task.description && (
-                <p className="mt-1 break-words text-xs leading-5 text-[#7b847e]">
+                <p className="mt-1 break-words text-xs leading-5 text-[var(--text-muted)]">
                   {task.description}
                 </p>
               )}
@@ -138,7 +138,7 @@ export function UpcomingTasks({
                           ? categoryColorStyles[
                           category.color
                           ]
-                          : 'bg-[#f1f3f1] text-[#667069]',
+                          : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
                       ].join(' ')}
                     >
                       {category?.name ?? 'Sem categoria'}
@@ -163,7 +163,7 @@ export function UpcomingTasks({
 
                 {task.estimatedMinutes !==
                   null && (
-                    <span className="flex items-center gap-1 text-[#7b847e]">
+                    <span className="flex items-center gap-1 text-[var(--text-muted)]">
                       <Timer size={13} />
 
                       {formatEstimatedMinutes(
@@ -180,3 +180,4 @@ export function UpcomingTasks({
     </article>
   )
 }
+

@@ -1,4 +1,4 @@
-import {
+﻿import {
   useEffect,
   useState,
   type PropsWithChildren,
@@ -119,7 +119,7 @@ export function TasksProvider({
         toast.error(
           getErrorMessage(
             error,
-            'Não foi possível carregar as tarefas.',
+            'N�o foi poss�vel carregar as tarefas.',
           ),
         )
       })
@@ -134,7 +134,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
 
       return false
@@ -168,7 +168,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível criar a tarefa.',
+          'N�o foi poss�vel criar a tarefa.',
         ),
       )
 
@@ -182,7 +182,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
 
       return false
@@ -220,7 +220,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível atualizar a tarefa.',
+          'N�o foi poss�vel atualizar a tarefa.',
         ),
       )
 
@@ -234,7 +234,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
 
       return false
@@ -247,7 +247,7 @@ export function TasksProvider({
 
     if (!task) {
       toast.error(
-        'A tarefa não foi encontrada.',
+        'A tarefa n�o foi encontrada.',
       )
 
       return false
@@ -308,7 +308,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível atualizar o status da tarefa.',
+          'N�o foi poss�vel atualizar o status da tarefa.',
         ),
       )
 
@@ -321,7 +321,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sessão não está disponível.',
+        'Sua sess�o n�o est� dispon�vel.',
       )
 
       return false
@@ -345,7 +345,7 @@ export function TasksProvider({
       }))
 
       toast.success(
-        'Tarefa excluída com sucesso.',
+        'Tarefa exclu�da com sucesso.',
       )
 
       return true
@@ -353,7 +353,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'Não foi possível excluir a tarefa.',
+          'N�o foi poss�vel excluir a tarefa.',
         ),
       )
 

@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   CategoryColor,
 } from '../types/categoryTypes'
 
@@ -7,7 +7,7 @@ export const categoryColorStyles: Record<
   string
 > = {
   green:
-    'bg-[#e4f3e8] text-[#19683a]',
+    'bg-[var(--primary-soft)] text-[var(--primary-strong)]',
   blue:
     'bg-[#e7efff] text-[#315fa8]',
   purple:
@@ -24,7 +24,7 @@ export const categoryProgressStyles: Record<
   CategoryColor,
   string
 > = {
-  green: 'bg-[#23834b]',
+  green: 'bg-[var(--primary)]',
   blue: 'bg-[#5b83c5]',
   purple: 'bg-[#8968b8]',
   orange: 'bg-[#c97a32]',

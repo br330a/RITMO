@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   ChevronDown,
   ChevronUp,
@@ -391,11 +391,11 @@ export function TasksPage() {
       <section className="mx-auto max-w-5xl">
         <header className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-[#17211b]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Minhas tarefas
             </h1>
 
-            <p className="mt-2 text-[#667069]">
+            <p className="mt-2 text-[var(--text-secondary)]">
               Organize todas as suas atividades em um só
               lugar.
             </p>
@@ -406,20 +406,20 @@ export function TasksPage() {
             onClick={() =>
               setIsModalOpen(true)
             }
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)]"
           >
             <Plus size={19} />
             Nova tarefa
           </button>
         </header>
 
-        <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[#e4ebe5] bg-white shadow-sm">
+        <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] shadow-sm">
           <div className="px-3 py-4 text-center">
-            <strong className="block text-xl text-[#17211b]">
+            <strong className="block text-xl text-[var(--text-primary)]">
               {filteredTasksCount}
             </strong>
 
-            <span className="text-xs text-[#8a938d]">
+            <span className="text-xs text-[var(--text-muted)]">
               Total
             </span>
           </div>
@@ -429,17 +429,17 @@ export function TasksPage() {
               {filteredPendingTasks.length}
             </strong>
 
-            <span className="text-xs text-[#8a938d]">
+            <span className="text-xs text-[var(--text-muted)]">
               Pendentes
             </span>
           </div>
 
           <div className="px-3 py-4 text-center">
-            <strong className="block text-xl text-[#23834b]">
+            <strong className="block text-xl text-[var(--primary)]">
               {filteredCompletedTasks.length}
             </strong>
 
-            <span className="text-xs text-[#8a938d]">
+            <span className="text-xs text-[var(--text-muted)]">
               Concluídas
             </span>
           </div>
@@ -457,8 +457,8 @@ export function TasksPage() {
                 className={[
                   'cursor-pointer rounded-xl px-4 py-2 text-sm font-medium transition-colors',
                   activeFilter === filter.value
-                    ? 'bg-[#23834b] text-white'
-                    : 'border border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
                 ].join(' ')}
               >
                 {filter.label}
@@ -477,8 +477,8 @@ export function TasksPage() {
             className={[
               'flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors',
               isFiltersOpen || hasActiveFilters
-                ? 'border-[#b9d8c2] bg-[#e4f3e8] text-[#19683a]'
-                : 'border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
+                ? 'border-[#b9d8c2] bg-[var(--primary-soft)] text-[var(--primary-strong)]'
+                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
             ].join(' ')}
           >
             <SlidersHorizontal size={16} />
@@ -486,7 +486,7 @@ export function TasksPage() {
             Filtros
 
             {activeFiltersCount > 0 && (
-              <span className="grid min-w-5 place-items-center rounded-full bg-[#23834b] px-1.5 py-0.5 text-[11px] font-bold text-white">
+              <span className="grid min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 py-0.5 text-[11px] font-bold text-white">
                 {activeFiltersCount}
               </span>
             )}
@@ -500,15 +500,15 @@ export function TasksPage() {
         </div>
 
         {isFiltersOpen && (
-          <div className="mt-4 rounded-2xl border border-[#e4ebe5] bg-white p-4 shadow-sm sm:p-5">
+          <div className="mt-4 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-sm sm:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal
                   size={18}
-                  className="text-[#19683a]"
+                  className="text-[var(--primary-strong)]"
                 />
 
-                <h2 className="text-sm font-semibold text-[#27312b]">
+                <h2 className="text-sm font-semibold text-[var(--text-strong)]">
                   Buscar e filtrar
                 </h2>
               </div>
@@ -520,8 +520,8 @@ export function TasksPage() {
                 className={[
                   'flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
                   hasActiveFilters
-                    ? 'cursor-pointer text-[#19683a] hover:bg-[#e4f3e8]'
-                    : 'cursor-not-allowed text-[#b3bab5]',
+                    ? 'cursor-pointer text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]'
+                    : 'cursor-not-allowed text-[var(--text-faint)]',
                 ].join(' ')}
               >
                 <X size={14} />
@@ -532,7 +532,7 @@ export function TasksPage() {
             <div className="relative">
               <Search
                 size={18}
-                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[#8a938d]"
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[var(--text-muted)]"
               />
 
               <input
@@ -543,7 +543,7 @@ export function TasksPage() {
                 }
                 placeholder="Buscar por título ou descrição..."
                 aria-label="Buscar tarefas"
-                className="w-full rounded-xl border border-[#dce4dd] bg-white py-3 pr-11 pl-11 text-sm text-[#27312b] outline-none transition placeholder:text-[#9aa29d] focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 pr-11 pl-11 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
               />
 
               {searchTerm && (
@@ -551,7 +551,7 @@ export function TasksPage() {
                   type="button"
                   onClick={() => setSearchTerm('')}
                   aria-label="Limpar busca"
-                  className="absolute top-1/2 right-3 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#f3f7f3] hover:text-[#27312b]"
+                  className="absolute top-1/2 right-3 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-strong)]"
                 >
                   <X size={16} />
                 </button>
@@ -560,7 +560,7 @@ export function TasksPage() {
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <label>
-                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Categoria
                 </span>
 
@@ -579,7 +579,7 @@ export function TasksPage() {
               </label>
 
               <label>
-                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Prioridade
                 </span>
 
@@ -590,7 +590,7 @@ export function TasksPage() {
                       event.target.value,
                     )
                   }
-                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
                 >
                   {priorities.map((priority) => (
                     <option
@@ -604,7 +604,7 @@ export function TasksPage() {
               </label>
 
               <label className="sm:col-span-2 lg:col-span-1">
-                <span className="mb-1.5 block text-xs font-medium text-[#667069]">
+                <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Recorrência
                 </span>
 
@@ -615,7 +615,7 @@ export function TasksPage() {
                       event.target.value as RecurrenceFilter,
                     )
                   }
-                  className="w-full cursor-pointer rounded-xl border border-[#dce4dd] bg-white px-3 py-2.5 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
                 >
                   {recurrences.map((recurrence) => (
                     <option
@@ -630,7 +630,7 @@ export function TasksPage() {
             </div>
 
             {hasActiveFilters && (
-              <p className="mt-4 border-t border-[#edf1ed] pt-4 text-xs text-[#8a938d]">
+              <p className="mt-4 border-t border-[var(--border-soft)] pt-4 text-xs text-[var(--text-muted)]">
                 {filteredTasksCount}{' '}
                 {filteredTasksCount === 1
                   ? 'tarefa encontrada'
@@ -641,19 +641,19 @@ export function TasksPage() {
         )}
 
         {!hasTasksForActiveFilter ? (
-          <div className="mt-6 rounded-2xl border border-dashed border-[#cfd8d1] bg-white px-6 py-12 text-center">
+          <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-6 py-12 text-center">
             <Search
               size={30}
-              className="mx-auto text-[#a1aaa4]"
+              className="mx-auto text-[var(--text-faint)]"
             />
 
-            <p className="mt-4 font-medium text-[#27312b]">
+            <p className="mt-4 font-medium text-[var(--text-strong)]">
               {hasActiveFilters
                 ? 'Nenhuma tarefa corresponde aos filtros'
                 : 'Nenhuma tarefa encontrada'}
             </p>
 
-            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[#8a938d]">
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[var(--text-muted)]">
               {hasActiveFilters
                 ? 'Altere a busca ou os filtros para encontrar outras tarefas.'
                 : 'Experimente outro status ou crie uma nova tarefa.'}
@@ -663,7 +663,7 @@ export function TasksPage() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="mt-5 cursor-pointer rounded-xl bg-[#e4f3e8] px-4 py-2.5 text-sm font-semibold text-[#19683a] hover:bg-[#d8eddd]"
+                className="mt-5 cursor-pointer rounded-xl bg-[var(--primary-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]"
               >
                 Limpar filtros
               </button>
@@ -678,11 +678,11 @@ export function TasksPage() {
                 <section>
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#17211b]">
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                         Pendentes
                       </h2>
 
-                      <p className="mt-1 text-sm text-[#8a938d]">
+                      <p className="mt-1 text-sm text-[var(--text-muted)]">
                         Prioridades mais importantes aparecem
                         primeiro.
                       </p>
@@ -711,17 +711,17 @@ export function TasksPage() {
                 <section>
                   <div className="mb-4 flex items-center justify-between gap-4">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#17211b]">
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                         Concluídas
                       </h2>
 
-                      <p className="mt-1 text-sm text-[#8a938d]">
+                      <p className="mt-1 text-sm text-[var(--text-muted)]">
                         As tarefas finalizadas ficam
                         separadas das pendentes.
                       </p>
                     </div>
 
-                    <span className="rounded-full bg-[#e4f3e8] px-3 py-1 text-xs font-semibold text-[#19683a]">
+                    <span className="rounded-full bg-[var(--primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--primary-strong)]">
                       {
                         filteredCompletedTasks.length
                       }
@@ -798,3 +798,4 @@ export function TasksPage() {
     </>
   )
 }
+

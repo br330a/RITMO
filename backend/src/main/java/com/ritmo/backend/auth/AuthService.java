@@ -30,36 +30,50 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(
+            LoginRequest request
+    ) {
         String email = request.email()
                 .trim()
                 .toLowerCase(Locale.ROOT);
 
         User user = userRepository
                 .findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED,
-                        "E-mail ou senha inválidos."
-                ));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.UNAUTHORIZED,
+                                "E-mail ou senha inválidos."
+                        )
+                );
 
-        if (!passwordEncoder.matches(
-                request.password(),
-                user.getPasswordHash()
-        )) {
+        if (
+                !passwordEncoder.matches(
+                        request.password(),
+                        user.getPasswordHash()
+                )
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "E-mail ou senha inválidos."
             );
         }
 
-        String token = jwtService.generateToken(user);
+        String token =
+                jwtService.generateToken(user);
 
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt()
-        );
+        String theme =
+                user.getTheme() == null
+                        ? "light"
+                        : user.getTheme();
+
+        UserResponse userResponse =
+                new UserResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        theme,
+                        user.getCreatedAt()
+                );
 
         return new AuthResponse(
                 token,

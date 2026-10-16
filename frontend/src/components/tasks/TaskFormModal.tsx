@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+﻿import { useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
 import type {
   CreateTaskData,
@@ -128,7 +128,7 @@ const weekDays = [
 ]
 
 const inputStyles =
-  'w-full rounded-xl border border-[#dce4dd] bg-white px-4 py-3 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]'
+  'w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]'
 
 function getWeekdayFromDateValue(
   dateValue: string,
@@ -360,20 +360,20 @@ export function TaskFormModal({
         onMouseDown={(event) =>
           event.stopPropagation()
         }
-        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-7 shadow-xl"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
       >
         <header className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2
               id="task-form-title"
-              className="text-2xl font-semibold text-[#17211b]"
+              className="text-2xl font-semibold text-[var(--text-primary)]"
             >
               {isEditing
                 ? 'Editar tarefa'
                 : 'Nova tarefa'}
             </h2>
 
-            <p className="mt-1 text-sm text-[#7b847e]">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               {isEditing
                 ? 'Atualize as informações da atividade.'
                 : 'Organize uma nova atividade.'}
@@ -384,7 +384,7 @@ export function TaskFormModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#667069] hover:bg-[#f3f7f3]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
           >
             <X size={20} />
           </button>
@@ -395,7 +395,7 @@ export function TaskFormModal({
           className="space-y-5"
         >
           <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
+            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
               Tarefa
             </span>
 
@@ -412,7 +412,7 @@ export function TaskFormModal({
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
+            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
               Descrição (opcional)
             </span>
 
@@ -431,7 +431,7 @@ export function TaskFormModal({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                 Data
               </span>
 
@@ -448,7 +448,7 @@ export function TaskFormModal({
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                 Horário (opcional)
               </span>
 
@@ -464,7 +464,7 @@ export function TaskFormModal({
           </div>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
+            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
               Categoria
             </span>
 
@@ -494,7 +494,7 @@ export function TaskFormModal({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                 Prioridade
               </span>
 
@@ -528,7 +528,7 @@ export function TaskFormModal({
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                 Duração estimada
               </span>
 
@@ -559,9 +559,9 @@ export function TaskFormModal({
             </label>
           </div>
 
-          <div className="border-t border-[#edf1ed] pt-5">
+          <div className="border-t border-[var(--border-soft)] pt-5">
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[#27312b]">
+              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                 Repetir
               </span>
 
@@ -591,7 +591,7 @@ export function TaskFormModal({
             {recurrenceFrequency ===
               'weekly' && (
                 <div className="mt-4">
-                  <p className="mb-2 text-sm font-medium text-[#27312b]">
+                  <p className="mb-2 text-sm font-medium text-[var(--text-strong)]">
                     Dias da semana
                   </p>
 
@@ -620,8 +620,8 @@ export function TaskFormModal({
                             className={[
                               'cursor-pointer rounded-xl border px-2 py-2 text-xs font-semibold transition-colors',
                               isSelected
-                                ? 'border-[#23834b] bg-[#23834b] text-white'
-                                : 'border-[#dce4dd] bg-white text-[#667069] hover:bg-[#f3f7f3]',
+                                ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
+                                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
                             ].join(' ')}
                           >
                             {weekDay.label}
@@ -637,7 +637,7 @@ export function TaskFormModal({
               'none' && (
                 <>
                   <label className="mt-4 block">
-                    <span className="mb-2 block text-sm font-medium text-[#27312b]">
+                    <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
                       Data final (opcional)
                     </span>
 
@@ -657,7 +657,7 @@ export function TaskFormModal({
                       }
                     />
 
-                    <span className="mt-2 block text-xs leading-5 text-[#8a938d]">
+                    <span className="mt-2 block text-xs leading-5 text-[var(--text-muted)]">
                       Deixe em branco para
                       repetir sem uma data
                       final.
@@ -666,7 +666,7 @@ export function TaskFormModal({
 
                   {recurrenceFrequency ===
                     'daily' && (
-                      <p className="mt-3 text-xs text-[#667069]">
+                      <p className="mt-3 text-xs text-[var(--text-secondary)]">
                         A tarefa será repetida
                         todos os dias a partir
                         da data inicial.
@@ -675,7 +675,7 @@ export function TaskFormModal({
 
                   {recurrenceFrequency ===
                     'monthly' && (
-                      <p className="mt-3 text-xs text-[#667069]">
+                      <p className="mt-3 text-xs text-[var(--text-secondary)]">
                         A tarefa será repetida
                         todo mês no dia{' '}
                         {getDayOfMonth(
@@ -692,7 +692,7 @@ export function TaskFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-xl border border-[#dce4dd] px-5 py-3 text-sm font-semibold text-[#667069] hover:bg-[#f7faf7]"
+              className="cursor-pointer rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
             >
               Cancelar
             </button>
@@ -700,7 +700,7 @@ export function TaskFormModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cursor-pointer rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
                 ? 'Salvando...'
@@ -714,3 +714,4 @@ export function TaskFormModal({
     </div>
   )
 }
+

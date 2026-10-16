@@ -1,4 +1,4 @@
-import {
+﻿import {
   CalendarDays,
   Check,
   Clock3,
@@ -60,15 +60,15 @@ export function TaskCard({
           onOpen(task)
         }
       }}
-      className="min-w-0 cursor-pointer rounded-2xl border border-[#e4ebe5] bg-white p-5 shadow-sm transition-all hover:border-[#cbd9ce] hover:shadow-md"
+      className="min-w-0 cursor-pointer rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 shadow-sm transition-all hover:border-[var(--border)] hover:shadow-md"
     >
       <div>
         <h2
           className={[
             'break-words text-base leading-6 font-semibold',
             task.completed
-              ? 'text-[#9aa29d] line-through'
-              : 'text-[#27312b]',
+              ? 'text-[var(--text-faint)] line-through'
+              : 'text-[var(--text-strong)]',
           ].join(' ')}
         >
           {task.title}
@@ -79,8 +79,8 @@ export function TaskCard({
             className={[
               'mt-1.5 break-words text-sm leading-5',
               task.completed
-                ? 'text-[#a7afa9]'
-                : 'text-[#667069]',
+                ? 'text-[var(--text-faint)]'
+                : 'text-[var(--text-secondary)]',
             ].join(' ')}
           >
             {task.description}
@@ -88,7 +88,7 @@ export function TaskCard({
         )}
       </div>
 
-      <div className="mt-4 flex items-center gap-3 border-t border-[#edf1ed] pt-4">
+      <div className="mt-4 flex items-center gap-3 border-t border-[var(--border-soft)] pt-4">
         <button
           type="button"
           onClick={(event) => {
@@ -107,8 +107,8 @@ export function TaskCard({
           className={[
             'grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border transition-colors',
             task.completed
-              ? 'border-[#23834b] bg-[#23834b] text-white'
-              : 'border-[#aeb8b1] bg-white hover:border-[#23834b]',
+              ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
+              : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--primary)]',
           ].join(' ')}
         >
           {task.completed && (
@@ -116,7 +116,7 @@ export function TaskCard({
           )}
         </button>
 
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#7b847e]">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[var(--text-muted)]">
           <span className="flex items-center gap-1.5">
             <CalendarDays size={14} />
             {formatTaskDate(task.dueDate)}
@@ -143,7 +143,7 @@ export function TaskCard({
                 ? categoryColorStyles[
                 category.color
                 ]
-                : 'bg-[#f1f3f1] text-[#667069]',
+                : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
             ].join(' ')}
           >
             {category?.name ?? 'Sem categoria'}
@@ -168,7 +168,7 @@ export function TaskCard({
               onEdit(task)
             }}
             aria-label={`Editar ${task.title}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#e4f3e8] hover:text-[#19683a]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--primary-soft-hover)] hover:text-[var(--primary-strong)]"
           >
             <Pencil size={17} />
           </button>
@@ -180,7 +180,7 @@ export function TaskCard({
               onDelete(task)
             }}
             aria-label={`Excluir ${task.title}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-red-50 hover:text-red-600"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 size={17} />
           </button>
@@ -189,3 +189,4 @@ export function TaskCard({
     </article>
   )
 }
+

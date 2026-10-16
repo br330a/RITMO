@@ -1,4 +1,4 @@
-import type { TaskPriority } from '../types/taskTypes'
+﻿import type { TaskPriority } from '../types/taskTypes'
 
 export const priorityLabels: Record<TaskPriority, string> = {
   low: 'Baixa',
@@ -7,7 +7,8 @@ export const priorityLabels: Record<TaskPriority, string> = {
 }
 
 export const priorityStyles: Record<TaskPriority, string> = {
-  low: 'bg-[#edf5ef] text-[#52705a]',
+  low: 'bg-[var(--primary-soft)] text-[#52705a]',
   medium: 'bg-[#fff3dc] text-[#96651f]',
   high: 'bg-[#fde8e8] text-[#b33a3a]',
 }
+

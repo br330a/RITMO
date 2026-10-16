@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Menu } from 'lucide-react'
 import { Outlet } from 'react-router'
 import { Sidebar } from '../components/navigation/Sidebar'
@@ -30,7 +30,7 @@ export function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f7faf7]">
+    <div className="flex min-h-screen bg-[var(--app-bg)]">
       {isSidebarOpen && (
         <button
           type="button"
@@ -63,14 +63,14 @@ export function AppLayout() {
             : 'lg:pl-64',
         ].join(' ')}
       >
-        <header className="sticky top-0 z-30 grid h-16 grid-cols-[40px_1fr_40px] items-center border-b border-[#e4ebe5] bg-white px-4 lg:hidden">
+        <header className="sticky top-0 z-30 grid h-16 grid-cols-[40px_1fr_40px] items-center border-b border-[var(--border-soft)] bg-[var(--surface)] px-4 lg:hidden">
           <button
             type="button"
             onClick={() =>
               setIsSidebarOpen(true)
             }
             aria-label="Abrir menu"
-            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[#dce4dd] text-[#27312b] hover:bg-[#f3f7f3]"
+            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[var(--border)] text-[var(--text-strong)] hover:bg-[var(--surface-hover)]"
           >
             <Menu size={21} />
           </button>
@@ -78,7 +78,7 @@ export function AppLayout() {
           <div className="flex items-center justify-center gap-2.5">
             <RitmoLogo className="size-9" />
 
-            <span className="font-bold tracking-wide text-[#17211b]">
+            <span className="font-bold tracking-wide text-[var(--text-primary)]">
               RITMO
             </span>
           </div>

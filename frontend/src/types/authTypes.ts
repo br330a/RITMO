@@ -1,7 +1,10 @@
+import type { Theme } from './themeTypes'
+
 export type AuthUser = {
   id: number
   name: string
   email: string
+  theme: Theme
   createdAt: string
 }
 

@@ -1,4 +1,4 @@
-import {
+﻿import {
   useState,
   type FormEvent,
 } from 'react'
@@ -123,20 +123,20 @@ export function CategoryFormModal({
         onMouseDown={(event) =>
           event.stopPropagation()
         }
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-7 shadow-xl"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
       >
         <header className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2
               id="category-form-title"
-              className="text-2xl font-semibold text-[#17211b]"
+              className="text-2xl font-semibold text-[var(--text-primary)]"
             >
               {isEditing
                 ? 'Editar categoria'
                 : 'Nova categoria'}
             </h2>
 
-            <p className="mt-1 text-sm text-[#7b847e]">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               Personalize como essa área aparece no RITMO.
             </p>
           </div>
@@ -145,7 +145,7 @@ export function CategoryFormModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[#667069] hover:bg-[#f3f7f3]"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
           >
             <X size={20} />
           </button>
@@ -156,7 +156,7 @@ export function CategoryFormModal({
           className="space-y-6"
         >
           <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[#27312b]">
+            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
               Nome
             </span>
 
@@ -169,12 +169,12 @@ export function CategoryFormModal({
               placeholder="Ex.: Academia"
               maxLength={30}
               autoFocus
-              className="w-full rounded-xl border border-[#dce4dd] bg-white px-4 py-3 text-sm text-[#27312b] outline-none transition focus:border-[#23834b] focus:ring-2 focus:ring-[#dcefe1]"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
             />
           </label>
 
           <div>
-            <p className="mb-3 text-sm font-medium text-[#27312b]">
+            <p className="mb-3 text-sm font-medium text-[var(--text-strong)]">
               Cor
             </p>
 
@@ -195,8 +195,8 @@ export function CategoryFormModal({
                     className={[
                       'flex cursor-pointer items-center justify-center rounded-xl border p-3 transition-all',
                       color === colorOption
-                        ? 'border-[#23834b] ring-2 ring-[#dcefe1]'
-                        : 'border-[#e1e7e2] hover:border-[#b9c6bc]',
+                        ? 'border-[var(--primary)] ring-2 ring-[#dcefe1]'
+                        : 'border-[var(--border-soft)] hover:border-[var(--border)]',
                     ].join(' ')}
                   >
                     <span
@@ -214,7 +214,7 @@ export function CategoryFormModal({
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-medium text-[#27312b]">
+            <p className="mb-3 text-sm font-medium text-[var(--text-strong)]">
               Ícone
             </p>
 
@@ -253,8 +253,8 @@ export function CategoryFormModal({
                         ? categoryColorStyles[
                             color
                           ] +
-                          ' border-[#23834b] ring-2 ring-[#dcefe1]'
-                        : 'border-[#e1e7e2] bg-white text-[#667069] hover:bg-[#f7faf7]',
+                          ' border-[var(--primary)] ring-2 ring-[#dcefe1]'
+                        : 'border-[var(--border-soft)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
                     ].join(' ')}
                   >
                     <Icon
@@ -267,8 +267,8 @@ export function CategoryFormModal({
             </div>
           </div>
 
-          <div className="rounded-xl bg-[#f7faf7] p-4">
-            <p className="mb-3 text-xs font-semibold tracking-wide text-[#8a938d] uppercase">
+          <div className="rounded-xl bg-[var(--app-bg)] p-4">
+            <p className="mb-3 text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
               Prévia
             </p>
 
@@ -294,7 +294,7 @@ export function CategoryFormModal({
                 })()}
               </div>
 
-              <span className="font-semibold text-[#27312b]">
+              <span className="font-semibold text-[var(--text-strong)]">
                 {name.trim() ||
                   'Nova categoria'}
               </span>
@@ -305,7 +305,7 @@ export function CategoryFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-xl border border-[#dce4dd] px-5 py-3 text-sm font-semibold text-[#667069] hover:bg-[#f7faf7]"
+              className="cursor-pointer rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
             >
               Cancelar
             </button>
@@ -313,7 +313,7 @@ export function CategoryFormModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cursor-pointer rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
                 ? 'Salvando...'
@@ -327,3 +327,4 @@ export function CategoryFormModal({
     </div>
   )
 }
+

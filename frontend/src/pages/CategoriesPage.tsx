@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   Plus,
   Tags,
@@ -67,11 +67,11 @@ export function CategoriesPage() {
   if (isLoadingCategories) {
     return (
       <section className="mx-auto max-w-[1200px]">
-        <div className="grid min-h-64 place-items-center rounded-2xl border border-[#e4ebe5] bg-white">
+        <div className="grid min-h-64 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)]">
           <div className="text-center">
-            <div className="mx-auto size-6 animate-spin rounded-full border-2 border-[#cfe1d3] border-t-[#23834b]" />
+            <div className="mx-auto size-6 animate-spin rounded-full border-2 border-[#cfe1d3] border-t-[var(--primary)]" />
 
-            <p className="mt-3 text-sm text-[#667069]">
+            <p className="mt-3 text-sm text-[var(--text-secondary)]">
               Carregando categorias...
             </p>
           </div>
@@ -85,11 +85,11 @@ export function CategoriesPage() {
       <section className="mx-auto max-w-[1200px]">
         <header className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-[#17211b]">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Categorias
             </h1>
 
-            <p className="mt-2 text-[#667069]">
+            <p className="mt-2 text-[var(--text-secondary)]">
               Organize as áreas da sua rotina do seu jeito.
             </p>
           </div>
@@ -99,45 +99,45 @@ export function CategoriesPage() {
             onClick={() =>
               setIsCreateModalOpen(true)
             }
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)]"
           >
             <Plus size={19} />
             Nova categoria
           </button>
         </header>
 
-        <div className="mt-8 rounded-2xl border border-[#e4ebe5] bg-white p-6 shadow-sm">
-          <p className="text-sm text-[#7b847e]">
+        <div className="mt-8 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 shadow-sm">
+          <p className="text-sm text-[var(--text-muted)]">
             Visão geral
           </p>
 
           <div className="mt-4 flex flex-wrap gap-8">
             <div>
-              <strong className="block text-2xl text-[#17211b]">
+              <strong className="block text-2xl text-[var(--text-primary)]">
                 {categories.length}
               </strong>
 
-              <span className="text-sm text-[#8a938d]">
+              <span className="text-sm text-[var(--text-muted)]">
                 Categorias
               </span>
             </div>
 
             <div>
-              <strong className="block text-2xl text-[#17211b]">
+              <strong className="block text-2xl text-[var(--text-primary)]">
                 {tasks.length}
               </strong>
 
-              <span className="text-sm text-[#8a938d]">
+              <span className="text-sm text-[var(--text-muted)]">
                 Total de tarefas
               </span>
             </div>
 
             <div>
-              <strong className="block text-2xl text-[#23834b]">
+              <strong className="block text-2xl text-[var(--primary)]">
                 {completedTasks}
               </strong>
 
-              <span className="text-sm text-[#8a938d]">
+              <span className="text-sm text-[var(--text-muted)]">
                 Concluídas
               </span>
             </div>
@@ -148,7 +148,7 @@ export function CategoriesPage() {
                   completedTasks}
               </strong>
 
-              <span className="text-sm text-[#8a938d]">
+              <span className="text-sm text-[var(--text-muted)]">
                 Pendentes
               </span>
             </div>
@@ -156,17 +156,17 @@ export function CategoriesPage() {
         </div>
 
         {categories.length === 0 ? (
-          <div className="mt-6 rounded-2xl border border-dashed border-[#cfd8d1] bg-white px-6 py-14 text-center">
+          <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-6 py-14 text-center">
             <Tags
               size={32}
-              className="mx-auto text-[#a1aaa4]"
+              className="mx-auto text-[var(--text-faint)]"
             />
 
-            <p className="mt-4 font-medium text-[#27312b]">
+            <p className="mt-4 font-medium text-[var(--text-strong)]">
               Nenhuma categoria criada
             </p>
 
-            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[#8a938d]">
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[var(--text-muted)]">
               Crie categorias para organizar suas tarefas por áreas da rotina.
             </p>
 
@@ -175,7 +175,7 @@ export function CategoriesPage() {
               onClick={() =>
                 setIsCreateModalOpen(true)
               }
-              className="mt-5 cursor-pointer rounded-xl bg-[#e4f3e8] px-4 py-2.5 text-sm font-semibold text-[#19683a] hover:bg-[#d8eddd]"
+              className="mt-5 cursor-pointer rounded-xl bg-[var(--primary-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]"
             >
               Criar categoria
             </button>
@@ -239,15 +239,15 @@ export function CategoriesPage() {
             onMouseDown={(event) =>
               event.stopPropagation()
             }
-            className="w-full max-w-md rounded-2xl bg-white p-7 shadow-xl"
+            className="w-full max-w-md rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
           >
             <header className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold text-[#17211b]">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Excluir categoria?
                 </h2>
 
-                <p className="mt-2 text-sm leading-6 text-[#667069]">
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
                   A categoria{' '}
                   <strong>
                     {
@@ -266,7 +266,7 @@ export function CategoriesPage() {
                   )
                 }
                 aria-label="Fechar"
-                className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[#667069] hover:bg-[#f3f7f3]"
+                className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
               >
                 <X size={19} />
               </button>
@@ -280,7 +280,7 @@ export function CategoriesPage() {
                     null,
                   )
                 }
-                className="cursor-pointer rounded-xl border border-[#dce4dd] px-4 py-2.5 text-sm font-semibold text-[#667069] hover:bg-[#f7faf7]"
+                className="cursor-pointer rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
               >
                 Cancelar
               </button>
@@ -308,3 +308,4 @@ export function CategoriesPage() {
     </>
   )
 }
+

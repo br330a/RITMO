@@ -1,4 +1,4 @@
-export function getLocalDateValue(date = new Date()) {
+﻿export function getLocalDateValue(date = new Date()) {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -18,7 +18,7 @@ export function formatTaskDate(dateValue: string) {
     }
 
   if (dateValue === getLocalDateValue(tomorrow)) {
-    return 'Amanhã'
+    return 'Amanh�'
   }
 
   return new Intl.DateTimeFormat('pt-BR', {

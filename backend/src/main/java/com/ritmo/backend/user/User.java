@@ -27,21 +27,33 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Column(length = 10)
+    private String theme;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     protected User() {
     }
 
-    public User(String name, String email, String passwordHash) {
+    public User(
+            String name,
+            String email,
+            String passwordHash
+    ) {
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
+        this.theme = "light";
     }
 
     @PrePersist
     public void prePersist() {
         createdAt = Instant.now();
+
+        if (theme == null) {
+            theme = "light";
+        }
     }
 
     public Long getId() {
@@ -60,6 +72,10 @@ public class User {
         return passwordHash;
     }
 
+    public String getTheme() {
+        return theme;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -74,5 +90,9 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 }

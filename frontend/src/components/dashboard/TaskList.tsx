@@ -1,4 +1,4 @@
-import {
+﻿import {
   useEffect,
   useRef,
   useState,
@@ -116,26 +116,26 @@ export function TaskList({
     : 0
 
   return (
-    <article className="min-w-0 rounded-2xl border border-[#e4ebe5] bg-white p-4 shadow-sm sm:p-7">
-      <header className="flex flex-wrap items-center justify-between gap-5 border-b border-[#edf1ed] pb-6">
+    <article className="min-w-0 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-sm sm:p-7">
+      <header className="flex flex-wrap items-center justify-between gap-5 border-b border-[var(--border-soft)] pb-6">
         <div className="flex items-center gap-3">
-          <div className="grid size-10 place-items-center rounded-xl bg-[#e4f3e8] text-[#19683a]">
+          <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary-strong)]">
             <ListTodo size={21} />
           </div>
 
-          <h2 className="text-xl font-semibold text-[#17211b]">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
             Suas tarefas de {selectedDateLabel}
           </h2>
         </div>
 
         <div className="w-48">
-          <p className="mb-2 text-sm text-[#667069]">
+          <p className="mb-2 text-sm text-[var(--text-secondary)]">
             {completedTasks} de {tasks.length} concluídas
           </p>
 
-          <div className="h-2 overflow-hidden rounded-full bg-[#e7ece8]">
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-muted)]">
             <div
-              className="h-full rounded-full bg-[#23834b] transition-all"
+              className="h-full rounded-full bg-[var(--primary)] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -144,11 +144,11 @@ export function TaskList({
 
       {tasks.length === 0 ? (
         <div className="py-12 text-center">
-          <p className="font-medium text-[#27312b]">
+          <p className="font-medium text-[var(--text-strong)]">
             Nenhuma tarefa para {selectedDateLabel}
           </p>
 
-          <p className="mt-1 text-sm text-[#8a938d]">
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
             Aproveite o dia ou crie uma nova tarefa.
           </p>
         </div>
@@ -179,7 +179,7 @@ export function TaskList({
                   onOpenTask(task)
                 }
               }}
-              className="grid cursor-pointer grid-cols-[32px_minmax(0,1fr)_32px] items-start gap-3 border-b border-[#edf1ed] px-2 py-4 transition-colors last:border-none hover:bg-[#f8faf8]"
+              className="grid cursor-pointer grid-cols-[32px_minmax(0,1fr)_32px] items-start gap-3 border-b border-[var(--border-soft)] px-2 py-4 transition-colors last:border-none hover:bg-[var(--surface-hover)]"
             >
               <button
                 type="button"
@@ -195,8 +195,8 @@ export function TaskList({
                 className={[
                   'mt-0.5 grid size-7 cursor-pointer place-items-center rounded-full border transition-colors',
                   task.completed
-                    ? 'border-[#23834b] bg-[#23834b] text-white'
-                    : 'border-[#aeb8b1] bg-white hover:border-[#23834b]',
+                    ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
+                    : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--primary)]',
                 ].join(' ')}
               >
                 {task.completed && (
@@ -209,8 +209,8 @@ export function TaskList({
                   className={[
                     'break-words text-sm leading-5 font-semibold',
                     task.completed
-                      ? 'text-[#9aa29d] line-through'
-                      : 'text-[#27312b]',
+                      ? 'text-[var(--text-faint)] line-through'
+                      : 'text-[var(--text-strong)]',
                   ].join(' ')}
                 >
                   {task.title}
@@ -221,15 +221,15 @@ export function TaskList({
                     className={[
                       'mt-1 break-words text-xs leading-5',
                       task.completed
-                        ? 'text-[#a7afa9]'
-                        : 'text-[#7b847e]',
+                        ? 'text-[var(--text-faint)]'
+                        : 'text-[var(--text-muted)]',
                     ].join(' ')}
                   >
                     {task.description}
                   </p>
                 )}
 
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#7b847e]">
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
                   <span className="flex items-center gap-1">
                     <Clock3 size={13} />
                     {task.time ?? 'Sem horário'}
@@ -252,7 +252,7 @@ export function TaskList({
                             ? categoryColorStyles[
                             category.color
                             ]
-                            : 'bg-[#f1f3f1] text-[#667069]',
+                            : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
                         ].join(' ')}
                       >
                         {category?.name ?? 'Sem categoria'}
@@ -295,20 +295,20 @@ export function TaskList({
                   aria-expanded={
                     openMenuTaskId === task.id
                   }
-                  className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#8a938d] hover:bg-[#f3f7f3]"
+                  className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--surface-hover)]"
                 >
                   <MoreHorizontal size={18} />
                 </button>
 
                 {openMenuTaskId === task.id && (
-                  <div className="absolute top-10 right-0 z-20 w-36 rounded-xl border border-[#e4ebe5] bg-white p-1.5 shadow-lg">
+                  <div className="absolute top-10 right-0 z-20 w-36 rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] p-1.5 shadow-lg">
                     <button
                       type="button"
                       onClick={() => {
                         onEditTask(task)
                         setOpenMenuTaskId(null)
                       }}
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#27312b] hover:bg-[#f3f7f3]"
+                      className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--text-strong)] hover:bg-[var(--surface-hover)]"
                     >
                       <Pencil size={16} />
                       Editar
@@ -336,3 +336,4 @@ export function TaskList({
     </article>
   )
 }
+

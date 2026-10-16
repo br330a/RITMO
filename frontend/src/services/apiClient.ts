@@ -1,4 +1,4 @@
-import { API_URL } from '../config/api'
+﻿import { API_URL } from '../config/api'
 
 export type ApiErrorPayload = {
   status?: number
@@ -18,7 +18,7 @@ export class ApiError extends Error {
   ) {
     super(
       payload?.message ??
-        `Erro na requisição. Código HTTP: ${status}.`,
+        `Erro na requisi��o. C�digo HTTP: ${status}.`,
     )
 
     this.name = 'ApiError'

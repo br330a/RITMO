@@ -10,6 +10,7 @@ import {
   getCurrentUser,
   loginUser,
   registerUser,
+  updateUserTheme,
 } from '../services/authService'
 import {
   getStoredAuthToken,
@@ -21,6 +22,9 @@ import type {
   LoginCredentials,
   RegisterData,
 } from '../types/authTypes'
+import type {
+  Theme,
+} from '../types/themeTypes'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -33,13 +37,18 @@ export function AuthProvider({
     getStoredAuthToken(),
   )
 
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [token, setToken] = useState<string | null>(
-    initialToken,
-  )
-  const [isLoading, setIsLoading] = useState(
-    Boolean(initialToken),
-  )
+  const [user, setUser] =
+    useState<AuthUser | null>(null)
+
+  const [token, setToken] =
+    useState<string | null>(
+      initialToken,
+    )
+
+  const [isLoading, setIsLoading] =
+    useState(
+      Boolean(initialToken),
+    )
 
   useEffect(() => {
     if (!initialToken) {
@@ -62,8 +71,11 @@ export function AuthProvider({
   }, [initialToken])
 
   const login = useCallback(
-    async (credentials: LoginCredentials) => {
-      const response = await loginUser(credentials)
+    async (
+      credentials: LoginCredentials,
+    ) => {
+      const response =
+        await loginUser(credentials)
 
       saveAuthToken(response.token)
 
@@ -85,6 +97,41 @@ export function AuthProvider({
     [login],
   )
 
+  const updateThemePreference =
+    useCallback(
+      async (theme: Theme) => {
+        if (!token || !user) {
+          throw new Error(
+            'Sua sessão não está disponível.',
+          )
+        }
+
+        const previousUser = user
+
+        setUser({
+          ...user,
+          theme,
+        })
+
+        try {
+          const updatedUser =
+            await updateUserTheme(
+              token,
+              theme,
+            )
+
+          setUser(updatedUser)
+        } catch (error) {
+          setUser(previousUser)
+          throw error
+        }
+      },
+      [
+        token,
+        user,
+      ],
+    )
+
   const logout = useCallback(() => {
     removeAuthToken()
     setToken(null)
@@ -95,10 +142,12 @@ export function AuthProvider({
     () => ({
       user,
       token,
-      isAuthenticated: Boolean(user && token),
+      isAuthenticated:
+        Boolean(user && token),
       isLoading,
       login,
       register,
+      updateThemePreference,
       logout,
     }),
     [
@@ -107,6 +156,7 @@ export function AuthProvider({
       isLoading,
       login,
       register,
+      updateThemePreference,
       logout,
     ],
   )

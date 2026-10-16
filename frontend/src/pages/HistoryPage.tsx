@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { History } from 'lucide-react'
 import { TaskCard } from '../components/tasks/TaskCard'
 import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
@@ -96,16 +96,16 @@ export function HistoryPage() {
       <section className="mx-auto max-w-5xl">
         <header>
           <div className="flex items-center gap-3">
-            <div className="grid size-11 place-items-center rounded-xl bg-[#e4f3e8] text-[#19683a]">
+            <div className="grid size-11 place-items-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary-strong)]">
               <History size={22} />
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-[#17211b]">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                 Histórico
               </h1>
 
-              <p className="mt-1 text-[#667069]">
+              <p className="mt-1 text-[var(--text-secondary)]">
                 Tarefas concluídas há mais de{' '}
                 {COMPLETED_TASK_RETENTION_DAYS}{' '}
                 dias.
@@ -115,13 +115,13 @@ export function HistoryPage() {
         </header>
 
         <div className="mt-8">
-          <div className="inline-flex items-center rounded-2xl border border-[#e4ebe5] bg-white px-5 py-4 shadow-sm">
+          <div className="inline-flex items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-5 py-4 shadow-sm">
             <div>
-              <strong className="block text-2xl text-[#17211b]">
+              <strong className="block text-2xl text-[var(--text-primary)]">
                 {archivedTasks.length}
               </strong>
 
-              <span className="text-xs text-[#8a938d]">
+              <span className="text-xs text-[var(--text-muted)]">
                 Tarefas arquivadas
               </span>
             </div>
@@ -129,17 +129,17 @@ export function HistoryPage() {
         </div>
 
         {archivedTasks.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-[#cfd8d1] bg-white px-6 py-14 text-center">
+          <div className="mt-8 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-6 py-14 text-center">
             <History
               size={32}
-              className="mx-auto text-[#a1aaa4]"
+              className="mx-auto text-[var(--text-faint)]"
             />
 
-            <p className="mt-4 font-medium text-[#27312b]">
+            <p className="mt-4 font-medium text-[var(--text-strong)]">
               Seu histórico está vazio
             </p>
 
-            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[#8a938d]">
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-[var(--text-muted)]">
               Tarefas concluídas há mais de{' '}
               {COMPLETED_TASK_RETENTION_DAYS}{' '}
               dias aparecerão aqui automaticamente.
@@ -230,3 +230,4 @@ export function HistoryPage() {
     </>
   )
 }
+
