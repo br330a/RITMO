@@ -1,15 +1,17 @@
 import {
   CalendarDays,
+  History,
   LayoutDashboard,
   ListTodo,
+  LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Shapes,
   X,
-  History,
 } from 'lucide-react'
 import { NavLink } from 'react-router'
 import { RitmoLogo } from '../branding/RitmoLogo'
+import { useAuth } from '../../hooks/useAuth'
 
 type SidebarProps = {
   isOpen: boolean
@@ -39,7 +41,6 @@ const navigationItems = [
     path: '/categorias',
     icon: Shapes,
   },
-
   {
     label: 'Histórico',
     path: '/historico',
@@ -53,6 +54,18 @@ export function Sidebar({
   onClose,
   onToggleCollapse,
 }: SidebarProps) {
+  const {
+    user,
+    logout,
+  } = useAuth()
+
+  const userInitial =
+    user?.name.trim().charAt(0).toUpperCase() || '?'
+
+  function handleLogout() {
+    onClose()
+    logout()
+  }
 
   return (
     <aside
@@ -140,11 +153,17 @@ export function Sidebar({
               end={item.path === '/'}
               onClick={onClose}
               aria-label={item.label}
-              title={isCollapsed ? item.label : undefined}
+              title={
+                isCollapsed
+                  ? item.label
+                  : undefined
+              }
               className={({ isActive }) =>
                 [
                   'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#23834b]',
-                  isCollapsed ? 'lg:justify-center lg:px-0' : '',
+                  isCollapsed
+                    ? 'lg:justify-center lg:px-0'
+                    : '',
                   isActive
                     ? 'bg-[#e4f3e8] text-[#19683a]'
                     : 'text-[#667069] hover:bg-[#f3f7f3] hover:text-[#17211b]',
@@ -158,7 +177,11 @@ export function Sidebar({
                 aria-hidden="true"
               />
 
-              <span className={isCollapsed ? 'lg:hidden' : ''}>
+              <span
+                className={
+                  isCollapsed ? 'lg:hidden' : ''
+                }
+              >
                 {item.label}
               </span>
             </NavLink>
@@ -167,25 +190,54 @@ export function Sidebar({
       </nav>
 
       <div className="mt-6 border-t border-[#e4ebe5] pt-5">
-        <div className={isCollapsed ? 'lg:hidden' : ''}>
-          <p className="px-3 text-sm font-semibold text-[#17211b]">
-            Bruno
+        <div
+          className={
+            isCollapsed ? 'lg:hidden' : ''
+          }
+        >
+          <p className="truncate px-3 text-sm font-semibold text-[#17211b]">
+            {user?.name}
           </p>
 
-          <p className="px-3 text-xs text-[#7b847e]">
-            Minha conta
+          <p className="truncate px-3 text-xs text-[#7b847e]">
+            {user?.email}
           </p>
         </div>
 
         {isCollapsed && (
           <div
-            title="Bruno — Minha conta"
-            aria-label="Bruno — Minha conta"
+            title={`${user?.name ?? 'Usuário'} — ${user?.email ?? ''}`}
+            aria-label={user?.name ?? 'Usuário'}
             className="mx-auto hidden size-10 place-items-center rounded-full bg-[#e4f3e8] text-sm font-semibold text-[#19683a] lg:grid"
           >
-            B
+            {userInitial}
           </div>
         )}
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          title="Sair"
+          className={[
+            'mt-4 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#667069] transition-colors hover:bg-red-50 hover:text-red-700',
+            isCollapsed
+              ? 'lg:justify-center lg:px-0'
+              : '',
+          ].join(' ')}
+        >
+          <LogOut
+            size={19}
+            className="shrink-0"
+          />
+
+          <span
+            className={
+              isCollapsed ? 'lg:hidden' : ''
+            }
+          >
+            Sair
+          </span>
+        </button>
       </div>
     </aside>
   )

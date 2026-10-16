@@ -10,12 +10,15 @@ import { TaskDetailsModal } from '../components/tasks/TaskDetailModal'
 
 import { ConfirmDeleteModal } from '../components/tasks/ConfirmDeleteModal'
 import type { Task } from '../types/taskTypes'
+import { useAuth } from '../hooks/useAuth'
 import {
   getTaskOccurrence,
   getTasksForDate,
 } from '../utils/taskRecurrence'
 
 export function DashboardPage() {
+  const { user } = useAuth()
+
   const {
     tasks,
     createTask,
@@ -75,13 +78,16 @@ export function DashboardPage() {
     month: 'long',
   }).format(new Date())
 
+  const firstName =
+    user?.name.trim().split(/\s+/)[0] ?? 'Usuário'
+
   return (
     <>
       <section className="mx-auto max-w-[1500px]">
         <header className="flex flex-wrap items-start justify-between gap-6">
           <div>
             <h1 className="text-4xl font-bold tracking-tight text-[#17211b]">
-              Bom dia, Bruno!
+              Bom dia, {firstName}!
             </h1>
 
             <p className="mt-2 text-lg text-[#667069]">
