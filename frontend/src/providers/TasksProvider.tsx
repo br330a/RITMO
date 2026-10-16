@@ -8,170 +8,362 @@ import {
   TasksContext,
   type TasksContextValue,
 } from '../context/tasksContext'
-import { initialTasks } from '../data/initialTasks'
+import { useAuth } from '../hooks/useAuth'
+import { ApiError } from '../services/apiClient'
 import {
-  loadTasks,
-  saveTasks,
-} from '../services/taskStorage'
+  completeTaskOccurrenceRequest,
+  createTaskRequest,
+  deleteTaskRequest,
+  getTasks,
+  setTaskCompletionRequest,
+  uncompleteTaskOccurrenceRequest,
+  updateTaskRequest,
+} from '../services/taskService'
 import type {
   CreateTaskData,
   Task,
 } from '../types/taskTypes'
 
+type TasksState = {
+  ownerToken: string | null
+  tasks: Task[]
+}
+
+function sortTasks(tasks: Task[]) {
+  return [...tasks].sort(
+    (firstTask, secondTask) => {
+      const dateComparison =
+        firstTask.dueDate.localeCompare(
+          secondTask.dueDate,
+        )
+
+      if (dateComparison !== 0) {
+        return dateComparison
+      }
+
+      return (
+        firstTask.time ?? '23:59'
+      ).localeCompare(
+        secondTask.time ?? '23:59',
+      )
+    },
+  )
+}
+
+function getErrorMessage(
+  error: unknown,
+  fallbackMessage: string,
+) {
+  if (error instanceof ApiError) {
+    return (
+      error.payload?.message ??
+      fallbackMessage
+    )
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return fallbackMessage
+}
+
 export function TasksProvider({
   children,
 }: PropsWithChildren) {
-  const [tasks, setTasks] = useState<Task[]>(
-    () => loadTasks() ?? initialTasks,
-  )
+  const { token } = useAuth()
+
+  const [state, setState] =
+    useState<TasksState>({
+      ownerToken: null,
+      tasks: [],
+    })
+
+  const tasks =
+    token && state.ownerToken === token
+      ? state.tasks
+      : []
+
+  const isLoadingTasks =
+    Boolean(token) &&
+    state.ownerToken !== token
 
   useEffect(() => {
-    saveTasks(tasks)
-  }, [tasks])
+    if (!token) {
+      return
+    }
 
-  function createTask(
+    let isActive = true
+
+    getTasks(token)
+      .then((loadedTasks) => {
+        if (!isActive) {
+          return
+        }
+
+        setState({
+          ownerToken: token,
+          tasks: sortTasks(loadedTasks),
+        })
+      })
+      .catch((error: unknown) => {
+        if (!isActive) {
+          return
+        }
+
+        setState({
+          ownerToken: token,
+          tasks: [],
+        })
+
+        toast.error(
+          getErrorMessage(
+            error,
+            'Não foi possível carregar as tarefas.',
+          ),
+        )
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [token])
+
+  async function createTask(
     taskData: CreateTaskData,
   ) {
-    setTasks((currentTasks) =>
-      [
-        ...currentTasks,
-        {
-          ...taskData,
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
 
-          id: crypto.randomUUID(),
+      return false
+    }
 
-          
+    try {
+      const newTask =
+        await createTaskRequest(
+          token,
+          taskData,
+        )
 
-          completed: false,
-          completedAt: null,
-          completedOccurrences: {},
-        },
-      ].sort((firstTask, secondTask) =>
-        (
-          firstTask.time ?? '23:59'
-        ).localeCompare(
-          secondTask.time ?? '23:59',
+      setState((currentState) => ({
+        ownerToken: token,
+        tasks: sortTasks(
+          currentState.ownerToken === token
+            ? [
+                ...currentState.tasks,
+                newTask,
+              ]
+            : [newTask],
         ),
-      ),
-    )
+      }))
+
+      toast.success(
+        'Tarefa criada com sucesso.',
+      )
+
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível criar a tarefa.',
+        ),
+      )
+
+      return false
+    }
   }
 
-  function updateTask(
+  async function updateTask(
     taskId: string,
     taskData: CreateTaskData,
   ) {
-    setTasks((currentTasks) =>
-      currentTasks
-        .map((task) =>
-          task.id === taskId
-            ? {
-              ...task,
-              ...taskData,
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
 
-            }
-            : task,
+      return false
+    }
+
+    try {
+      const updatedTask =
+        await updateTaskRequest(
+          token,
+          taskId,
+          taskData,
         )
-        .sort(
-          (
-            firstTask,
-            secondTask,
-          ) => {
-            const dateComparison =
-              firstTask.dueDate.localeCompare(
-                secondTask.dueDate,
-              )
 
-            return dateComparison !== 0
-              ? dateComparison
-              : (
-                firstTask.time ??
-                '23:59'
-              ).localeCompare(
-                secondTask.time ??
-                '23:59',
+      setState((currentState) => ({
+        ownerToken: token,
+        tasks:
+          currentState.ownerToken === token
+            ? sortTasks(
+                currentState.tasks.map(
+                  (task) =>
+                    task.id === taskId
+                      ? updatedTask
+                      : task,
+                ),
               )
-          },
+            : [updatedTask],
+      }))
+
+      toast.success(
+        'Tarefa atualizada com sucesso.',
+      )
+
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível atualizar a tarefa.',
         ),
-    )
+      )
+
+      return false
+    }
   }
 
-  function toggleTask(
+  async function toggleTask(
     taskId: string,
     occurrenceDate?: string,
   ) {
-    setTasks((currentTasks) =>
-      currentTasks.map((task) => {
-        if (task.id !== taskId) {
-          return task
-        }
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
 
-        if (task.recurrence) {
-          const targetDate =
-            occurrenceDate ??
-            task.dueDate
+      return false
+    }
 
-          const currentCompletedAt =
-            task.completedOccurrences[
-            targetDate
-            ]
-
-          const nextCompletedOccurrences = {
-            ...task.completedOccurrences,
-          }
-
-          if (currentCompletedAt) {
-            delete nextCompletedOccurrences[
-              targetDate
-            ]
-          } else {
-            nextCompletedOccurrences[
-              targetDate
-            ] =
-              new Date().toISOString()
-          }
-
-          return {
-            ...task,
-            completed: false,
-            completedAt: null,
-            completedOccurrences:
-              nextCompletedOccurrences,
-          }
-        }
-
-        if (task.completed) {
-          return {
-            ...task,
-            completed: false,
-            completedAt: null,
-          }
-        }
-
-        return {
-          ...task,
-          completed: true,
-          completedAt:
-            new Date().toISOString(),
-        }
-      }),
+    const task = tasks.find(
+      (currentTask) =>
+        currentTask.id === taskId,
     )
+
+    if (!task) {
+      toast.error(
+        'A tarefa não foi encontrada.',
+      )
+
+      return false
+    }
+
+    try {
+      let updatedTask: Task
+
+      if (task.recurrence) {
+        const targetDate =
+          occurrenceDate ??
+          task.dueDate
+
+        const isCompleted =
+          Boolean(
+            task.completedOccurrences[
+              targetDate
+            ],
+          )
+
+        updatedTask = isCompleted
+          ? await uncompleteTaskOccurrenceRequest(
+              token,
+              taskId,
+              targetDate,
+            )
+          : await completeTaskOccurrenceRequest(
+              token,
+              taskId,
+              targetDate,
+            )
+      } else {
+        updatedTask =
+          await setTaskCompletionRequest(
+            token,
+            taskId,
+            !task.completed,
+          )
+      }
+
+      setState((currentState) => ({
+        ownerToken: token,
+        tasks:
+          currentState.ownerToken === token
+            ? sortTasks(
+                currentState.tasks.map(
+                  (currentTask) =>
+                    currentTask.id === taskId
+                      ? updatedTask
+                      : currentTask,
+                ),
+              )
+            : [updatedTask],
+      }))
+
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível atualizar o status da tarefa.',
+        ),
+      )
+
+      return false
+    }
   }
 
-  function deleteTask(taskId: string) {
-    setTasks((currentTasks) =>
-      currentTasks.filter(
-        (task) =>
-          task.id !== taskId,
-      ),
-    )
+  async function deleteTask(
+    taskId: string,
+  ) {
+    if (!token) {
+      toast.error(
+        'Sua sessão não está disponível.',
+      )
 
-    toast.success(
-      'Tarefa excluída com sucesso.',
-    )
+      return false
+    }
+
+    try {
+      await deleteTaskRequest(
+        token,
+        taskId,
+      )
+
+      setState((currentState) => ({
+        ownerToken: token,
+        tasks:
+          currentState.ownerToken === token
+            ? currentState.tasks.filter(
+                (task) =>
+                  task.id !== taskId,
+              )
+            : [],
+      }))
+
+      toast.success(
+        'Tarefa excluída com sucesso.',
+      )
+
+      return true
+    } catch (error) {
+      toast.error(
+        getErrorMessage(
+          error,
+          'Não foi possível excluir a tarefa.',
+        ),
+      )
+
+      return false
+    }
   }
 
   const contextValue: TasksContextValue = {
     tasks,
+    isLoadingTasks,
     createTask,
     updateTask,
     toggleTask,

@@ -13,7 +13,9 @@ import { toast } from 'sonner'
 type TaskFormModalProps = {
   task?: Task
   onClose: () => void
-  onSubmit: (taskData: CreateTaskData) => void
+  onSubmit: (
+    taskData: CreateTaskData,
+  ) => Promise<boolean>
   initialDate?: string
 }
 
@@ -210,6 +212,9 @@ export function TaskFormModal({
 
   const isEditing = Boolean(task)
 
+  const [isSubmitting, setIsSubmitting] =
+    useState(false)
+
   function handleRecurrenceChange(
     value: RecurrenceOption,
   ) {
@@ -244,7 +249,7 @@ export function TaskFormModal({
     })
   }
 
-  function handleSubmit(
+  async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
@@ -316,28 +321,31 @@ export function TaskFormModal({
             recurrenceEndDate || null,
         }
 
-    onSubmit({
-      title: title.trim(),
-      description:
-        description.trim() || null,
-      dueDate,
-      time: time || null,
-      categoryId: selectedCategory.id,
-      priority,
-      estimatedMinutes:
-        estimatedMinutes
-          ? Number(estimatedMinutes)
-          : null,
-      recurrence,
-    })
+    setIsSubmitting(true)
 
-    toast.success(
-      task
-        ? 'Tarefa atualizada com sucesso.'
-        : 'Tarefa criada com sucesso.',
-    )
+    try {
+      const success = await onSubmit({
+        title: title.trim(),
 
-    onClose()
+        description:
+          description.trim() || null,
+        dueDate,
+        time: time || null,
+        categoryId: selectedCategory.id,
+        priority,
+        estimatedMinutes:
+          estimatedMinutes
+            ? Number(estimatedMinutes)
+            : null,
+        recurrence,
+      })
+
+      if (success) {
+        onClose()
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -691,11 +699,14 @@ export function TaskFormModal({
 
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a]"
+              disabled={isSubmitting}
+              className="cursor-pointer rounded-xl bg-[#23834b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#19683a] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isEditing
-                ? 'Salvar alterações'
-                : 'Criar tarefa'}
+              {isSubmitting
+                ? 'Salvando...'
+                : isEditing
+                  ? 'Salvar alterações'
+                  : 'Criar tarefa'}
             </button>
           </div>
         </form>

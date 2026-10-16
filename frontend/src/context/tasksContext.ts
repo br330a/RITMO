@@ -1,17 +1,33 @@
 import { createContext } from 'react'
-import type { CreateTaskData, Task } from '../types/taskTypes'
+import type {
+  CreateTaskData,
+  Task,
+} from '../types/taskTypes'
 
 export type TasksContextValue = {
   tasks: Task[]
-  createTask: (task: CreateTaskData) => void
+  isLoadingTasks: boolean
+
+  createTask: (
+    taskData: CreateTaskData,
+  ) => Promise<boolean>
+
+  updateTask: (
+    taskId: string,
+    taskData: CreateTaskData,
+  ) => Promise<boolean>
+
   toggleTask: (
     taskId: string,
     occurrenceDate?: string,
-  ) => void
-  deleteTask: (taskId: string) => void
-  updateTask: (taskId: string, taskData: CreateTaskData) => void
+  ) => Promise<boolean>
+
+  deleteTask: (
+    taskId: string,
+  ) => Promise<boolean>
 }
 
-export const TasksContext = createContext<TasksContextValue | undefined>(
-  undefined,
-)
+export const TasksContext =
+  createContext<
+    TasksContextValue | undefined
+  >(undefined)

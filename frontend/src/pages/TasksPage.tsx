@@ -790,10 +790,9 @@ export function TasksPage() {
           onCancel={() =>
             setTaskToDelete(null)
           }
-          onConfirm={() => {
+          onConfirm={() =>
             deleteTask(taskToDelete.id)
-            setTaskToDelete(null)
-          }}
+          }
         />
       )}
     </>

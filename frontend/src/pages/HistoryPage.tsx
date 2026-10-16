@@ -222,10 +222,9 @@ export function HistoryPage() {
           onCancel={() =>
             setTaskToDelete(null)
           }
-          onConfirm={() => {
+          onConfirm={() =>
             deleteTask(taskToDelete.id)
-            setTaskToDelete(null)
-          }}
+          }
         />
       )}
     </>

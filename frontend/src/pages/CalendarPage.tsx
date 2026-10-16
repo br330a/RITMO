@@ -387,10 +387,9 @@ export function CalendarPage() {
         <ConfirmDeleteModal
           taskTitle={taskToDelete.title}
           onCancel={() => setTaskToDelete(null)}
-          onConfirm={() => {
+          onConfirm={() =>
             deleteTask(taskToDelete.id)
-            setTaskToDelete(null)
-          }}
+          }
         />
       )}
     </>
