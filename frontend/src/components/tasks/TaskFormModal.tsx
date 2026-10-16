@@ -1,14 +1,42 @@
-﻿import { useState, type FormEvent } from 'react'
-import { X } from 'lucide-react'
+﻿import {
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react'
+import {
+  AlignLeft,
+  ArrowDown,
+  ArrowUp,
+  CalendarDays,
+  Clock3,
+  Flag,
+  ListTodo,
+  Minus,
+  Repeat2,
+  Shapes,
+  Timer,
+  X,
+  type LucideIcon,
+} from 'lucide-react'
+import { toast } from 'sonner'
+import { RitmoSelect } from '../ui/RitmoSelect'
+import {
+  categoryColorStyles,
+} from '../../constants/categoryStyles'
+import {
+  categoryIcons,
+} from '../../constants/categoryIcons'
+import { useCategories } from '../../hooks/useCategories'
 import type {
   CreateTaskData,
   RecurrenceFrequency,
   Task,
   TaskPriority,
 } from '../../types/taskTypes'
-import { useCategories } from '../../hooks/useCategories'
 import { getLocalDateValue } from '../../utils/date'
-import { toast } from 'sonner'
+
+import { RitmoDatePicker } from '../ui/RitmoDatePicker'
+import { RitmoTimeInput } from '../ui/RitmoTimeInput'
 
 type TaskFormModalProps = {
   task?: Task
@@ -23,38 +51,80 @@ type RecurrenceOption =
   | 'none'
   | RecurrenceFrequency
 
+type FieldLabelProps = {
+  icon: LucideIcon
+  children: ReactNode
+  optional?: boolean
+}
 
+function FieldLabel({
+  icon: Icon,
+  children,
+  optional = false,
+}: FieldLabelProps) {
+  return (
+    <span className="mb-2 flex items-center gap-2 text-sm font-medium text-[var(--text-strong)]">
+      <Icon
+        size={16}
+        className="text-[var(--text-muted)]"
+      />
+
+      <span>{children}</span>
+
+      {optional && (
+        <span className="font-normal text-[var(--text-muted)]">
+          (opcional)
+        </span>
+      )}
+    </span>
+  )
+}
 
 const priorities: {
   value: TaskPriority
   label: string
+  icon: LucideIcon
+  selectedClassName: string
 }[] = [
-    {
-      value: 'low',
-      label: 'Baixa',
-    },
-    {
-      value: 'medium',
-      label: 'Média',
-    },
-    {
-      value: 'high',
-      label: 'Alta',
-    },
-  ]
+  {
+    value: 'low',
+    label: 'Baixa',
+    icon: ArrowDown,
+    selectedClassName:
+      'border-emerald-500/50 bg-emerald-500/10 text-emerald-600',
+  },
+  {
+    value: 'medium',
+    label: 'Média',
+    icon: Minus,
+    selectedClassName:
+      'border-amber-500/50 bg-amber-500/10 text-amber-600',
+  },
+  {
+    value: 'high',
+    label: 'Alta',
+    icon: ArrowUp,
+    selectedClassName:
+      'border-red-500/50 bg-red-500/10 text-red-600',
+  },
+]
 
 const durationOptions = [
   {
+    value: '',
+    label: 'Não informar',
+  },
+  {
     value: '15',
-    label: '15 min',
+    label: '15 minutos',
   },
   {
     value: '30',
-    label: '30 min',
+    label: '30 minutos',
   },
   {
     value: '45',
-    label: '45 min',
+    label: '45 minutos',
   },
   {
     value: '60',
@@ -78,23 +148,23 @@ const recurrenceOptions: {
   value: RecurrenceOption
   label: string
 }[] = [
-    {
-      value: 'none',
-      label: 'Não repetir',
-    },
-    {
-      value: 'daily',
-      label: 'Diariamente',
-    },
-    {
-      value: 'weekly',
-      label: 'Semanalmente',
-    },
-    {
-      value: 'monthly',
-      label: 'Mensalmente',
-    },
-  ]
+  {
+    value: 'none',
+    label: 'Não repetir',
+  },
+  {
+    value: 'daily',
+    label: 'Diariamente',
+  },
+  {
+    value: 'weekly',
+    label: 'Semanalmente',
+  },
+  {
+    value: 'monthly',
+    label: 'Mensalmente',
+  },
+]
 
 const weekDays = [
   {
@@ -128,14 +198,15 @@ const weekDays = [
 ]
 
 const inputStyles =
-  'w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]'
+  'w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]'
 
 function getWeekdayFromDateValue(
   dateValue: string,
 ) {
-  const [year, month, day] = dateValue
-    .split('-')
-    .map(Number)
+  const [year, month, day] =
+    dateValue
+      .split('-')
+      .map(Number)
 
   return new Date(
     year,
@@ -144,8 +215,12 @@ function getWeekdayFromDateValue(
   ).getDay()
 }
 
-function getDayOfMonth(dateValue: string) {
-  return Number(dateValue.split('-')[2])
+function getDayOfMonth(
+  dateValue: string,
+) {
+  return Number(
+    dateValue.split('-')[2],
+  )
 }
 
 export function TaskFormModal({
@@ -154,23 +229,31 @@ export function TaskFormModal({
   onSubmit,
   initialDate,
 }: TaskFormModalProps) {
-  const { categories } = useCategories()
-  const [title, setTitle] = useState(
-    task?.title ?? '',
-  )
+  const { categories } =
+    useCategories()
 
-  const [dueDate, setDueDate] = useState(
-    task?.dueDate ??
-    initialDate ??
-    getLocalDateValue(),
-  )
-
-  const [time, setTime] = useState(
-    task?.time ?? '',
-  )
+  const [title, setTitle] =
+    useState(task?.title ?? '')
 
   const [description, setDescription] =
-    useState(task?.description ?? '')
+    useState(
+      task?.description ?? '',
+    )
+
+  const [dueDate, setDueDate] =
+    useState(
+      task?.dueDate ??
+        initialDate ??
+        getLocalDateValue(),
+    )
+
+  const [time, setTime] =
+    useState(task?.time ?? '')
+
+  const [categoryId, setCategoryId] =
+    useState(
+      task?.categoryId ?? '',
+    )
 
   const [priority, setPriority] =
     useState<TaskPriority>(
@@ -181,39 +264,58 @@ export function TaskFormModal({
     estimatedMinutes,
     setEstimatedMinutes,
   ] = useState(
-    task?.estimatedMinutes?.toString() ?? '',
+    task?.estimatedMinutes
+      ?.toString() ?? '',
   )
-
-  const [categoryId, setCategoryId] =
-    useState(
-      task?.categoryId ?? '',
-    )
 
   const [
     recurrenceFrequency,
     setRecurrenceFrequency,
-  ] = useState<RecurrenceOption>(
-    task?.recurrence?.frequency ?? 'none',
-  )
+  ] =
+    useState<RecurrenceOption>(
+      task?.recurrence
+        ?.frequency ?? 'none',
+    )
 
   const [
     selectedWeekDays,
     setSelectedWeekDays,
   ] = useState<number[]>(
-    task?.recurrence?.daysOfWeek ?? [],
+    task?.recurrence
+      ?.daysOfWeek ?? [],
   )
 
   const [
     recurrenceEndDate,
     setRecurrenceEndDate,
   ] = useState(
-    task?.recurrence?.endDate ?? '',
+    task?.recurrence?.endDate ??
+      '',
   )
 
-  const isEditing = Boolean(task)
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false)
 
-  const [isSubmitting, setIsSubmitting] =
-    useState(false)
+  const isEditing =
+    Boolean(task)
+
+  const categoryOptions =
+    categories.map(
+      (category) => ({
+        value: category.id,
+        label: category.name,
+        icon:
+          categoryIcons[
+            category.icon
+          ],
+        iconClassName:
+          categoryColorStyles[
+            category.color
+          ],
+      }),
+    )
 
   function handleRecurrenceChange(
     value: RecurrenceOption,
@@ -225,7 +327,9 @@ export function TaskFormModal({
       selectedWeekDays.length === 0
     ) {
       setSelectedWeekDays([
-        getWeekdayFromDateValue(dueDate),
+        getWeekdayFromDateValue(
+          dueDate,
+        ),
       ])
     }
 
@@ -234,19 +338,33 @@ export function TaskFormModal({
     }
   }
 
-  function toggleWeekDay(day: number) {
-    setSelectedWeekDays((currentDays) => {
-      if (currentDays.includes(day)) {
-        return currentDays.filter(
-          (currentDay) => currentDay !== day,
-        )
-      }
+  function toggleWeekDay(
+    day: number,
+  ) {
+    setSelectedWeekDays(
+      (currentDays) => {
+        if (
+          currentDays.includes(day)
+        ) {
+          return currentDays.filter(
+            (currentDay) =>
+              currentDay !== day,
+          )
+        }
 
-      return [...currentDays, day].sort(
-        (firstDay, secondDay) =>
-          firstDay - secondDay,
-      )
-    })
+        return [
+          ...currentDays,
+          day,
+        ].sort(
+          (
+            firstDay,
+            secondDay,
+          ) =>
+            firstDay -
+            secondDay,
+        )
+      },
+    )
   }
 
   async function handleSubmit(
@@ -255,7 +373,9 @@ export function TaskFormModal({
     event.preventDefault()
 
     if (!title.trim()) {
-      toast.error('Digite o nome da tarefa.')
+      toast.error(
+        'Digite o nome da tarefa.',
+      )
       return
     }
 
@@ -276,7 +396,8 @@ export function TaskFormModal({
     const selectedCategory =
       categories.find(
         (category) =>
-          category.id === categoryId,
+          category.id ===
+          categoryId,
       )
 
     if (!selectedCategory) {
@@ -287,7 +408,8 @@ export function TaskFormModal({
     }
 
     if (
-      recurrenceFrequency === 'weekly' &&
+      recurrenceFrequency ===
+        'weekly' &&
       selectedWeekDays.length === 0
     ) {
       toast.error(
@@ -298,7 +420,8 @@ export function TaskFormModal({
 
     if (
       recurrenceEndDate &&
-      recurrenceEndDate < dueDate
+      recurrenceEndDate <
+        dueDate
     ) {
       toast.error(
         'A data final não pode ser anterior à data inicial.',
@@ -307,38 +430,44 @@ export function TaskFormModal({
     }
 
     const recurrence =
-      recurrenceFrequency === 'none'
+      recurrenceFrequency ===
+      'none'
         ? null
         : {
-          frequency:
-            recurrenceFrequency,
-          daysOfWeek:
-            recurrenceFrequency ===
+            frequency:
+              recurrenceFrequency,
+            daysOfWeek:
+              recurrenceFrequency ===
               'weekly'
-              ? selectedWeekDays
-              : [],
-          endDate:
-            recurrenceEndDate || null,
-        }
+                ? selectedWeekDays
+                : [],
+            endDate:
+              recurrenceEndDate ||
+              null,
+          }
 
     setIsSubmitting(true)
 
     try {
-      const success = await onSubmit({
-        title: title.trim(),
-
-        description:
-          description.trim() || null,
-        dueDate,
-        time: time || null,
-        categoryId: selectedCategory.id,
-        priority,
-        estimatedMinutes:
-          estimatedMinutes
-            ? Number(estimatedMinutes)
-            : null,
-        recurrence,
-      })
+      const success =
+        await onSubmit({
+          title: title.trim(),
+          description:
+            description.trim() ||
+            null,
+          dueDate,
+          time: time || null,
+          categoryId:
+            selectedCategory.id,
+          priority,
+          estimatedMinutes:
+            estimatedMinutes
+              ? Number(
+                  estimatedMinutes,
+                )
+              : null,
+          recurrence,
+        })
 
       if (success) {
         onClose()
@@ -353,38 +482,49 @@ export function TaskFormModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="task-form-title"
-      onMouseDown={onClose}
-      className="fixed inset-0 z-50 grid place-items-center bg-black/35 px-5"
+      onMouseDown={
+        isSubmitting
+          ? undefined
+          : onClose
+      }
+      className="fixed inset-0 z-50 grid place-items-center bg-[var(--overlay)] px-4 py-5 sm:px-6"
     >
       <section
         onMouseDown={(event) =>
           event.stopPropagation()
         }
-        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
+        className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-[var(--border-soft)] bg-[var(--surface)] shadow-2xl"
       >
-        <header className="mb-6 flex items-start justify-between gap-4">
+        <header className="flex items-start justify-between gap-6 border-b border-[var(--border-soft)] px-6 py-5 sm:px-7">
           <div>
-            <h2
-              id="task-form-title"
-              className="text-2xl font-semibold text-[var(--text-primary)]"
-            >
-              {isEditing
-                ? 'Editar tarefa'
-                : 'Nova tarefa'}
-            </h2>
+            <div className="mb-1 flex items-center gap-2.5">
+              <div className="grid size-9 place-items-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary-strong)]">
+                <ListTodo size={18} />
+              </div>
 
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <h2
+                id="task-form-title"
+                className="text-xl font-semibold text-[var(--text-primary)] sm:text-2xl"
+              >
+                {isEditing
+                  ? 'Editar tarefa'
+                  : 'Nova tarefa'}
+              </h2>
+            </div>
+
+            <p className="ml-0 mt-2 text-sm text-[var(--text-muted)] sm:ml-[46px]">
               {isEditing
-                ? 'Atualize as informações da atividade.'
-                : 'Organize uma nova atividade.'}
+                ? 'Atualize os detalhes e o planejamento.'
+                : 'Organize sua atividade de forma rápida.'}
             </p>
           </div>
 
           <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             aria-label="Fechar"
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
+            className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-xl text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X size={20} />
           </button>
@@ -392,307 +532,301 @@ export function TaskFormModal({
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-5"
         >
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-              Tarefa
-            </span>
-
-            <input
-              type="text"
-              value={title}
-              onChange={(event) =>
-                setTitle(event.target.value)
-              }
-              placeholder="Ex.: Estudar Java"
-              autoFocus
-              className={inputStyles}
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-              Descrição (opcional)
-            </span>
-
-            <textarea
-              value={description}
-              onChange={(event) =>
-                setDescription(
-                  event.target.value,
-                )
-              }
-              placeholder="Ex.: Revisar orientação a objetos e fazer exercícios"
-              rows={3}
-              className={`${inputStyles} resize-none`}
-            />
-          </label>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                Data
-              </span>
-
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(event) =>
-                  setDueDate(
-                    event.target.value,
-                  )
-                }
-                className={inputStyles}
-              />
-            </label>
-
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                Horário (opcional)
-              </span>
-
-              <input
-                type="time"
-                value={time}
-                onChange={(event) =>
-                  setTime(event.target.value)
-                }
-                className={inputStyles}
-              />
-            </label>
-          </div>
-
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-              Categoria
-            </span>
-
-            <select
-              value={categoryId}
-              onChange={(event) =>
-                setCategoryId(
-                  event.target.value,
-                )
-              }
-              className={inputStyles}
-            >
-              <option value="" disabled>
-                Selecione uma categoria
-              </option>
-
-              {categories.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
+          <div className="grid gap-7 px-6 py-6 sm:px-7 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
+            <div className="space-y-5">
+              <div>
+                <FieldLabel
+                  icon={ListTodo}
                 >
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+                  Tarefa
+                </FieldLabel>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                Prioridade
-              </span>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(event) =>
+                    setTitle(
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Ex.: Estudar Java"
+                  autoFocus
+                  className={inputStyles}
+                />
+              </div>
 
-              <select
-                value={priority}
-                onChange={(event) =>
-                  setPriority(
-                    event.target
-                      .value as TaskPriority,
-                  )
-                }
-                className={inputStyles}
-              >
-                {priorities.map(
-                  (priorityOption) => (
-                    <option
-                      key={
-                        priorityOption.value
-                      }
-                      value={
-                        priorityOption.value
-                      }
-                    >
-                      {
-                        priorityOption.label
-                      }
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
+              <div>
+                <FieldLabel
+                  icon={AlignLeft}
+                  optional
+                >
+                  Descrição
+                </FieldLabel>
 
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                Duração estimada
-              </span>
+                <textarea
+                  value={description}
+                  onChange={(event) =>
+                    setDescription(
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Adicione detalhes, observações ou contexto..."
+                  rows={5}
+                  className={`${inputStyles} resize-none`}
+                />
+              </div>
 
-              <select
-                value={estimatedMinutes}
-                onChange={(event) =>
-                  setEstimatedMinutes(
-                    event.target.value,
-                  )
-                }
-                className={inputStyles}
-              >
-                <option value="">
-                  Não informar
-                </option>
+              <div>
+                <FieldLabel
+                  icon={Shapes}
+                >
+                  Categoria
+                </FieldLabel>
 
-                {durationOptions.map(
-                  (duration) => (
-                    <option
-                      key={duration.value}
-                      value={duration.value}
-                    >
-                      {duration.label}
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
-          </div>
+                <RitmoSelect
+                  value={categoryId}
+                  options={
+                    categoryOptions
+                  }
+                  onChange={
+                    setCategoryId
+                  }
+                  placeholder="Selecione uma categoria"
+                  ariaLabel="Selecionar categoria"
+                />
+              </div>
+            </div>
 
-          <div className="border-t border-[var(--border-soft)] pt-5">
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                Repetir
-              </span>
+            <div className="space-y-5 lg:border-l lg:border-[var(--border-soft)] lg:pl-8">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <FieldLabel
+                    icon={
+                      CalendarDays
+                    }
+                  >
+                    Data
+                  </FieldLabel>
 
-              <select
-                value={recurrenceFrequency}
-                onChange={(event) =>
-                  handleRecurrenceChange(
-                    event.target
-                      .value as RecurrenceOption,
-                  )
-                }
-                className={inputStyles}
-              >
-                {recurrenceOptions.map(
-                  (option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
-
-            {recurrenceFrequency ===
-              'weekly' && (
-                <div className="mt-4">
-                  <p className="mb-2 text-sm font-medium text-[var(--text-strong)]">
-                    Dias da semana
-                  </p>
-
-                  <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-                    {weekDays.map(
-                      (weekDay) => {
-                        const isSelected =
-                          selectedWeekDays.includes(
-                            weekDay.value,
-                          )
-
-                        return (
-                          <button
-                            key={
-                              weekDay.value
-                            }
-                            type="button"
-                            onClick={() =>
-                              toggleWeekDay(
-                                weekDay.value,
-                              )
-                            }
-                            aria-pressed={
-                              isSelected
-                            }
-                            className={[
-                              'cursor-pointer rounded-xl border px-2 py-2 text-xs font-semibold transition-colors',
-                              isSelected
-                                ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
-                                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
-                            ].join(' ')}
-                          >
-                            {weekDay.label}
-                          </button>
-                        )
-                      },
-                    )}
-                  </div>
+                  <RitmoDatePicker
+                    value={dueDate}
+                    onChange={setDueDate}
+                    ariaLabel="Selecionar data da tarefa"
+                  />
                 </div>
-              )}
 
-            {recurrenceFrequency !==
-              'none' && (
-                <>
-                  <label className="mt-4 block">
-                    <span className="mb-2 block text-sm font-medium text-[var(--text-strong)]">
-                      Data final (opcional)
-                    </span>
+                <div>
+                  <FieldLabel
+                    icon={Clock3}
+                    optional
+                  >
+                    Horário
+                  </FieldLabel>
 
-                    <input
-                      type="date"
+                  <RitmoTimeInput
+                    value={time}
+                    onChange={setTime}
+                    ariaLabel="Horário da tarefa"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel
+                  icon={Flag}
+                >
+                  Prioridade
+                </FieldLabel>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {priorities.map(
+                    (
+                      priorityOption,
+                    ) => {
+                      const Icon =
+                        priorityOption.icon
+
+                      const isSelected =
+                        priority ===
+                        priorityOption.value
+
+                      return (
+                        <button
+                          key={
+                            priorityOption.value
+                          }
+                          type="button"
+                          onClick={() =>
+                            setPriority(
+                              priorityOption.value,
+                            )
+                          }
+                          aria-pressed={
+                            isSelected
+                          }
+                          className={[
+                            'flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border px-2 py-3 text-xs font-semibold transition-all sm:text-sm',
+                            isSelected
+                              ? priorityOption.selectedClassName
+                              : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
+                          ].join(' ')}
+                        >
+                          <Icon
+                            size={15}
+                          />
+
+                          {
+                            priorityOption.label
+                          }
+                        </button>
+                      )
+                    },
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel
+                  icon={Timer}
+                  optional
+                >
+                  Duração estimada
+                </FieldLabel>
+
+                <RitmoSelect
+                  value={
+                    estimatedMinutes
+                  }
+                  options={
+                    durationOptions
+                  }
+                  onChange={
+                    setEstimatedMinutes
+                  }
+                  ariaLabel="Selecionar duração estimada"
+                />
+              </div>
+
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-soft)] p-4">
+                <FieldLabel
+                  icon={Repeat2}
+                >
+                  Recorrência
+                </FieldLabel>
+
+                <RitmoSelect
+                  value={
+                    recurrenceFrequency
+                  }
+                  options={
+                    recurrenceOptions
+                  }
+                  onChange={(value) =>
+                    handleRecurrenceChange(
+                      value as RecurrenceOption,
+                    )
+                  }
+                  ariaLabel="Selecionar recorrência"
+                />
+
+                {recurrenceFrequency ===
+                  'weekly' && (
+                  <div className="mt-4">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                      Dias da semana
+                    </p>
+
+                    <div className="grid grid-cols-4 gap-2 sm:grid-cols-7 lg:grid-cols-4 xl:grid-cols-7">
+                      {weekDays.map(
+                        (weekDay) => {
+                          const isSelected =
+                            selectedWeekDays.includes(
+                              weekDay.value,
+                            )
+
+                          return (
+                            <button
+                              key={
+                                weekDay.value
+                              }
+                              type="button"
+                              onClick={() =>
+                                toggleWeekDay(
+                                  weekDay.value,
+                                )
+                              }
+                              aria-pressed={
+                                isSelected
+                              }
+                              className={[
+                                'cursor-pointer rounded-xl border px-2 py-2 text-xs font-semibold transition-colors',
+                                isSelected
+                                  ? 'border-[var(--primary)] bg-[var(--primary)] text-white'
+                                  : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
+                              ].join(' ')}
+                            >
+                              {
+                                weekDay.label
+                              }
+                            </button>
+                          )
+                        },
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {recurrenceFrequency !==
+                  'none' && (
+                  <div className="mt-4">
+                    <FieldLabel
+                      icon={
+                        CalendarDays
+                      }
+                      optional
+                    >
+                      Data final
+                    </FieldLabel>
+
+                    <RitmoDatePicker
+                      value={recurrenceEndDate}
                       min={dueDate}
-                      value={
-                        recurrenceEndDate
+                      onChange={
+                        setRecurrenceEndDate
                       }
-                      onChange={(event) =>
-                        setRecurrenceEndDate(
-                          event.target.value,
-                        )
-                      }
-                      className={
-                        inputStyles
-                      }
+                      ariaLabel="Selecionar data final da recorrência"
                     />
 
-                    <span className="mt-2 block text-xs leading-5 text-[var(--text-muted)]">
-                      Deixe em branco para
-                      repetir sem uma data
-                      final.
-                    </span>
-                  </label>
-
-                  {recurrenceFrequency ===
-                    'daily' && (
-                      <p className="mt-3 text-xs text-[var(--text-secondary)]">
-                        A tarefa será repetida
-                        todos os dias a partir
-                        da data inicial.
+                    {recurrenceFrequency ===
+                      'daily' && (
+                      <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+                        Será repetida todos os dias a partir da data inicial.
                       </p>
                     )}
 
-                  {recurrenceFrequency ===
-                    'monthly' && (
-                      <p className="mt-3 text-xs text-[var(--text-secondary)]">
-                        A tarefa será repetida
-                        todo mês no dia{' '}
+                    {recurrenceFrequency ===
+                      'monthly' && (
+                      <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+                        Será repetida mensalmente no dia{' '}
                         {getDayOfMonth(
                           dueDate,
                         )}
                         .
                       </p>
                     )}
-                </>
-              )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-2">
+          <footer className="flex flex-col-reverse gap-3 border-t border-[var(--border-soft)] px-6 py-5 sm:flex-row sm:justify-end sm:px-7">
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
+              disabled={isSubmitting}
+              className="cursor-pointer rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -700,7 +834,7 @@ export function TaskFormModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="cursor-pointer rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cursor-pointer rounded-xl bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
                 ? 'Salvando...'
@@ -708,10 +842,9 @@ export function TaskFormModal({
                   ? 'Salvar alterações'
                   : 'Criar tarefa'}
             </button>
-          </div>
+          </footer>
         </form>
       </section>
     </div>
   )
 }
-
