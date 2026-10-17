@@ -16,6 +16,7 @@ import {
   Shapes,
   Timer,
   X,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -32,11 +33,16 @@ import type {
   RecurrenceFrequency,
   Task,
   TaskPriority,
+  TaskSticker,
 } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
 
 import { RitmoDatePicker } from '../ui/RitmoDatePicker'
 import { RitmoTimeInput } from '../ui/RitmoTimeInput'
+
+import {
+  TaskStickerPicker,
+} from './TaskStickerPicker'
 
 type TaskFormModalProps = {
   task?: Task
@@ -269,6 +275,13 @@ export function TaskFormModal({
   )
 
   const [
+    sticker,
+    setSticker,
+  ] = useState<TaskSticker | null>(
+    task?.sticker ?? null,
+  )
+
+  const [
     recurrenceFrequency,
     setRecurrenceFrequency,
   ] =
@@ -466,6 +479,7 @@ export function TaskFormModal({
                   estimatedMinutes,
                 )
               : null,
+          sticker,
           recurrence,
         })
 
@@ -594,6 +608,20 @@ export function TaskFormModal({
                   }
                   placeholder="Selecione uma categoria"
                   ariaLabel="Selecionar categoria"
+                />
+              </div>
+
+              <div>
+                <FieldLabel
+                  icon={Sparkles}
+                  optional
+                >
+                  Adesivo
+                </FieldLabel>
+
+                <TaskStickerPicker
+                  value={sticker}
+                  onChange={setSticker}
                 />
               </div>
             </div>

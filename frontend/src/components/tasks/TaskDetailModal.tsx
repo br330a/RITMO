@@ -25,6 +25,10 @@ import {
   formatTaskRecurrence,
 } from '../../utils/taskRecurrence'
 
+import {
+  getTaskSticker,
+} from '../../constants/taskStickers'
+
 type TaskDetailsModalProps = {
   task: Task
   onClose: () => void
@@ -68,6 +72,11 @@ export function TaskDetailsModal({
     categories,
     task.categoryId,
   )
+
+  const sticker =
+    getTaskSticker(
+      task.sticker,
+    )
   useEffect(() => {
     function handleKeyDown(
       event: KeyboardEvent,
@@ -103,7 +112,7 @@ export function TaskDetailsModal({
     <div
       role="presentation"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--overlay)] p-4 backdrop-blur-[2px]"
     >
       <section
         role="dialog"
@@ -145,32 +154,30 @@ export function TaskDetailsModal({
                   ]
                 }
               </span>
-
-              <span
-                className={[
-                  'rounded-full px-3 py-1 text-xs font-semibold',
-                  category
-                    ? categoryColorStyles[
-                    category.color
-                    ]
-                    : 'bg-[var(--surface-muted)] text-[var(--text-secondary)]',
-                ].join(' ')}
-              >
-                {category?.name ?? 'Sem categoria'}
-              </span>
             </div>
 
-            <h2
-              id="task-details-title"
-              className={[
-                'break-words text-2xl font-bold tracking-tight sm:text-3xl',
-                task.completed
-                  ? 'text-[#7d8780] line-through'
-                  : 'text-[var(--text-primary)]',
-              ].join(' ')}
-            >
-              {task.title}
-            </h2>
+            <div className="flex items-start gap-3">
+              {sticker && (
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 shrink-0 text-3xl"
+                >
+                  {sticker.emoji}
+                </span>
+              )}
+
+              <h2
+                id="task-details-title"
+                className={[
+                  'break-words text-2xl font-bold tracking-tight sm:text-3xl',
+                  task.completed
+                    ? 'text-[var(--text-faint)] line-through'
+                    : 'text-[var(--text-primary)]',
+                ].join(' ')}
+              >
+                {task.title}
+              </h2>
+            </div>
           </div>
 
           <button
@@ -189,7 +196,7 @@ export function TaskDetailsModal({
               Descrição
             </p>
 
-            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[#4f5a53]">
+            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--text-secondary)]">
               {task.description ||
                 'Nenhuma descrição adicionada.'}
             </p>
@@ -300,7 +307,7 @@ export function TaskDetailsModal({
             className={[
               'flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors',
               task.completed
-                ? 'border border-[var(--border)] text-[#526057] hover:bg-[var(--surface-hover)]'
+                ? 'border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
                 : 'bg-[var(--primary-soft)] text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]',
             ].join(' ')}
           >
@@ -330,7 +337,7 @@ export function TaskDetailsModal({
                 onDelete(task)
                 onClose()
               }}
-              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 sm:flex-none"
+              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-500/10 sm:flex-none"
             >
               <Trash2 size={17} />
               Excluir

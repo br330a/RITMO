@@ -17,6 +17,9 @@ import {
 import type { Task } from '../../types/taskTypes'
 import { formatTaskDate } from '../../utils/date'
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
+import {
+  getTaskSticker,
+} from '../../constants/taskStickers'
 
 type TaskCardProps = {
   task: Task
@@ -42,6 +45,11 @@ export function TaskCard({
     categories,
     task.categoryId,
   )
+
+  const sticker =
+    getTaskSticker(
+      task.sticker,
+    )
   return (
     <article
       role="button"
@@ -63,16 +71,27 @@ export function TaskCard({
       className="min-w-0 cursor-pointer rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 shadow-sm transition-all hover:border-[var(--border)] hover:shadow-md"
     >
       <div>
-        <h2
-          className={[
-            'break-words text-base leading-6 font-semibold',
-            task.completed
-              ? 'text-[var(--text-faint)] line-through'
-              : 'text-[var(--text-strong)]',
-          ].join(' ')}
-        >
-          {task.title}
-        </h2>
+        <div className="flex items-start gap-2">
+          {sticker && (
+            <span
+              aria-hidden="true"
+              className="mt-0.5 shrink-0 text-lg"
+            >
+              {sticker.emoji}
+            </span>
+          )}
+
+          <h2
+            className={[
+              'break-words text-base leading-6 font-semibold',
+              task.completed
+                ? 'text-[var(--text-faint)] line-through'
+                : 'text-[var(--text-strong)]',
+            ].join(' ')}
+          >
+            {task.title}
+          </h2>
+        </div>
 
         {task.description && (
           <p
@@ -180,7 +199,7 @@ export function TaskCard({
               onDelete(task)
             }}
             aria-label={`Excluir ${task.title}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-50 hover:text-red-600"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-600"
           >
             <Trash2 size={17} />
           </button>

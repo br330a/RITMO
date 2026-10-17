@@ -25,6 +25,10 @@ import type { Task } from '../../types/taskTypes'
 import { getLocalDateValue } from '../../utils/date'
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 
+import {
+  getTaskSticker,
+} from '../../constants/taskStickers'
+
 type TaskListProps = {
   selectedDate: string
   tasks: Task[]
@@ -160,6 +164,11 @@ export function TaskList({
                 task.categoryId,
               )
 
+              const sticker =
+                getTaskSticker(
+                  task.sticker,
+                )
+
               return (
             <div
               key={task.id}
@@ -205,16 +214,27 @@ export function TaskList({
               </button>
 
               <div className="min-w-0">
-                <p
-                  className={[
-                    'break-words text-sm leading-5 font-semibold',
-                    task.completed
-                      ? 'text-[var(--text-faint)] line-through'
-                      : 'text-[var(--text-strong)]',
-                  ].join(' ')}
-                >
-                  {task.title}
-                </p>
+                <div className="flex items-start gap-2">
+                  {sticker && (
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 text-base"
+                    >
+                      {sticker.emoji}
+                    </span>
+                  )}
+
+                  <p
+                    className={[
+                      'break-words text-sm leading-5 font-semibold',
+                      task.completed
+                        ? 'text-[var(--text-faint)] line-through'
+                        : 'text-[var(--text-strong)]',
+                    ].join(' ')}
+                  >
+                    {task.title}
+                  </p>
+                </div>
 
                 {task.description && (
                   <p
@@ -320,7 +340,7 @@ export function TaskList({
                         onDeleteTask(task)
                         setOpenMenuTaskId(null)
                       }}
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                      className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-500/10"
                     >
                       <Trash2 size={16} />
                       Excluir

@@ -21,6 +21,10 @@ import {
 import { formatEstimatedMinutes } from '../../utils/taskFormatters'
 import { getNextPendingOccurrence } from '../../utils/taskRecurrence'
 
+import {
+  getTaskSticker,
+} from '../../constants/taskStickers'
+
 type UpcomingTasksProps = {
   onOpenTask: (task: Task) => void
 }
@@ -94,6 +98,10 @@ export function UpcomingTasks({
                 categories,
                 task.categoryId,
               )
+              const sticker =
+                getTaskSticker(
+                  task.sticker,
+                )
 
               return (
                 <div
@@ -120,9 +128,20 @@ export function UpcomingTasks({
                   : ', sem horário'}
               </p>
 
-              <p className="mt-1 break-words text-sm font-medium text-[var(--text-strong)]">
-                {task.title}
-              </p>
+              <div className="mt-1 flex items-start gap-2">
+                {sticker && (
+                  <span
+                    aria-hidden="true"
+                    className="shrink-0 text-base"
+                  >
+                    {sticker.emoji}
+                  </span>
+                )}
+
+                <p className="break-words text-sm font-medium text-[var(--text-strong)]">
+                  {task.title}
+                </p>
+              </div>
 
               {task.description && (
                 <p className="mt-1 break-words text-xs leading-5 text-[var(--text-muted)]">

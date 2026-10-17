@@ -22,6 +22,10 @@ import {
   getTasksForDate,
 } from '../utils/taskRecurrence'
 
+import {
+  getTaskSticker,
+} from '../constants/taskStickers'
+
 function formatSelectedDate(dateValue: string) {
   const [year, month, day] = dateValue.split('-').map(Number)
   const date = new Date(year, month - 1, day)
@@ -153,7 +157,7 @@ export function CalendarPage() {
               className={[
                 'cursor-pointer rounded-xl border px-5 py-3 text-sm font-semibold transition-colors',
                 isViewingToday
-                  ? 'cursor-default border-[var(--border)] bg-[#edf1ed] text-[var(--text-muted)] shadow-inner'
+                  ? 'cursor-default border-[var(--border)] bg-[var(--surface-muted)] text-[var(--text-muted)] shadow-inner'
                   : 'border-[var(--primary)] bg-[var(--primary)] text-white hover:bg-[var(--primary-strong)]',
               ].join(' ')}
             >
@@ -218,6 +222,11 @@ export function CalendarPage() {
                       task.categoryId,
                     )
 
+                    const sticker =
+                      getTaskSticker(
+                        task.sticker,
+                      )
+
                     return (
                   <div
                     key={`${task.id}-${task.dueDate}`}
@@ -275,16 +284,27 @@ export function CalendarPage() {
                       </button>
 
                       <div className="min-w-0 flex-1">
-                        <p
-                          className={[
-                            'text-sm font-medium',
-                            task.completed
-                              ? 'text-[var(--text-faint)] line-through'
-                              : 'text-[var(--text-strong)]',
-                          ].join(' ')}
-                        >
-                          {task.title}
-                        </p>
+                        <div className="flex items-start gap-2">
+                          {sticker && (
+                            <span
+                              aria-hidden="true"
+                              className="shrink-0 text-base"
+                            >
+                              {sticker.emoji}
+                            </span>
+                          )}
+
+                          <p
+                            className={[
+                              'text-sm font-medium',
+                              task.completed
+                                ? 'text-[var(--text-faint)] line-through'
+                                : 'text-[var(--text-strong)]',
+                            ].join(' ')}
+                          >
+                            {task.title}
+                          </p>
+                        </div>
 
                         <div className="mt-2 flex items-center justify-between gap-3">
                           <span>{task.time ?? 'Sem horário'}</span>
@@ -330,7 +350,7 @@ export function CalendarPage() {
                           setTaskToDelete(task)
                         }}
                         aria-label={`Excluir ${task.title}`}
-                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-50 hover:text-red-600"
+                        className="grid size-8 cursor-pointer place-items-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-600"
                       >
                         <Trash2 size={16} />
                       </button>

@@ -26,6 +26,16 @@ import { isTaskArchived } from '../utils/taskStatus'
 import { getLocalDateValue } from '../utils/date'
 import { useCategories } from '../hooks/useCategories'
 
+import {
+  RitmoSelect,
+} from '../components/ui/RitmoSelect'
+import {
+  categoryColorStyles,
+} from '../constants/categoryStyles'
+import {
+  categoryIcons,
+} from '../constants/categoryIcons'
+
 type TaskFilter =
   | 'all'
   | 'pending'
@@ -172,6 +182,27 @@ export function TasksPage() {
   } = useTasks()
 
   const { categories } = useCategories()
+
+  const categoryOptions = [
+    {
+      value: 'all',
+      label: 'Todas as categorias',
+    },
+    ...categories.map(
+      (category) => ({
+        value: category.id,
+        label: category.name,
+        icon:
+          categoryIcons[
+            category.icon
+          ],
+        iconClassName:
+          categoryColorStyles[
+            category.color
+          ],
+      }),
+    ),
+  ]
   const today = getLocalDateValue()
 
   const [activeFilter, setActiveFilter] =
@@ -413,7 +444,7 @@ export function TasksPage() {
           </button>
         </header>
 
-        <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[#e4ebe5] overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] shadow-sm">
+        <div className="mt-8 grid max-w-md grid-cols-3 divide-x divide-[var(--border-soft)] overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] shadow-sm">
           <div className="px-3 py-4 text-center">
             <strong className="block text-xl text-[var(--text-primary)]">
               {filteredTasksCount}
@@ -425,7 +456,7 @@ export function TasksPage() {
           </div>
 
           <div className="px-3 py-4 text-center">
-            <strong className="block text-xl text-[#b06b24]">
+            <strong className="block text-xl text-amber-500">
               {filteredPendingTasks.length}
             </strong>
 
@@ -477,7 +508,7 @@ export function TasksPage() {
             className={[
               'flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors',
               isFiltersOpen || hasActiveFilters
-                ? 'border-[#b9d8c2] bg-[var(--primary-soft)] text-[var(--primary-strong)]'
+                ? 'border-[var(--primary)] bg-[var(--primary-soft)] text-[var(--primary-strong)]'
                 : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]',
             ].join(' ')}
           >
@@ -543,7 +574,7 @@ export function TasksPage() {
                 }
                 placeholder="Buscar por título ou descrição..."
                 aria-label="Buscar tarefas"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 pr-11 pl-11 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 pr-11 pl-11 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
 
               {searchTerm && (
@@ -559,74 +590,54 @@ export function TasksPage() {
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <label>
+              <div>
                 <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Categoria
                 </span>
 
-                <option value="all">
-                  Todas as categorias
-                </option>
+                <RitmoSelect
+                  value={categoryFilter}
+                  options={categoryOptions}
+                  onChange={
+                    setCategoryFilter
+                  }
+                  ariaLabel="Filtrar por categoria"
+                />
+              </div>
 
-                {categories.map((category) => (
-                  <option
-                    key={category.id}
-                    value={category.id}
-                  >
-                    {category.name}
-                  </option>
-                ))}
-              </label>
-
-              <label>
+              <div>
                 <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Prioridade
                 </span>
 
-                <select
+                <RitmoSelect
                   value={priorityFilter}
-                  onChange={(event) =>
-                    setCategoryFilter(
-                      event.target.value,
+                  options={priorities}
+                  onChange={(value) =>
+                    setPriorityFilter(
+                      value as PriorityFilter,
                     )
                   }
-                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
-                >
-                  {priorities.map((priority) => (
-                    <option
-                      key={priority.value}
-                      value={priority.value}
-                    >
-                      {priority.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  ariaLabel="Filtrar por prioridade"
+                />
+              </div>
 
-              <label className="sm:col-span-2 lg:col-span-1">
+              <div className="sm:col-span-2 lg:col-span-1">
                 <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
                   Recorrência
                 </span>
 
-                <select
+                <RitmoSelect
                   value={recurrenceFilter}
-                  onChange={(event) =>
+                  options={recurrences}
+                  onChange={(value) =>
                     setRecurrenceFilter(
-                      event.target.value as RecurrenceFilter,
+                      value as RecurrenceFilter,
                     )
                   }
-                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--text-strong)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#dcefe1]"
-                >
-                  {recurrences.map((recurrence) => (
-                    <option
-                      key={recurrence.value}
-                      value={recurrence.value}
-                    >
-                      {recurrence.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  ariaLabel="Filtrar por recorrência"
+                />
+              </div>
             </div>
 
             {hasActiveFilters && (
@@ -688,7 +699,7 @@ export function TasksPage() {
                       </p>
                     </div>
 
-                    <span className="rounded-full bg-[#fff3dc] px-3 py-1 text-xs font-semibold text-[#96651f]">
+                    <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-500">
                       {
                         filteredPendingTasks.length
                       }

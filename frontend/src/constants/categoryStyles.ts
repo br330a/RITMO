@@ -7,27 +7,27 @@ export const categoryColorStyles: Record<
   string
 > = {
   green:
-    'bg-[var(--primary-soft)] text-[var(--primary-strong)]',
+    'bg-emerald-500/10 text-emerald-500',
   blue:
-    'bg-[#e7efff] text-[#315fa8]',
+    'bg-blue-500/10 text-blue-500',
   purple:
-    'bg-[#f0eafb] text-[#6f4ca5]',
+    'bg-purple-500/10 text-purple-500',
   orange:
-    'bg-[#fff0df] text-[#a85f21]',
+    'bg-orange-500/10 text-orange-500',
   red:
-    'bg-[#fde8e8] text-[#b33a3a]',
+    'bg-red-500/10 text-red-500',
   teal:
-    'bg-[#e1f3f0] text-[#24756b]',
+    'bg-teal-500/10 text-teal-500',
 }
 
 export const categoryProgressStyles: Record<
   CategoryColor,
   string
 > = {
-  green: 'bg-[var(--primary)]',
-  blue: 'bg-[#5b83c5]',
-  purple: 'bg-[#8968b8]',
-  orange: 'bg-[#c97a32]',
-  red: 'bg-[#c64b4b]',
-  teal: 'bg-[#318b7f]',
+  green: 'bg-emerald-500',
+  blue: 'bg-blue-500',
+  purple: 'bg-purple-500',
+  orange: 'bg-orange-500',
+  red: 'bg-red-500',
+  teal: 'bg-teal-500',
 }
