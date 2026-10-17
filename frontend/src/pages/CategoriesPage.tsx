@@ -1,20 +1,31 @@
-﻿import { useState } from 'react'
+﻿import {
+  useState,
+} from 'react'
 import {
   Plus,
   Tags,
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { CategoryCard } from '../components/categories/CategoryCard'
-import { CategoryFormModal } from '../components/categories/CategoryFormModal'
-import { useCategories } from '../hooks/useCategories'
-import { useTasks } from '../hooks/useTasks'
+import {
+  CategoryCard,
+} from '../components/categories/CategoryCard'
+import {
+  CategoryFormModal,
+} from '../components/categories/CategoryFormModal'
+import {
+  useCategories,
+} from '../hooks/useCategories'
+import {
+  useTasks,
+} from '../hooks/useTasks'
 import type {
   Category,
 } from '../types/categoryTypes'
 
 export function CategoriesPage() {
-  const { tasks } = useTasks()
+  const { tasks } =
+    useTasks()
 
   const {
     categories,
@@ -32,16 +43,24 @@ export function CategoriesPage() {
   const [
     categoryToEdit,
     setCategoryToEdit,
-  ] = useState<Category | null>(null)
+  ] =
+    useState<Category | null>(
+      null,
+    )
 
   const [
     categoryToDelete,
     setCategoryToDelete,
-  ] = useState<Category | null>(null)
+  ] =
+    useState<Category | null>(
+      null,
+    )
 
-  const completedTasks = tasks.filter(
-    (task) => task.completed,
-  ).length
+  const completedTasks =
+    tasks.filter(
+      (task) =>
+        task.completed,
+    ).length
 
   function requestCategoryDeletion(
     category: Category,
@@ -57,19 +76,22 @@ export function CategoriesPage() {
       toast.error(
         'Essa categoria ainda possui tarefas. Mova ou exclua essas tarefas antes de apagar a categoria.',
       )
-
       return
     }
 
-    setCategoryToDelete(category)
+    setCategoryToDelete(
+      category,
+    )
   }
 
-  if (isLoadingCategories) {
+  if (
+    isLoadingCategories
+  ) {
     return (
       <section className="mx-auto max-w-[1200px]">
         <div className="grid min-h-64 place-items-center rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)]">
           <div className="text-center">
-            <div className="mx-auto size-6 animate-spin rounded-full border-2 border-[#cfe1d3] border-t-[var(--primary)]" />
+            <div className="mx-auto size-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[var(--primary)]" />
 
             <p className="mt-3 text-sm text-[var(--text-secondary)]">
               Carregando categorias...
@@ -97,9 +119,11 @@ export function CategoriesPage() {
           <button
             type="button"
             onClick={() =>
-              setIsCreateModalOpen(true)
+              setIsCreateModalOpen(
+                true,
+              )
             }
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-strong)]"
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white hover:bg-[var(--primary-hover)]"
           >
             <Plus size={19} />
             Nova categoria
@@ -114,7 +138,9 @@ export function CategoriesPage() {
           <div className="mt-4 flex flex-wrap gap-8">
             <div>
               <strong className="block text-2xl text-[var(--text-primary)]">
-                {categories.length}
+                {
+                  categories.length
+                }
               </strong>
 
               <span className="text-sm text-[var(--text-muted)]">
@@ -134,7 +160,9 @@ export function CategoriesPage() {
 
             <div>
               <strong className="block text-2xl text-[var(--primary)]">
-                {completedTasks}
+                {
+                  completedTasks
+                }
               </strong>
 
               <span className="text-sm text-[var(--text-muted)]">
@@ -143,7 +171,7 @@ export function CategoriesPage() {
             </div>
 
             <div>
-              <strong className="block text-2xl text-[#b06b24]">
+              <strong className="block text-2xl text-amber-500">
                 {tasks.length -
                   completedTasks}
               </strong>
@@ -155,7 +183,8 @@ export function CategoriesPage() {
           </div>
         </div>
 
-        {categories.length === 0 ? (
+        {categories.length ===
+        0 ? (
           <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)] px-6 py-14 text-center">
             <Tags
               size={32}
@@ -173,7 +202,9 @@ export function CategoriesPage() {
             <button
               type="button"
               onClick={() =>
-                setIsCreateModalOpen(true)
+                setIsCreateModalOpen(
+                  true,
+                )
               }
               className="mt-5 cursor-pointer rounded-xl bg-[var(--primary-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--primary-strong)] hover:bg-[var(--primary-soft-hover)]"
             >
@@ -185,8 +216,12 @@ export function CategoriesPage() {
             {categories.map(
               (category) => (
                 <CategoryCard
-                  key={category.id}
-                  category={category}
+                  key={
+                    category.id
+                  }
+                  category={
+                    category
+                  }
                   tasks={tasks}
                   onEdit={
                     setCategoryToEdit
@@ -204,20 +239,32 @@ export function CategoriesPage() {
       {isCreateModalOpen && (
         <CategoryFormModal
           onClose={() =>
-            setIsCreateModalOpen(false)
+            setIsCreateModalOpen(
+              false,
+            )
           }
-          onSubmit={createCategory}
+          onSubmit={
+            createCategory
+          }
         />
       )}
 
       {categoryToEdit && (
         <CategoryFormModal
-          key={categoryToEdit.id}
-          category={categoryToEdit}
-          onClose={() =>
-            setCategoryToEdit(null)
+          key={
+            categoryToEdit.id
           }
-          onSubmit={(categoryData) =>
+          category={
+            categoryToEdit
+          }
+          onClose={() =>
+            setCategoryToEdit(
+              null,
+            )
+          }
+          onSubmit={(
+            categoryData,
+          ) =>
             updateCategory(
               categoryToEdit.id,
               categoryData,
@@ -231,15 +278,19 @@ export function CategoriesPage() {
           role="dialog"
           aria-modal="true"
           onMouseDown={() =>
-            setCategoryToDelete(null)
+            setCategoryToDelete(
+              null,
+            )
           }
-          className="fixed inset-0 z-50 grid place-items-center bg-black/35 px-5"
+          className="fixed inset-0 z-50 grid place-items-center bg-[var(--overlay)] px-5"
         >
           <section
-            onMouseDown={(event) =>
+            onMouseDown={(
+              event,
+            ) =>
               event.stopPropagation()
             }
-            className="w-full max-w-md rounded-2xl bg-[var(--surface)] p-7 shadow-xl"
+            className="w-full max-w-md rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-7 shadow-xl"
           >
             <header className="flex items-start justify-between gap-4">
               <div>
@@ -294,7 +345,9 @@ export function CategoriesPage() {
                     )
 
                   if (success) {
-                    setCategoryToDelete(null)
+                    setCategoryToDelete(
+                      null,
+                    )
                   }
                 }}
                 className="cursor-pointer rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
@@ -308,4 +361,3 @@ export function CategoriesPage() {
     </>
   )
 }
-

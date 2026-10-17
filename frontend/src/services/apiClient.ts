@@ -18,7 +18,7 @@ export class ApiError extends Error {
   ) {
     super(
       payload?.message ??
-        `Erro na requisi��o. C�digo HTTP: ${status}.`,
+        `Erro na requisição. Código HTTP: ${status}.`,
     )
 
     this.name = 'ApiError'
@@ -27,10 +27,11 @@ export class ApiError extends Error {
   }
 }
 
-type ApiRequestOptions = Omit<RequestInit, 'body'> & {
-  body?: unknown
-  token?: string | null
-}
+type ApiRequestOptions =
+  Omit<RequestInit, 'body'> & {
+    body?: unknown
+    token?: string | null
+  }
 
 async function readResponse(
   response: Response,
@@ -40,13 +41,20 @@ async function readResponse(
   }
 
   const contentType =
-    response.headers.get('content-type') ?? ''
+    response.headers.get(
+      'content-type',
+    ) ?? ''
 
-  if (contentType.includes('application/json')) {
+  if (
+    contentType.includes(
+      'application/json',
+    )
+  ) {
     return response.json()
   }
 
-  const text = await response.text()
+  const text =
+    await response.text()
 
   return text || null
 }
@@ -76,21 +84,32 @@ export async function apiRequest<T>(
     ...requestOptions
   } = options
 
-  const headers = new Headers(initialHeaders)
+  const headers =
+    new Headers(initialHeaders)
 
-  headers.set('Accept', 'application/json')
+  headers.set(
+    'Accept',
+    'application/json',
+  )
 
   if (requestBody !== undefined) {
-    headers.set('Content-Type', 'application/json')
+    headers.set(
+      'Content-Type',
+      'application/json',
+    )
   }
 
   if (token) {
-    headers.set('Authorization', `Bearer ${token}`)
+    headers.set(
+      'Authorization',
+      `Bearer ${token}`,
+    )
   }
 
-  const normalizedPath = path.startsWith('/')
-    ? path
-    : `/${path}`
+  const normalizedPath =
+    path.startsWith('/')
+      ? path
+      : `/${path}`
 
   const response = await fetch(
     `${API_URL}${normalizedPath}`,
@@ -100,11 +119,14 @@ export async function apiRequest<T>(
       body:
         requestBody === undefined
           ? undefined
-          : JSON.stringify(requestBody),
+          : JSON.stringify(
+              requestBody,
+            ),
     },
   )
 
-  const data = await readResponse(response)
+  const data =
+    await readResponse(response)
 
   if (!response.ok) {
     throw new ApiError(

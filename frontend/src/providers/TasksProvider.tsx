@@ -119,7 +119,7 @@ export function TasksProvider({
         toast.error(
           getErrorMessage(
             error,
-            'N�o foi poss�vel carregar as tarefas.',
+            'Não foi possível carregar as tarefas.',
           ),
         )
       })
@@ -134,7 +134,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
 
       return false
@@ -168,7 +168,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel criar a tarefa.',
+          'Não foi possível criar a tarefa.',
         ),
       )
 
@@ -182,7 +182,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
 
       return false
@@ -220,7 +220,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel atualizar a tarefa.',
+          'Não foi possível atualizar a tarefa.',
         ),
       )
 
@@ -234,7 +234,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
 
       return false
@@ -247,7 +247,7 @@ export function TasksProvider({
 
     if (!task) {
       toast.error(
-        'A tarefa n�o foi encontrada.',
+        'A tarefa não foi encontrada.',
       )
 
       return false
@@ -308,7 +308,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel atualizar o status da tarefa.',
+          'Não foi possível atualizar o status da tarefa.',
         ),
       )
 
@@ -321,7 +321,7 @@ export function TasksProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
 
       return false
@@ -345,7 +345,7 @@ export function TasksProvider({
       }))
 
       toast.success(
-        'Tarefa exclu�da com sucesso.',
+        'Tarefa excluída com sucesso.',
       )
 
       return true
@@ -353,7 +353,7 @@ export function TasksProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel excluir a tarefa.',
+          'Não foi possível excluir a tarefa.',
         ),
       )
 

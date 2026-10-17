@@ -1,7 +1,10 @@
 ﻿const apiUrl = import.meta.env.VITE_API_URL?.trim()
 
 if (!apiUrl) {
-  throw new Error('VITE_API_URL n�o est� configurada.')
+  throw new Error(
+    'VITE_API_URL não está configurada.',
+  )
 }
 
-export const API_URL = apiUrl.replace(/\/+$/, '')
+export const API_URL =
+  apiUrl.replace(/\/+$/, '')

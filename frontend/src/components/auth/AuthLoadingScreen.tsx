@@ -1,4 +1,6 @@
-﻿import { RitmoLogo } from '../branding/RitmoLogo'
+﻿import {
+  RitmoLogo,
+} from '../branding/RitmoLogo'
 
 export function AuthLoadingScreen() {
   return (
@@ -6,7 +8,7 @@ export function AuthLoadingScreen() {
       <div className="flex flex-col items-center gap-4">
         <RitmoLogo className="size-14" />
 
-        <div className="size-6 animate-spin rounded-full border-2 border-[#cfe1d3] border-t-[var(--primary)]" />
+        <div className="size-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[var(--primary)]" />
 
         <p className="text-sm text-[var(--text-secondary)]">
           Carregando...

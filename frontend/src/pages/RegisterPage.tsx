@@ -2,37 +2,82 @@
   useState,
   type FormEvent,
 } from 'react'
-import { Link, useNavigate } from 'react-router'
-import { UserPlus } from 'lucide-react'
+import {
+  Link,
+  useNavigate,
+} from 'react-router'
+import {
+  UserPlus,
+} from 'lucide-react'
 import { toast } from 'sonner'
-import { RitmoLogo } from '../components/branding/RitmoLogo'
-import { useAuth } from '../hooks/useAuth'
+import {
+  RitmoLogo,
+} from '../components/branding/RitmoLogo'
+import {
+  useAuth,
+} from '../hooks/useAuth'
 
 export function RegisterPage() {
-  const navigate = useNavigate()
-  const { register } = useAuth()
+  const navigate =
+    useNavigate()
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] =
-    useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { register } =
+    useAuth()
+
+  const [
+    name,
+    setName,
+  ] = useState('')
+
+  const [
+    email,
+    setEmail,
+  ] = useState('')
+
+  const [
+    password,
+    setPassword,
+  ] = useState('')
+
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState('')
+
+  const [
+    error,
+    setError,
+  ] =
+    useState<string | null>(
+      null,
+    )
+
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false)
 
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
 
     setError(null)
 
-    if (password !== confirmPassword) {
-      setError('As senhas não coincidem.')
+    if (
+      password !==
+      confirmPassword
+    ) {
+      setError(
+        'As senhas não coincidem.',
+      )
       return
     }
 
-    if (password.length < 8) {
+    if (
+      password.length < 8
+    ) {
       setError(
         'A senha precisa ter pelo menos 8 caracteres.',
       )
@@ -48,11 +93,20 @@ export function RegisterPage() {
         password,
       })
 
-      toast.success('Conta criada com sucesso.')
-      navigate('/', { replace: true })
+      toast.success(
+        'Conta criada com sucesso.',
+      )
+
+      navigate(
+        '/',
+        {
+          replace: true,
+        },
+      )
     } catch (submitError) {
       setError(
-        submitError instanceof Error
+        submitError instanceof
+        Error
           ? submitError.message
           : 'Não foi possível criar sua conta.',
       )
@@ -86,7 +140,9 @@ export function RegisterPage() {
           </div>
 
           <form
-            onSubmit={handleSubmit}
+            onSubmit={
+              handleSubmit
+            }
             className="space-y-5"
           >
             <div>
@@ -101,14 +157,20 @@ export function RegisterPage() {
                 id="name"
                 type="text"
                 value={name}
-                onChange={(event) =>
-                  setName(event.target.value)
+                onChange={(
+                  event,
+                ) =>
+                  setName(
+                    event
+                      .target
+                      .value,
+                  )
                 }
                 required
                 maxLength={100}
                 autoComplete="name"
                 placeholder="Seu nome"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 
@@ -124,13 +186,19 @@ export function RegisterPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(event) =>
-                  setEmail(event.target.value)
+                onChange={(
+                  event,
+                ) =>
+                  setEmail(
+                    event
+                      .target
+                      .value,
+                  )
                 }
                 required
                 autoComplete="email"
                 placeholder="seu@email.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 
@@ -146,15 +214,21 @@ export function RegisterPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(event) =>
-                  setPassword(event.target.value)
+                onChange={(
+                  event,
+                ) =>
+                  setPassword(
+                    event
+                      .target
+                      .value,
+                  )
                 }
                 required
                 minLength={8}
                 maxLength={72}
                 autoComplete="new-password"
                 placeholder="Mínimo de 8 caracteres"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 
@@ -169,23 +243,31 @@ export function RegisterPage() {
               <input
                 id="confirmPassword"
                 type="password"
-                value={confirmPassword}
-                onChange={(event) =>
-                  setConfirmPassword(event.target.value)
+                value={
+                  confirmPassword
+                }
+                onChange={(
+                  event,
+                ) =>
+                  setConfirmPassword(
+                    event
+                      .target
+                      .value,
+                  )
                 }
                 required
                 minLength={8}
                 maxLength={72}
                 autoComplete="new-password"
                 placeholder="Digite a senha novamente"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[#23834b]/15"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 
             {error && (
               <div
                 role="alert"
-                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-500"
               >
                 {error}
               </div>
@@ -193,10 +275,14 @@ export function RegisterPage() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting
+              }
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 font-semibold text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <UserPlus size={18} />
+              <UserPlus
+                size={18}
+              />
 
               {isSubmitting
                 ? 'Criando conta...'
@@ -218,4 +304,3 @@ export function RegisterPage() {
     </main>
   )
 }
-

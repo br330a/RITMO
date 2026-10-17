@@ -114,7 +114,7 @@ export function CategoriesProvider({
         toast.error(
           getErrorMessage(
             error,
-            'N�o foi poss�vel carregar as categorias.',
+            'Não foi possível carregar as categorias.',
           ),
         )
       })
@@ -129,7 +129,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
       return false
     }
@@ -163,7 +163,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel criar a categoria.',
+          'Não foi possível criar a categoria.',
         ),
       )
 
@@ -177,7 +177,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
       return false
     }
@@ -214,7 +214,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel atualizar a categoria.',
+          'Não foi possível atualizar a categoria.',
         ),
       )
 
@@ -227,7 +227,7 @@ export function CategoriesProvider({
   ) {
     if (!token) {
       toast.error(
-        'Sua sess�o n�o est� dispon�vel.',
+        'Sua sessão não está disponível.',
       )
       return false
     }
@@ -251,7 +251,7 @@ export function CategoriesProvider({
       }))
 
       toast.success(
-        'Categoria exclu�da com sucesso.',
+        'Categoria excluída com sucesso.',
       )
 
       return true
@@ -259,7 +259,7 @@ export function CategoriesProvider({
       toast.error(
         getErrorMessage(
           error,
-          'N�o foi poss�vel excluir a categoria.',
+          'Não foi possível excluir a categoria.',
         ),
       )
 
