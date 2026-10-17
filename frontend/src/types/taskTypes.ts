@@ -8,6 +8,20 @@ export type RecurrenceFrequency =
   | 'weekly'
   | 'monthly'
 
+export type TaskSticker =
+  | 'star'
+  | 'heart'
+  | 'flower'
+  | 'coffee'
+  | 'book'
+  | 'headphones'
+  | 'game'
+  | 'fire'
+  | 'sparkles'
+  | 'moon'
+  | 'paw'
+  | 'clover'
+
 export type TaskRecurrence = {
   frequency: RecurrenceFrequency
   daysOfWeek: number[]
@@ -30,6 +44,7 @@ export type Task = {
 
   priority: TaskPriority
   estimatedMinutes: number | null
+  sticker: TaskSticker | null
 
   recurrence: TaskRecurrence | null
   completedOccurrences: CompletedOccurrences
@@ -38,10 +53,16 @@ export type Task = {
   completedAt: string | null
 }
 
-export type CreateTaskData = Omit<
+type BaseCreateTaskData = Omit<
   Task,
   | 'id'
   | 'completed'
   | 'completedAt'
   | 'completedOccurrences'
+  | 'sticker'
 >
+
+export type CreateTaskData =
+  BaseCreateTaskData & {
+    sticker?: TaskSticker | null
+  }

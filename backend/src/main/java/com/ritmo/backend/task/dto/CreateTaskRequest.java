@@ -38,6 +38,12 @@ public record CreateTaskRequest(
         @Positive
         Integer estimatedMinutes,
 
+        @Pattern(
+                regexp = "star|heart|flower|coffee|book|headphones|game|fire|sparkles|moon|paw|clover",
+                message = "Adesivo inválido."
+        )
+        String sticker,
+
         @Valid
         TaskRecurrenceRequest recurrence
 

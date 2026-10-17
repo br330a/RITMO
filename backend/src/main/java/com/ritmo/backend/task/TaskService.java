@@ -87,9 +87,18 @@ public class TaskService {
                 user
         );
 
-        applyRecurrence(task, request.recurrence());
+        task.setSticker(
+                parseSticker(request.sticker())
+        );
 
-        return toResponse(taskRepository.save(task));
+        applyRecurrence(
+                task,
+                request.recurrence()
+        );
+
+        return toResponse(
+                taskRepository.save(task)
+        );
     }
 
     @Transactional
@@ -98,31 +107,70 @@ public class TaskService {
             UUID taskId,
             UpdateTaskRequest request
     ) {
-        Task task = findTask(userId, taskId);
+        Task task =
+                findTask(userId, taskId);
 
-        Category category = findCategory(
-                userId,
-                request.categoryId()
+        Category category =
+                findCategory(
+                        userId,
+                        request.categoryId()
+                );
+
+        task.setTitle(
+                request.title().trim()
         );
 
-        task.setTitle(request.title().trim());
         task.setDescription(
-                normalizeDescription(request.description())
+                normalizeDescription(
+                        request.description()
+                )
         );
-        task.setDueDate(request.dueDate());
-        task.setTime(parseTime(request.time()));
-        task.setPriority(parsePriority(request.priority()));
-        task.setEstimatedMinutes(request.estimatedMinutes());
+
+        task.setDueDate(
+                request.dueDate()
+        );
+
+        task.setTime(
+                parseTime(request.time())
+        );
+
+        task.setPriority(
+                parsePriority(
+                        request.priority()
+                )
+        );
+
+        task.setEstimatedMinutes(
+                request.estimatedMinutes()
+        );
+
+        task.setSticker(
+                parseSticker(
+                        request.sticker()
+                )
+        );
+
         task.setCategory(category);
 
-        applyRecurrence(task, request.recurrence());
+        applyRecurrence(
+                task,
+                request.recurrence()
+        );
 
         return toResponse(task);
     }
 
     @Transactional
-    public void delete(Long userId, UUID taskId) {
-        Task task = findTask(userId, taskId);
+    public void delete(
+            Long userId,
+            UUID taskId
+    ) {
+        Task task =
+                findTask(
+                        userId,
+                        taskId
+                );
+
         taskRepository.delete(task);
     }
 
@@ -132,9 +180,16 @@ public class TaskService {
             UUID taskId,
             boolean completed
     ) {
-        Task task = findTask(userId, taskId);
+        Task task =
+                findTask(
+                        userId,
+                        taskId
+                );
 
-        if (task.getRecurrenceFrequency() != null) {
+        if (
+                task.getRecurrenceFrequency()
+                        != null
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Tarefas recorrentes devem ser concluídas por ocorrência."
@@ -142,8 +197,11 @@ public class TaskService {
         }
 
         task.setCompleted(completed);
+
         task.setCompletedAt(
-                completed ? Instant.now() : null
+                completed
+                        ? Instant.now()
+                        : null
         );
 
         return toResponse(task);
@@ -155,12 +213,22 @@ public class TaskService {
             UUID taskId,
             LocalDate date
     ) {
-        Task task = findTask(userId, taskId);
+        Task task =
+                findTask(
+                        userId,
+                        taskId
+                );
 
-        validateOccurrence(task, date);
+        validateOccurrence(
+                task,
+                date
+        );
 
         task.getCompletedOccurrences()
-                .putIfAbsent(date, Instant.now());
+                .putIfAbsent(
+                        date,
+                        Instant.now()
+                );
 
         return toResponse(task);
     }
@@ -171,22 +239,38 @@ public class TaskService {
             UUID taskId,
             LocalDate date
     ) {
-        Task task = findTask(userId, taskId);
+        Task task =
+                findTask(
+                        userId,
+                        taskId
+                );
 
-        validateOccurrence(task, date);
+        validateOccurrence(
+                task,
+                date
+        );
 
-        task.getCompletedOccurrences().remove(date);
+        task.getCompletedOccurrences()
+                .remove(date);
 
         return toResponse(task);
     }
 
-    private Task findTask(Long userId, UUID taskId) {
+    private Task findTask(
+            Long userId,
+            UUID taskId
+    ) {
         return taskRepository
-                .findByIdAndUserId(taskId, userId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Tarefa não encontrada."
-                ));
+                .findByIdAndUserId(
+                        taskId,
+                        userId
+                )
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Tarefa não encontrada."
+                        )
+                );
     }
 
     private Category findCategory(
@@ -194,11 +278,16 @@ public class TaskService {
             UUID categoryId
     ) {
         return categoryRepository
-                .findByIdAndUserId(categoryId, userId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Categoria não encontrada."
-                ));
+                .findByIdAndUserId(
+                        categoryId,
+                        userId
+                )
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Categoria não encontrada."
+                        )
+                );
     }
 
     private void applyRecurrence(
@@ -206,22 +295,40 @@ public class TaskService {
             TaskRecurrenceRequest recurrence
     ) {
         if (recurrence == null) {
-            task.setRecurrenceFrequency(null);
-            task.setRecurrenceDaysOfWeek(Set.of());
-            task.setRecurrenceEndDate(null);
-            task.getCompletedOccurrences().clear();
+            task.setRecurrenceFrequency(
+                    null
+            );
+
+            task.setRecurrenceDaysOfWeek(
+                    Set.of()
+            );
+
+            task.setRecurrenceEndDate(
+                    null
+            );
+
+            task.getCompletedOccurrences()
+                    .clear();
+
             return;
         }
 
         RecurrenceFrequency frequency =
                 RecurrenceFrequency.valueOf(
-                        recurrence.frequency()
-                                .toUpperCase(Locale.ROOT)
+                        recurrence
+                                .frequency()
+                                .toUpperCase(
+                                        Locale.ROOT
+                                )
                 );
 
         if (
                 recurrence.endDate() != null
-                        && recurrence.endDate().isBefore(task.getDueDate())
+                        && recurrence
+                        .endDate()
+                        .isBefore(
+                                task.getDueDate()
+                        )
         ) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -229,12 +336,18 @@ public class TaskService {
             );
         }
 
-        Set<Integer> days = recurrence.daysOfWeek() == null
-                ? Set.of()
-                : new HashSet<>(recurrence.daysOfWeek());
+        Set<Integer> days =
+                recurrence.daysOfWeek()
+                                == null
+                        ? Set.of()
+                        : new HashSet<>(
+                                recurrence
+                                        .daysOfWeek()
+                        );
 
         if (
-                frequency == RecurrenceFrequency.WEEKLY
+                frequency
+                        == RecurrenceFrequency.WEEKLY
                         && days.isEmpty()
         ) {
             throw new ResponseStatusException(
@@ -244,7 +357,8 @@ public class TaskService {
         }
 
         if (
-                frequency != RecurrenceFrequency.WEEKLY
+                frequency
+                        != RecurrenceFrequency.WEEKLY
                         && !days.isEmpty()
         ) {
             throw new ResponseStatusException(
@@ -255,23 +369,40 @@ public class TaskService {
 
         task.setCompleted(false);
         task.setCompletedAt(null);
-        task.setRecurrenceFrequency(frequency);
-        task.setRecurrenceDaysOfWeek(days);
-        task.setRecurrenceEndDate(recurrence.endDate());
+
+        task.setRecurrenceFrequency(
+                frequency
+        );
+
+        task.setRecurrenceDaysOfWeek(
+                days
+        );
+
+        task.setRecurrenceEndDate(
+                recurrence.endDate()
+        );
     }
 
     private void validateOccurrence(
             Task task,
             LocalDate date
     ) {
-        if (task.getRecurrenceFrequency() == null) {
+        if (
+                task.getRecurrenceFrequency()
+                        == null
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Esta tarefa não é recorrente."
             );
         }
 
-        if (!occursOnDate(task, date)) {
+        if (
+                !occursOnDate(
+                        task,
+                        date
+                )
+        ) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "A tarefa não possui ocorrência nessa data."
@@ -283,85 +414,160 @@ public class TaskService {
             Task task,
             LocalDate date
     ) {
-        if (date.isBefore(task.getDueDate())) {
-            return false;
-        }
-
         if (
-                task.getRecurrenceEndDate() != null
-                        && date.isAfter(task.getRecurrenceEndDate())
+                date.isBefore(
+                        task.getDueDate()
+                )
         ) {
             return false;
         }
 
-        return switch (task.getRecurrenceFrequency()) {
+        if (
+                task.getRecurrenceEndDate()
+                        != null
+                        && date.isAfter(
+                                task.getRecurrenceEndDate()
+                        )
+        ) {
+            return false;
+        }
+
+        return switch (
+                task.getRecurrenceFrequency()
+        ) {
             case DAILY -> true;
 
             case WEEKLY -> {
                 int dayOfWeek =
-                        date.getDayOfWeek().getValue() % 7;
+                        date.getDayOfWeek()
+                                .getValue()
+                                % 7;
 
-                yield task.getRecurrenceDaysOfWeek()
+                yield task
+                        .getRecurrenceDaysOfWeek()
                         .contains(dayOfWeek);
             }
 
             case MONTHLY ->
                     date.getDayOfMonth()
-                            == task.getDueDate().getDayOfMonth();
+                            == task
+                            .getDueDate()
+                            .getDayOfMonth();
         };
     }
 
-    private TaskPriority parsePriority(String priority) {
+    private TaskPriority parsePriority(
+            String priority
+    ) {
         return TaskPriority.valueOf(
-                priority.toUpperCase(Locale.ROOT)
+                priority.toUpperCase(
+                        Locale.ROOT
+                )
         );
     }
 
-    private LocalTime parseTime(String time) {
-        if (time == null || time.isBlank()) {
+    private TaskSticker parseSticker(
+            String sticker
+    ) {
+        if (
+                sticker == null
+                        || sticker.isBlank()
+        ) {
+            return null;
+        }
+
+        return TaskSticker.valueOf(
+                sticker.toUpperCase(
+                        Locale.ROOT
+                )
+        );
+    }
+
+    private LocalTime parseTime(
+            String time
+    ) {
+        if (
+                time == null
+                        || time.isBlank()
+        ) {
             return null;
         }
 
         return LocalTime.parse(time);
     }
 
-    private String normalizeDescription(String description) {
-        if (description == null || description.isBlank()) {
+    private String normalizeDescription(
+            String description
+    ) {
+        if (
+                description == null
+                        || description.isBlank()
+        ) {
             return null;
         }
 
         return description.trim();
     }
 
-    private TaskResponse toResponse(Task task) {
-        TaskRecurrenceResponse recurrence = null;
+    private TaskResponse toResponse(
+            Task task
+    ) {
+        TaskRecurrenceResponse recurrence =
+                null;
 
-        if (task.getRecurrenceFrequency() != null) {
-            recurrence = new TaskRecurrenceResponse(
-                    task.getRecurrenceFrequency()
-                            .name()
-                            .toLowerCase(Locale.ROOT),
-                    task.getRecurrenceDaysOfWeek()
-                            .stream()
-                            .sorted()
-                            .toList(),
-                    task.getRecurrenceEndDate()
-            );
+        if (
+                task.getRecurrenceFrequency()
+                        != null
+        ) {
+            recurrence =
+                    new TaskRecurrenceResponse(
+                            task
+                                    .getRecurrenceFrequency()
+                                    .name()
+                                    .toLowerCase(
+                                            Locale.ROOT
+                                    ),
+                            task
+                                    .getRecurrenceDaysOfWeek()
+                                    .stream()
+                                    .sorted()
+                                    .toList(),
+                            task
+                                    .getRecurrenceEndDate()
+                    );
         }
 
-        Map<String, String> completedOccurrences =
+        Map<String, String>
+                completedOccurrences =
                 new LinkedHashMap<>();
 
         task.getCompletedOccurrences()
                 .entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByKey())
+                .sorted(
+                        Map.Entry
+                                .comparingByKey()
+                )
                 .forEach(entry ->
                         completedOccurrences.put(
-                                entry.getKey().toString(),
-                                entry.getValue().toString()
+                                entry
+                                        .getKey()
+                                        .toString(),
+                                entry
+                                        .getValue()
+                                        .toString()
                         )
                 );
+
+        String sticker =
+                task.getSticker() == null
+                        ? null
+                        : task
+                        .getSticker()
+                        .name()
+                        .toLowerCase(
+                                Locale.ROOT
+                        );
 
         return new TaskResponse(
                 task.getId(),
@@ -370,12 +576,19 @@ public class TaskService {
                 task.getDueDate(),
                 task.getTime() == null
                         ? null
-                        : task.getTime().format(TIME_FORMATTER),
+                        : task
+                        .getTime()
+                        .format(
+                                TIME_FORMATTER
+                        ),
                 task.getCategory().getId(),
                 task.getPriority()
                         .name()
-                        .toLowerCase(Locale.ROOT),
+                        .toLowerCase(
+                                Locale.ROOT
+                        ),
                 task.getEstimatedMinutes(),
+                sticker,
                 recurrence,
                 completedOccurrences,
                 task.isCompleted(),

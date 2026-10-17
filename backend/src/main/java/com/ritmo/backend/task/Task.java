@@ -53,6 +53,10 @@ public class Task {
     @Column(name = "estimated_minutes")
     private Integer estimatedMinutes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private TaskSticker sticker;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -151,6 +155,10 @@ public class Task {
         return estimatedMinutes;
     }
 
+    public TaskSticker getSticker() {
+        return sticker;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -209,6 +217,10 @@ public class Task {
 
     public void setEstimatedMinutes(Integer estimatedMinutes) {
         this.estimatedMinutes = estimatedMinutes;
+    }
+
+    public void setSticker(TaskSticker sticker) {
+        this.sticker = sticker;
     }
 
     public void setCategory(Category category) {

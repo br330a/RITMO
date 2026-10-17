@@ -14,6 +14,7 @@ public record TaskResponse(
         UUID categoryId,
         String priority,
         Integer estimatedMinutes,
+        String sticker,
         TaskRecurrenceResponse recurrence,
         Map<String, String> completedOccurrences,
         boolean completed,
