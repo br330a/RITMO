@@ -5,7 +5,10 @@ import type {
   LoginCredentials,
   RegisterData,
 } from '../types/authTypes'
-import type { Theme } from '../types/themeTypes'
+import type {
+  AccentColor,
+  Theme,
+} from '../types/themeTypes'
 
 export function loginUser(
   credentials: LoginCredentials,
@@ -53,6 +56,22 @@ export function updateUserTheme(
       token,
       body: {
         theme,
+      },
+    },
+  )
+}
+
+export function updateUserAccentColor(
+  token: string,
+  accentColor: AccentColor,
+) {
+  return apiRequest<AuthUser>(
+    '/api/users/me/accent-color',
+    {
+      method: 'PATCH',
+      token,
+      body: {
+        accentColor,
       },
     },
   )

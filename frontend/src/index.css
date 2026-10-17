@@ -1,18 +1,115 @@
 @import "tailwindcss";
 
+/* =========================
+   CORES DE DESTAQUE
+   ========================= */
+
+:root,
+html[data-accent='green'] {
+  --accent-light: #23834b;
+  --accent-light-strong: #19683a;
+  --accent-light-hover: #1d7040;
+
+  --accent-dark: #43ae6d;
+  --accent-dark-strong: #6dce91;
+  --accent-dark-hover: #39985f;
+}
+
+html[data-accent='blue'] {
+  --accent-light: #3b82f6;
+  --accent-light-strong: #2563eb;
+  --accent-light-hover: #2f6fd5;
+
+  --accent-dark: #60a5fa;
+  --accent-dark-strong: #93c5fd;
+  --accent-dark-hover: #4b91e6;
+}
+
+html[data-accent='pink'] {
+  --accent-light: #db4f83;
+  --accent-light-strong: #b93667;
+  --accent-light-hover: #c74274;
+
+  --accent-dark: #e76b99;
+  --accent-dark-strong: #f08cb0;
+  --accent-dark-hover: #d85888;
+}
+
+html[data-accent='amber'] {
+  --accent-light: #c68a16;
+  --accent-light-strong: #98680d;
+  --accent-light-hover: #ad7610;
+
+  --accent-dark: #d9a441;
+  --accent-dark-strong: #edbd62;
+  --accent-dark-hover: #c79235;
+}
+
+html[data-accent='purple'] {
+  --accent-light: #7c5ac7;
+  --accent-light-strong: #6542b2;
+  --accent-light-hover: #6d4bb8;
+
+  --accent-dark: #9b7be0;
+  --accent-dark-strong: #b49aec;
+  --accent-dark-hover: #8968d0;
+}
+
+/* =========================
+   MODO CLARO
+   ========================= */
+
 :root,
 html[data-theme='light'] {
   color-scheme: light;
 
-  --app-bg: #f7faf7;
+  --primary: var(--accent-light);
+  --primary-strong: var(--accent-light-strong);
+  --primary-hover: var(--accent-light-hover);
+
+  --app-bg:
+    color-mix(
+      in srgb,
+      var(--primary) 3%,
+      #f8faf9
+    );
 
   --surface: #ffffff;
-  --surface-soft: #f1f5f1;
-  --surface-hover: #f3f7f3;
-  --surface-muted: #edf1ed;
 
-  --border: #dce4dd;
-  --border-soft: #e4ebe5;
+  --surface-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 7%,
+      #f7f9f8
+    );
+
+  --surface-hover:
+    color-mix(
+      in srgb,
+      var(--primary) 6%,
+      #f4f7f5
+    );
+
+  --surface-muted:
+    color-mix(
+      in srgb,
+      var(--primary) 8%,
+      #eff3f0
+    );
+
+  --border:
+    color-mix(
+      in srgb,
+      var(--primary) 13%,
+      #dce3de
+    );
+
+  --border-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 8%,
+      #e4e9e5
+    );
 
   --text-primary: #17211b;
   --text-strong: #27312b;
@@ -20,28 +117,82 @@ html[data-theme='light'] {
   --text-muted: #7b847e;
   --text-faint: #9aa29d;
 
-  --primary: #23834b;
-  --primary-strong: #19683a;
-  --primary-hover: #1d7040;
+  --primary-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 12%,
+      white
+    );
 
-  --primary-soft: #e4f3e8;
-  --primary-soft-hover: #d8eddd;
+  --primary-soft-hover:
+    color-mix(
+      in srgb,
+      var(--primary) 18%,
+      white
+    );
 
   --overlay: rgb(0 0 0 / 0.35);
 }
 
+/* =========================
+   MODO ESCURO
+   ========================= */
+
 html[data-theme='dark'] {
   color-scheme: dark;
 
-  --app-bg: #101613;
+  --primary: var(--accent-dark);
+  --primary-strong: var(--accent-dark-strong);
+  --primary-hover: var(--accent-dark-hover);
 
-  --surface: #18201b;
-  --surface-soft: #1e2822;
-  --surface-hover: #253129;
-  --surface-muted: #29352d;
+  --app-bg:
+    color-mix(
+      in srgb,
+      var(--primary) 5%,
+      #0f1411
+    );
 
-  --border: #344139;
-  --border-soft: #2b3730;
+  --surface:
+    color-mix(
+      in srgb,
+      var(--primary) 6%,
+      #171d19
+    );
+
+  --surface-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 10%,
+      #1c241f
+    );
+
+  --surface-hover:
+    color-mix(
+      in srgb,
+      var(--primary) 12%,
+      #222b25
+    );
+
+  --surface-muted:
+    color-mix(
+      in srgb,
+      var(--primary) 13%,
+      #273129
+    );
+
+  --border:
+    color-mix(
+      in srgb,
+      var(--primary) 17%,
+      #333d36
+    );
+
+  --border-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 12%,
+      #29322c
+    );
 
   --text-primary: #f1f6f2;
   --text-strong: #e2eae4;
@@ -49,15 +200,26 @@ html[data-theme='dark'] {
   --text-muted: #89978e;
   --text-faint: #718078;
 
-  --primary: #43ae6d;
-  --primary-strong: #6dce91;
-  --primary-hover: #39985f;
+  --primary-soft:
+    color-mix(
+      in srgb,
+      var(--primary) 19%,
+      #18201b
+    );
 
-  --primary-soft: #1e3a29;
-  --primary-soft-hover: #264a34;
+  --primary-soft-hover:
+    color-mix(
+      in srgb,
+      var(--primary) 26%,
+      #18201b
+    );
 
   --overlay: rgb(0 0 0 / 0.6);
 }
+
+/* =========================
+   BASE
+   ========================= */
 
 :root {
   font-family:

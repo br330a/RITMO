@@ -2,6 +2,7 @@ package com.ritmo.backend.user;
 
 import com.ritmo.backend.auth.dto.RegisterUserRequest;
 import com.ritmo.backend.auth.dto.UserResponse;
+import com.ritmo.backend.user.dto.UpdateAccentColorRequest;
 import com.ritmo.backend.user.dto.UpdateThemeRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -82,6 +83,21 @@ public class UserService {
         return toResponse(user);
     }
 
+    @Transactional
+    public UserResponse updateAccentColor(
+            Long userId,
+            UpdateAccentColorRequest request
+    ) {
+        User user = findUser(userId);
+
+        user.setAccentColor(
+                request.accentColor()
+                        .toLowerCase(Locale.ROOT)
+        );
+
+        return toResponse(user);
+    }
+
     private User findUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() ->
@@ -98,11 +114,17 @@ public class UserService {
                         ? "light"
                         : user.getTheme();
 
+        String accentColor =
+                user.getAccentColor() == null
+                        ? "green"
+                        : user.getAccentColor();
+
         return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 theme,
+                accentColor,
                 user.getCreatedAt()
         );
     }

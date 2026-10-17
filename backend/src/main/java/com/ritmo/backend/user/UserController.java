@@ -1,6 +1,7 @@
 package com.ritmo.backend.user;
 
 import com.ritmo.backend.auth.dto.UserResponse;
+import com.ritmo.backend.user.dto.UpdateAccentColorRequest;
 import com.ritmo.backend.user.dto.UpdateThemeRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,6 +44,21 @@ public class UserController {
                 Long.valueOf(jwt.getSubject());
 
         return userService.updateTheme(
+                userId,
+                request
+        );
+    }
+
+    @PatchMapping("/me/accent-color")
+    public UserResponse updateAccentColor(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid
+            @RequestBody UpdateAccentColorRequest request
+    ) {
+        Long userId =
+                Long.valueOf(jwt.getSubject());
+
+        return userService.updateAccentColor(
                 userId,
                 request
         );

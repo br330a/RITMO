@@ -30,6 +30,9 @@ public class User {
     @Column(length = 10)
     private String theme;
 
+    @Column(name = "accent_color", length = 10)
+    private String accentColor;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -45,6 +48,7 @@ public class User {
         this.email = email;
         this.passwordHash = passwordHash;
         this.theme = "light";
+        this.accentColor = "green";
     }
 
     @PrePersist
@@ -53,6 +57,10 @@ public class User {
 
         if (theme == null) {
             theme = "light";
+        }
+
+        if (accentColor == null) {
+            accentColor = "green";
         }
     }
 
@@ -76,6 +84,10 @@ public class User {
         return theme;
     }
 
+    public String getAccentColor() {
+        return accentColor;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -94,5 +106,9 @@ public class User {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public void setAccentColor(String accentColor) {
+        this.accentColor = accentColor;
     }
 }

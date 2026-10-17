@@ -1,9 +1,20 @@
 import { createContext } from 'react'
-import type { Theme } from '../types/themeTypes'
+import type {
+  AccentColor,
+  Theme,
+} from '../types/themeTypes'
 
 export type ThemeContextValue = {
   theme: Theme
-  setTheme: (theme: Theme) => void
+  accentColor: AccentColor
+
+  setTheme: (
+    theme: Theme,
+  ) => void
+
+  setAccentColor: (
+    accentColor: AccentColor,
+  ) => void
 }
 
 export const ThemeContext =

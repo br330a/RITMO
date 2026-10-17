@@ -1,10 +1,14 @@
-import type { Theme } from './themeTypes'
+import type {
+  AccentColor,
+  Theme,
+} from './themeTypes'
 
 export type AuthUser = {
   id: number
   name: string
   email: string
   theme: Theme
+  accentColor: AccentColor
   createdAt: string
 }
 

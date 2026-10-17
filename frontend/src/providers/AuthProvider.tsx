@@ -10,6 +10,7 @@ import {
   getCurrentUser,
   loginUser,
   registerUser,
+  updateUserAccentColor,
   updateUserTheme,
 } from '../services/authService'
 import {
@@ -23,6 +24,7 @@ import type {
   RegisterData,
 } from '../types/authTypes'
 import type {
+  AccentColor,
   Theme,
 } from '../types/themeTypes'
 
@@ -132,6 +134,43 @@ export function AuthProvider({
       ],
     )
 
+  const updateAccentColorPreference =
+    useCallback(
+      async (
+        accentColor: AccentColor,
+      ) => {
+        if (!token || !user) {
+          throw new Error(
+            'Sua sessão não está disponível.',
+          )
+        }
+
+        const previousUser = user
+
+        setUser({
+          ...user,
+          accentColor,
+        })
+
+        try {
+          const updatedUser =
+            await updateUserAccentColor(
+              token,
+              accentColor,
+            )
+
+          setUser(updatedUser)
+        } catch (error) {
+          setUser(previousUser)
+          throw error
+        }
+      },
+      [
+        token,
+        user,
+      ],
+    )
+
   const logout = useCallback(() => {
     removeAuthToken()
     setToken(null)
@@ -148,6 +187,7 @@ export function AuthProvider({
       login,
       register,
       updateThemePreference,
+      updateAccentColorPreference,
       logout,
     }),
     [
@@ -157,6 +197,7 @@ export function AuthProvider({
       login,
       register,
       updateThemePreference,
+      updateAccentColorPreference,
       logout,
     ],
   )

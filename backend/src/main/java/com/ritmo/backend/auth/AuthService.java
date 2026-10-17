@@ -66,12 +66,18 @@ public class AuthService {
                         ? "light"
                         : user.getTheme();
 
+        String accentColor =
+                user.getAccentColor() == null
+                        ? "green"
+                        : user.getAccentColor();
+
         UserResponse userResponse =
                 new UserResponse(
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
                         theme,
+                        accentColor,
                         user.getCreatedAt()
                 );
 

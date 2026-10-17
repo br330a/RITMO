@@ -4,7 +4,10 @@ import type {
   LoginCredentials,
   RegisterData,
 } from '../types/authTypes'
-import type { Theme } from '../types/themeTypes'
+import type {
+  AccentColor,
+  Theme,
+} from '../types/themeTypes'
 
 export type AuthContextValue = {
   user: AuthUser | null
@@ -22,6 +25,10 @@ export type AuthContextValue = {
 
   updateThemePreference: (
     theme: Theme,
+  ) => Promise<void>
+
+  updateAccentColorPreference: (
+    accentColor: AccentColor,
   ) => Promise<void>
 
   logout: () => void
