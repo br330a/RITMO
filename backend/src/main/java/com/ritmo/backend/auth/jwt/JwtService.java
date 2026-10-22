@@ -1,6 +1,5 @@
 package com.ritmo.backend.auth.jwt;
 
-import com.ritmo.backend.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -23,16 +22,16 @@ public class JwtService {
         this.expirationSeconds = expirationSeconds;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(Long userId, String email, String name) {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("ritmo-api")
-                .subject(user.getId().toString())
+                .subject(userId.toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirationSeconds))
-                .claim("email", user.getEmail())
-                .claim("name", user.getName())
+                .claim("email", email)
+                .claim("name", name)
                 .build();
 
         return jwtEncoder

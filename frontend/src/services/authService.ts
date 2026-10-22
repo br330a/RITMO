@@ -25,8 +25,8 @@ export function loginUser(
 export function registerUser(
   data: RegisterData,
 ) {
-  return apiRequest<AuthUser>(
-    '/api/auth/register',
+  return apiRequest<AuthResponse>(
+    '/api/auth/register-session',
     {
       method: 'POST',
       body: data,

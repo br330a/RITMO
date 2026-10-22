@@ -89,14 +89,13 @@ export function AuthProvider({
 
   const register = useCallback(
     async (data: RegisterData) => {
-      await registerUser(data)
+      const response = await registerUser(data)
 
-      await login({
-        email: data.email,
-        password: data.password,
-      })
+      saveAuthToken(response.token)
+      setToken(response.token)
+      setUser(response.user)
     },
-    [login],
+    [],
   )
 
   const updateThemePreference =

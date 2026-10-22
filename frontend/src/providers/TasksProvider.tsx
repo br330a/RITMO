@@ -1,5 +1,6 @@
-﻿import {
+import {
   useEffect,
+  useRef,
   useState,
   type PropsWithChildren,
 } from 'react'
@@ -78,6 +79,9 @@ export function TasksProvider({
       ownerToken: null,
       tasks: [],
     })
+
+  // Bloqueia toques repetidos na mesma tarefa até a API responder.
+  const pendingTaskIds = useRef(new Set<string>())
 
   const tasks =
     token && state.ownerToken === token
@@ -233,86 +237,101 @@ export function TasksProvider({
     occurrenceDate?: string,
   ) {
     if (!token) {
-      toast.error(
-        'Sua sessão não está disponível.',
-      )
-
+      toast.error('Sua sessão não está disponível.')
       return false
     }
 
-    const task = tasks.find(
-      (currentTask) =>
-        currentTask.id === taskId,
-    )
-
-    if (!task) {
-      toast.error(
-        'A tarefa não foi encontrada.',
-      )
-
+    // Duplo clique não cria duas operações concorrentes para a mesma tarefa.
+    if (pendingTaskIds.current.has(taskId)) {
       return false
     }
 
-    try {
-      let updatedTask: Task
+    const previousTask = tasks.find((task) => task.id === taskId)
 
-      if (task.recurrence) {
-        const targetDate =
-          occurrenceDate ??
-          task.dueDate
+    if (!previousTask) {
+      toast.error('A tarefa não foi encontrada.')
+      return false
+    }
 
-        const isCompleted =
-          Boolean(
-            task.completedOccurrences[
-              targetDate
-            ],
-          )
+    const targetDate = occurrenceDate ?? previousTask.dueDate
+    const wasCompleted = previousTask.recurrence
+      ? Boolean(previousTask.completedOccurrences[targetDate])
+      : previousTask.completed
 
-        updatedTask = isCompleted
-          ? await uncompleteTaskOccurrenceRequest(
-              token,
-              taskId,
-              targetDate,
-            )
-          : await completeTaskOccurrenceRequest(
-              token,
-              taskId,
-              targetDate,
-            )
+    const now = new Date().toISOString()
+    let optimisticTask: Task
+
+    if (previousTask.recurrence) {
+      const occurrences = { ...previousTask.completedOccurrences }
+
+      if (wasCompleted) {
+        delete occurrences[targetDate]
       } else {
-        updatedTask =
-          await setTaskCompletionRequest(
-            token,
-            taskId,
-            !task.completed,
-          )
+        occurrences[targetDate] = now
       }
 
-      setState((currentState) => ({
-        ownerToken: token,
-        tasks:
-          currentState.ownerToken === token
-            ? sortTasks(
-                currentState.tasks.map(
-                  (currentTask) =>
-                    currentTask.id === taskId
-                      ? updatedTask
-                      : currentTask,
-                ),
-              )
-            : [updatedTask],
-      }))
+      optimisticTask = {
+        ...previousTask,
+        completedOccurrences: occurrences,
+      }
+    } else {
+      optimisticTask = {
+        ...previousTask,
+        completed: !wasCompleted,
+        completedAt: wasCompleted ? null : now,
+      }
+    }
+
+    pendingTaskIds.current.add(taskId)
+
+    // Mudança visual instantânea, sem aguardar a resposta do servidor.
+    setState((currentState) => currentState.ownerToken === token
+      ? {
+          ...currentState,
+          tasks: currentState.tasks.map((task) =>
+            task.id === taskId ? optimisticTask : task,
+          ),
+        }
+      : currentState,
+    )
+
+    try {
+      const updatedTask = previousTask.recurrence
+        ? wasCompleted
+          ? await uncompleteTaskOccurrenceRequest(token, taskId, targetDate)
+          : await completeTaskOccurrenceRequest(token, taskId, targetDate)
+        : await setTaskCompletionRequest(token, taskId, !wasCompleted)
+
+      setState((currentState) => currentState.ownerToken === token
+        ? {
+            ...currentState,
+            tasks: currentState.tasks.map((task) =>
+              task.id === taskId ? updatedTask : task,
+            ),
+          }
+        : currentState,
+      )
 
       return true
     } catch (error) {
-      toast.error(
-        getErrorMessage(
-          error,
-          'Não foi possível atualizar o status da tarefa.',
-        ),
+      // Reverte apenas a tarefa afetada; outras mudanças são preservadas.
+      setState((currentState) => currentState.ownerToken === token
+        ? {
+            ...currentState,
+            tasks: currentState.tasks.map((task) =>
+              task.id === taskId ? previousTask : task,
+            ),
+          }
+        : currentState,
       )
 
+      toast.error(getErrorMessage(
+        error,
+        'Não foi possível atualizar o status da tarefa.',
+      ))
       return false
+    } finally {
+      pendingTaskIds.current.delete(taskId)
     }
   }
 
