@@ -10,6 +10,9 @@ function App() {
         position="top-right"
         richColors
         closeButton={false}
+        duration={3500}
+        visibleToasts={3}
+        toastOptions={{ className: 'ritmo-toast' }}
         swipeDirections={['top']}
       />
     </>

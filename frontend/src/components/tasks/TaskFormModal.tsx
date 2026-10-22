@@ -1,4 +1,4 @@
-﻿import {
+import {
   useState,
   type FormEvent,
   type ReactNode,
@@ -39,6 +39,7 @@ import { getLocalDateValue } from '../../utils/date'
 
 import { RitmoDatePicker } from '../ui/RitmoDatePicker'
 import { RitmoTimeInput } from '../ui/RitmoTimeInput'
+import { normalizeTime } from '../../utils/time'
 
 import {
   TaskStickerPicker,
@@ -406,6 +407,13 @@ export function TaskFormModal({
       return
     }
 
+    const normalizedTime = normalizeTime(time)
+
+    if (normalizedTime === null) {
+      toast.error('Digite um horário válido entre 00:00 e 23:59.')
+      return
+    }
+
     const selectedCategory =
       categories.find(
         (category) =>
@@ -469,7 +477,7 @@ export function TaskFormModal({
             description.trim() ||
             null,
           dueDate,
-          time: time || null,
+          time: normalizedTime || null,
           categoryId:
             selectedCategory.id,
           priority,

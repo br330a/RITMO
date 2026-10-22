@@ -1,4 +1,4 @@
-﻿import {
+import {
   useState,
   type FormEvent,
 } from 'react'
@@ -10,6 +10,7 @@ import {
   UserPlus,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { PasswordInput } from '../components/ui/PasswordInput'
 import {
   RitmoLogo,
 } from '../components/branding/RitmoLogo'
@@ -210,9 +211,8 @@ export function RegisterPage() {
                 Senha
               </label>
 
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(
                   event,
@@ -228,7 +228,6 @@ export function RegisterPage() {
                 maxLength={72}
                 autoComplete="new-password"
                 placeholder="Mínimo de 8 caracteres"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 
@@ -240,9 +239,8 @@ export function RegisterPage() {
                 Confirmar senha
               </label>
 
-              <input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 value={
                   confirmPassword
                 }
@@ -260,7 +258,6 @@ export function RegisterPage() {
                 maxLength={72}
                 autoComplete="new-password"
                 placeholder="Digite a senha novamente"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 

@@ -1,4 +1,4 @@
-﻿import {
+import {
   useState,
   type FormEvent,
 } from 'react'
@@ -10,6 +10,7 @@ import {
   LogIn,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { PasswordInput } from '../components/ui/PasswordInput'
 import {
   RitmoLogo,
 } from '../components/branding/RitmoLogo'
@@ -150,9 +151,8 @@ export function LoginPage() {
                 Senha
               </label>
 
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(
                   event,
@@ -166,7 +166,6 @@ export function LoginPage() {
                 required
                 autoComplete="current-password"
                 placeholder="Digite sua senha"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-soft)]"
               />
             </div>
 

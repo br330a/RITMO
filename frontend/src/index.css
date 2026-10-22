@@ -268,3 +268,48 @@ body {
   background: var(--primary-soft-hover);
   color: var(--text-primary);
 }
+/* Toasts do RITMO: barra de tempo e saída rápida para cima. */
+[data-sonner-toast].ritmo-toast {
+  overflow: hidden;
+}
+
+[data-sonner-toast].ritmo-toast::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary);
+  opacity: 0.85;
+  transform-origin: left center;
+  animation: ritmo-toast-progress 3500ms linear forwards;
+  pointer-events: none;
+}
+
+/* O Sonner pausa seu próprio temporizador ao expandir os toasts. */
+[data-sonner-toast].ritmo-toast[data-expanded='true']::after {
+  animation-play-state: paused;
+}
+
+[data-sonner-toast].ritmo-toast[data-removed='true'] {
+  transition: transform 180ms ease-in, opacity 180ms ease-in,
+    height 180ms ease-in, box-shadow 180ms ease-in !important;
+}
+
+[data-sonner-toast].ritmo-toast[data-type='loading']::after,
+[data-sonner-toast].ritmo-toast[data-promise='true']::after {
+  display: none;
+}
+
+@keyframes ritmo-toast-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-sonner-toast].ritmo-toast::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
